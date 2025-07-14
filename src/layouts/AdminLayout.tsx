@@ -11,26 +11,23 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { ModeToggle } from "@/components/theme/mode-toggle"
-import { NavUser } from "@/components/sidebar/nav-user"
-import { useAppSelector } from "@/helper"
-
-const data = {
-  user: {
-    name: "Bich Chu",
-    email: "bichchu@gmail.com",
-    avatar: "/avatars/admin.jpg",
-  },
-}
+import { NavAdmin } from "@/components/sidebar/nav-admin"
+import { useAppDispatch, useAppSelector } from "@/helper"
+import { logoutUser } from "@/api/authApi"
+import { logout } from "@/redux"
 
 const AdminLayout = () => {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const user = useAppSelector((state) => state.auth.user)
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logoutUser()
+    dispatch(logout())
     navigate("/login")
   }
-if (!user || !(user.roles.includes("ROLE_ADMIN") || user.roles.includes("ROLE_QUANLY"))) {
-  return <Navigate to="/" replace />
-}
+  if (!user || !(user.roles.includes("ROLE_ADMIN") || user.roles.includes("ROLE_QUANLY"))) {
+    return <Navigate to="/login" replace />
+  }
   return (
     <>
       <AppSidebar />
@@ -54,7 +51,14 @@ if (!user || !(user.roles.includes("ROLE_ADMIN") || user.roles.includes("ROLE_QU
             </div>
             <div className="flex items-center gap-2">
               <ModeToggle />
-              <NavUser user={data.user} handleLogout={handleLogout} />
+              <NavAdmin
+                user={{
+                  name: user.hoten,
+                  email: user.sub,
+                  avatar: "/avatars/admin.jpg",
+                }}
+                handleLogout={handleLogout}
+              />
             </div>
           </div>
         </header>

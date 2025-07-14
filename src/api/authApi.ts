@@ -66,4 +66,19 @@ export const confirmOTP = async (otpData: { otp: any }): Promise<any> => {
   }
 }
 
-   
+export const logoutUser = async (): Promise<any> => {
+  try {
+    const response = await post<any>("/auth/logout")
+
+    if (response.success === true) {
+      localStorage.removeItem("token")
+      toastSuccess("Đăng xuất thành công")
+    }
+
+    return response
+  } catch (error) {
+    toastError("Đăng xuất thất bại")
+    console.error("Logout failed:", error)
+    throw error
+  }
+}

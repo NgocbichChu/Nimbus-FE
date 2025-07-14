@@ -54,9 +54,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
           }
         }
         setState({ email: "", matKhau: "" })
-        // setTimeout(() => {
-        //   navigate("/")
-        // }, 1200)
       }
     } catch (error) {
       console.error("Login error:", error)

@@ -15,8 +15,8 @@ import { useAppDispatch } from "./helper"
 
 function App() {
   const dispatch = useAppDispatch()
-   useEffect(() => {
-    const token = localStorage.getItem('token')
+  useEffect(() => {
+    const token = localStorage.getItem("token")
     if (token) {
       decodeAndStoreUserFromToken(token, dispatch)
     }
