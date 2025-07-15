@@ -14,57 +14,64 @@ const UserLayout = () => {
   const dispatch = useAppDispatch()
   const user = useAppSelector((state) => state.auth.user as any)
   const handleLogout = async () => {
-  await logoutUser()
-  dispatch(logout()) 
-  navigate("/login")
+  try {
+    await logoutUser() // gọi API logout
+  } catch (error) {
+    console.warn("Logout failed, token may be expired:", error)
+  } finally {
+    // Xoá token, clear state bất kể API logout có thành công hay không
+    localStorage.removeItem("token")
+    dispatch(logout())
+    navigate("/login")
+  }
 }
   return (
-      <div className="min-h-screen bg-muted">
-        <nav className="h-16 bg-background border-b">
-          <div className="h-full flex items-center justify-between max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-8">
-              <Logo />
+    <div className="min-h-screen bg-muted">
+      <nav className="h-16 bg-background border-b">
+        <div className="h-full flex items-center justify-between max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-8">
+            <Logo />
 
-              {/* Desktop Menu */}
-              <NavMenu className="hidden md:block" />
-            </div>
+            {/* Desktop Menu */}
+            <NavMenu className="hidden md:block" />
+          </div>
 
-            <div className="flex items-center gap-3">
-              {!user ? (
-                <>
-                  <Button variant="outline" asChild>
-                    <Link to="/login">Đăng nhập</Link>
-                  </Button>
-                  <Button variant="default" asChild>
-                    <Link to="/sign-up">Đăng ký</Link>
-                  </Button>
-                </>
-              ) : (
-                <NavUser
-                  user={{
-                    name: user.hoten,
-                    email: user.sub,
-                    avatar: user.avatar,
-                  }}
-                  handleLogout={handleLogout}
-                />
-              )}
+          <div className="flex items-center gap-3">
+            {!user ? (
+              <>
+                <Button variant="outline" asChild>
+                  <Link to="/login">Đăng nhập</Link>
+                </Button>
+                <Button variant="default" asChild>
+                  <Link to="/sign-up">Đăng ký</Link>
+                </Button>
+              </>
+            ) : (
+              <NavUser
+                user={{
+                  name: user.hoten,
+                  email: user.sub,
+                  avatar: user.avatar,
+                }}
+                handleLogout={handleLogout}
+              />
+            )}
 
-              <ModeToggle />
+            <ModeToggle />
 
-              {/* Mobile Menu */}
-              <div className="md:hidden">
-                <NavigationSheet />
-              </div>
+            {/* Mobile Menu */}
+            <div className="md:hidden">
+              <NavigationSheet />
             </div>
           </div>
-        </nav>
+        </div>
+      </nav>
 
-        {/* Main Content */}
-        <main className="flex-1">
-          <Outlet />
-        </main>
-      </div>
+      {/* Main Content */}
+      <main className="flex-1">
+        <Outlet />
+      </main>
+    </div>
   )
 }
 

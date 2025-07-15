@@ -12,6 +12,7 @@ import SignUpPage from "./pages/auth/SignUpPage"
 import { useEffect } from "react"
 import { decodeAndStoreUserFromToken } from "./redux/decode"
 import { useAppDispatch } from "./helper"
+import DoctorsPage from "./pages/admin/DoctorsPage"
 
 function App() {
   const dispatch = useAppDispatch()
@@ -46,6 +47,7 @@ function App() {
           >
             <Route index element={<DashboardPage />} />
             <Route path="users" element={<UsersPage />} />
+            <Route path="doctors" element={<DoctorsPage />} />
           </Route>
         </Routes>
       </Router>

@@ -1,4 +1,4 @@
-import { House, Users } from "lucide-react"
+import { BookUser, ClipboardPlus, House, Users } from "lucide-react"
 
 import { NavMain } from "@/components/sidebar/nav-main"
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from "@/components/ui/sidebar"
@@ -14,7 +14,17 @@ const data = {
     {
       title: "Quản lý bệnh nhân ",
       url: "/dashboard/users",
+      icon: BookUser,
+    },
+    {
+      title: "Quản lý bác sĩ",
+      url: "/dashboard/doctors",
       icon: Users,
+    },
+    {
+      title: "Quản lý lịch khám",
+      url: "/dashboard/appointments",
+      icon: ClipboardPlus,
     },
   ],
 }
