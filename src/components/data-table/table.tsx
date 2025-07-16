@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+// import * as React from "react"
 import {
   useReactTable,
   getCoreRowModel,
@@ -30,6 +30,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
 import type { DataTableProps } from "./type-table"
+import { useState } from "react"
 
 export function DataTable<TData, TValue>({
   data,
@@ -38,11 +39,10 @@ export function DataTable<TData, TValue>({
   onEdit,
   onDelete,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-
-  const [filter, setFilter] = React.useState("")
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [filter, setFilter] = useState("")
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [rowSelection, setRowSelection] = useState({})
 
   const table = useReactTable({
     data,
