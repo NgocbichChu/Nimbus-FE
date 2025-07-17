@@ -12,11 +12,15 @@ import SignUpPage from "./pages/auth/SignUpPage"
 import { useEffect } from "react"
 import { decodeAndStoreUserFromToken } from "./redux/decode"
 import { useAppDispatch } from "./helper"
+import AppointmentPage from "./pages/user/AppointmentPage"
+import LienHePage from "./pages/user/LienHe"
+import ChuyenKhoaPage from "./pages/user/ChuyenKhoaPage"
+import ChuyenGiaPage from "./pages/user/ChuyenGiaPage"
 
 function App() {
   const dispatch = useAppDispatch()
-   useEffect(() => {
-    const token = localStorage.getItem('token')
+  useEffect(() => {
+    const token = localStorage.getItem("token")
     if (token) {
       decodeAndStoreUserFromToken(token, dispatch)
     }
@@ -32,7 +36,11 @@ function App() {
           {/* User Routes - With Navbar */}
           <Route path="/" element={<UserLayout />}>
             <Route index element={<HomePage />} />
-            <Route path="about" element={<AboutPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/chuyen-khoa" element={<ChuyenKhoaPage />} />
+            <Route path="/chuyen-gia" element={<ChuyenGiaPage />} />
+            <Route path="/dat-lich" element={<AppointmentPage />} />
+            <Route path="/lien-he" element={<LienHePage />} />
           </Route>
 
           {/* Admin Routes - With Sidebar */}

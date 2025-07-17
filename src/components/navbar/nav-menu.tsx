@@ -9,7 +9,7 @@ import { Link } from "react-router-dom"
 
 export const NavMenu = (props: NavigationMenuProps) => (
   <NavigationMenu {...props}>
-    <NavigationMenuList className="gap-6 space-x-0 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start">
+    <NavigationMenuList className="gap-6 space-x-0 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start ">
       <NavigationMenuItem>
         <NavigationMenuLink asChild>
           <Link to="/">Trang chủ</Link>
@@ -17,7 +17,22 @@ export const NavMenu = (props: NavigationMenuProps) => (
       </NavigationMenuItem>
       <NavigationMenuItem>
         <NavigationMenuLink asChild>
-          <Link to="/about">Giới thiệu</Link>
+          <Link to="/chuyen-khoa">Chuyên khoa</Link>
+        </NavigationMenuLink>
+      </NavigationMenuItem>
+      <NavigationMenuItem>
+        <NavigationMenuLink asChild>
+          <Link to="/chuyen-gia">Chuyên gia</Link>
+        </NavigationMenuLink>
+      </NavigationMenuItem>
+      <NavigationMenuItem>
+        <NavigationMenuLink asChild>
+          <Link to="/dat-lich">Đặt lịch</Link>
+        </NavigationMenuLink>
+      </NavigationMenuItem>
+      <NavigationMenuItem>
+        <NavigationMenuLink asChild>
+          <Link to="/lien-he">Liên hệ</Link>
         </NavigationMenuLink>
       </NavigationMenuItem>
     </NavigationMenuList>
