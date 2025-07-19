@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
-import { toastError } from "@/helper/toast"
 import { useAppDispatch } from "../../helper/index"
 import { authActions } from "@/redux/authSlice"
 import { loginUser } from "@/api/authApi"
@@ -44,7 +43,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
           const payload = decodeAndStoreUserFromToken(token, dispatch)
           if (payload) {
             const roles = payload.roles
-            if (roles.includes("ROLE_ADMIN") || roles.includes("ROLE_QUANLY")) {
+            if (roles.includes("ROLE_QUANLY")) {
               navigate("/dashboard")
             } else if (roles.includes("ROLE_BENHNHAN")) {
               navigate("/")
@@ -53,7 +52,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
         }
       }
     } catch (error) {
-      toastError("Đăng nhập thất bại. Vui lòng kiểm tra lại.")
       console.error("Login error:", error)
     }
   }

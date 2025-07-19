@@ -25,7 +25,7 @@ const AdminLayout = () => {
     dispatch(logout())
     navigate("/login")
   }
-  if (!user || !(user.roles.includes("ROLE_ADMIN") || user.roles.includes("ROLE_QUANLY"))) {
+  if (!user || !( user.roles.includes("ROLE_QUANLY"))) {
     return <Navigate to="/login" replace />
   }
   return (
