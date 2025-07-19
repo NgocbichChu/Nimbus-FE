@@ -1,4 +1,4 @@
-import { House, Users } from "lucide-react"
+import { BookUser, ClipboardPlus, House, Users } from "lucide-react"
 
 import { NavMain } from "@/components/sidebar/nav-main"
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from "@/components/ui/sidebar"
@@ -14,7 +14,17 @@ const data = {
     {
       title: "Quản lý bệnh nhân ",
       url: "/dashboard/users",
+      icon: BookUser,
+    },
+    {
+      title: "Quản lý bác sĩ",
+      url: "/dashboard/doctors",
       icon: Users,
+    },
+    {
+      title: "Quản lý lịch khám",
+      url: "/dashboard/appointments",
+      icon: ClipboardPlus,
     },
   ],
 }
@@ -23,8 +33,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="border-b min-h-14">
-        <div className="flex items-center gap-2">
-          <img src="/vite.svg" alt="logo" className="size-8" />
+        <div className="flex items-center gap-2 mt-1">
+          <img src="./src/assets/logoNimbus.svg" alt="logo" className="size-8" />
           <span className="font-semibold group-data-[collapsible=icon]:hidden">Nimbus</span>
         </div>
       </SidebarHeader>

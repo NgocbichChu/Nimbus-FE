@@ -4,37 +4,36 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
-import { toastError } from "@/helper/toast"
 import { useAppDispatch } from "../../helper/index"
 import { authActions } from "@/redux/authSlice"
 import { loginUser } from "@/api/authApi"
 import { Eye, EyeOff, Loader } from "lucide-react"
 import { decodeAndStoreUserFromToken } from "@/redux/decode"
+import { useForm } from "react-hook-form"
+import { yupResolver } from "@hookform/resolvers/yup"
+import { loginSchema, type LoginSchemaType } from "@/validation/auth-valid"
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
-  const [state, setState] = useState({
-    email: "",
-    matKhau: "",
-  })
-  const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginSchemaType>({
+    resolver: yupResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      matKhau: "",
+    },
+  })
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!state.email || !state.matKhau) {
-      toastError("Vui lòng nhập đầy đủ email và mật khẩu!")
-      return
-    }
-
-    setIsLoading(true)
-
+  const onSubmit = async (data: LoginSchemaType) => {
     try {
       const response = await loginUser({
-        email: state.email,
-        matKhau: state.matKhau,
+        email: data.email,
+        matKhau: data.matKhau,
       })
 
       if (response.success === true) {
@@ -44,24 +43,16 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
           const payload = decodeAndStoreUserFromToken(token, dispatch)
           if (payload) {
             const roles = payload.roles
-
-            // 👉 Điều hướng theo role
-            if (roles.includes("ROLE_ADMIN") || roles.includes("ROLE_QUANLY")) {
+            if (roles.includes("ROLE_QUANLY")) {
               navigate("/dashboard")
             } else if (roles.includes("ROLE_BENHNHAN")) {
-              navigate("/") // Default
+              navigate("/")
             }
           }
         }
-        setState({ email: "", matKhau: "" })
-        // setTimeout(() => {
-        //   navigate("/")
-        // }, 1200)
       }
     } catch (error) {
       console.error("Login error:", error)
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -70,7 +61,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
   }
 
   return (
-    <form className={cn("flex flex-col gap-6", className)} onSubmit={handleLogin} {...props}>
+    <form
+      className={cn("flex flex-col gap-6", className)}
+      onSubmit={handleSubmit(onSubmit)}
+      {...props}
+    >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Đăng nhập</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -80,14 +75,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Email *</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="m@example.com"
-            value={state.email}
-            onChange={(e) => setState({ ...state, email: e.target.value })}
-            required
-          />
+          <Input id="email" type="email" placeholder="m@example.com" {...register("email")} />
+          {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
@@ -100,9 +89,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
-              value={state.matKhau}
-              onChange={(e) => setState({ ...state, matKhau: e.target.value })}
-              required
+              {...register("matKhau")}
             />
             <button
               type="button"
@@ -114,16 +101,14 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
               {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>
           </div>
+          {errors.matKhau && (
+            <span className="text-sm text-red-500  block">{errors.matKhau.message}</span>
+          )}
         </div>
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading && <Loader className="mr-2 h-4 w-4 animate-spin" />}
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting && <Loader className="mr-2 h-4 w-4 animate-spin" />}
           Đăng nhập
         </Button>
-        <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-          <span className="bg-background text-muted-foreground relative z-10 px-2">
-            Hoặc tiếp tục với
-          </span>
-        </div>
       </div>
       <div className="text-center text-sm">
         Bạn chưa có tài khoản?{" "}

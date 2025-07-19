@@ -97,7 +97,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
       const response = await confirmOTP({ otp })
       if (response.success === true) {
         setTimeout(() => {
-            navigate("/login")
+          navigate("/login")
         }, 1200)
       }
     } catch (error) {
@@ -123,23 +123,28 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
                   onChange={(e) => setState({ ...state, hoTen: e.target.value })}
                 />
               </div>
-              <div className="grid gap-3">
-                <Label>Giới tính</Label>
+              <div className="flex items-center gap-4">
+                <Label className="min-w-[80px]">Giới tính:</Label>
                 <RadioGroup
                   value={state.gioiTinh}
                   onValueChange={(value) => setState({ ...state, gioiTinh: value })}
-                  className="flex gap-4"
+                  className="flex gap-6"
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-2">
                     <RadioGroupItem id="male" value="M" />
-                    <Label htmlFor="male">Nam</Label>
+                    <Label htmlFor="male" className="cursor-pointer">
+                      Nam
+                    </Label>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-2">
                     <RadioGroupItem id="female" value="F" />
-                    <Label htmlFor="female">Nữ</Label>
+                    <Label htmlFor="female" className="cursor-pointer">
+                      Nữ
+                    </Label>
                   </div>
                 </RadioGroup>
               </div>
+
               <div className="grid gap-3">
                 <Label htmlFor="email">Email *</Label>
                 <Input
@@ -149,23 +154,27 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
                   onChange={(e) => setState({ ...state, email: e.target.value })}
                 />
               </div>
-              <div className="grid gap-3">
-                <Label htmlFor="phone">Số điện thoại</Label>
-                <Input
-                  id="phone"
-                  type="text"
-                  value={state.soDienThoai}
-                  onChange={(e) => setState({ ...state, soDienThoai: e.target.value })}
-                />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="phone2">Liên hệ khẩn cấp</Label>
-                <Input
-                  id="phone2"
-                  type="text"
-                  value={state.lienHeKhanCap}
-                  onChange={(e) => setState({ ...state, lienHeKhanCap: e.target.value })}
-                />
+              <div className="flex">
+                <div className="grid gap-3">
+                  <Label htmlFor="phone">Số điện thoại</Label>
+                  <Input
+                    id="phone"
+                    type="text"
+                    value={state.soDienThoai}
+                    onChange={(e) => setState({ ...state, soDienThoai: e.target.value })}
+                    className="w-38 "
+                  />
+                </div>
+                <div className="grid gap-3 ml-auto">
+                  <Label htmlFor="phone2">Liên hệ khẩn cấp</Label>
+                  <Input
+                    id="phone2"
+                    type="text"
+                    value={state.lienHeKhanCap}
+                    onChange={(e) => setState({ ...state, lienHeKhanCap: e.target.value })}
+                    className="w-38"
+                  />
+                </div>
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="password">Mật khẩu *</Label>
