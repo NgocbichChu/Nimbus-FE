@@ -17,6 +17,7 @@ import AppointmentPage from "./pages/user/AppointmentPage"
 import LienHePage from "./pages/user/LienHe"
 import ChuyenKhoaPage from "./pages/user/ChuyenKhoaPage"
 import ChuyenGiaPage from "./pages/user/ChuyenGiaPage"
+import ProfilePage from "./pages/user/ProfilePage"
 
 function App() {
   const dispatch = useAppDispatch()
@@ -42,6 +43,7 @@ function App() {
             <Route path="/chuyen-gia" element={<ChuyenGiaPage />} />
             <Route path="/dat-lich" element={<AppointmentPage />} />
             <Route path="/lien-he" element={<LienHePage />} />
+            <Route path="/ho-so" element={<ProfilePage />} />
           </Route>
 
           {/* Admin Routes - With Sidebar */}

@@ -35,6 +35,11 @@ export const NavMenu = (props: NavigationMenuProps) => (
           <Link to="/lien-he">Liên hệ</Link>
         </NavigationMenuLink>
       </NavigationMenuItem>
+      <NavigationMenuItem>
+        <NavigationMenuLink asChild>
+          <Link to="/ho-so">Hồ sơ </Link>
+        </NavigationMenuLink>
+      </NavigationMenuItem>
     </NavigationMenuList>
   </NavigationMenu>
 )
