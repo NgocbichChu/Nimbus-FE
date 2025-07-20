@@ -1,93 +1,70 @@
+import { doctorColumns } from "@/components/data-table/doctor-column"
 import { DataTable } from "@/components/data-table/table"
-import { toastSuccess } from "@/helper/toast"
-import type { ColumnDef } from "@tanstack/react-table"
+import type { Doctor } from "@/components/data-table/type-table"
 
-type User = {
-  id: string
-  name: string
-  email: string
-  role: string
-  createdAt: string
-}
-
-const mockUsers: User[] = [
+const mockDoctors: Doctor[] = [
   {
-    id: "1",
-    name: "Phan Huy Hoàng",
-    email: "hoang@gmail.com",
-    role: "Admin",
-    createdAt: "2025-07-01T10:30:00Z",
+    bacsi_id: "BS001",
+    hoTen: "Nguyễn Văn A",
+    gioiTinh: "M",
+    email: "vana.nguyen@example.com",
+    soDienThoai: "0909123456",
+    chuyenKhoaId: 1,
+    chungChi: "Chứng chỉ Nội tổng quát",
+    trinhDo: "Bác sĩ chuyên khoa I",
+    kinhNghiem: 5,
+    ngayTuyenDung: "2020-06-15",
+    ghiChu: "",
+    trangThaiHoatDong: true,
   },
   {
-    id: "2",
-    name: "Chu Thị Ngọc Bích",
-    email: "bich@gmail.com",
-    role: "User",
-    createdAt: "2025-07-05T14:45:00Z",
-  },
-    {
-    id: "3",
-    name: "Nguyễn Văn A",
-    email: "a@gmail.com",
-    role: "User",
-    createdAt: "2025-07-05T14:45:00Z",
-  },
-  {
-    id: "4",
-    name: "Trần Thị B",
-    email: "b@gmail.com",
-    role: "User",
-    createdAt: "2025-07-05T14:45:00Z",
-  },
-];
-
-
-const userColumns: ColumnDef<User>[] = [
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => <span>{row.getValue("name")}</span>,
+    bacsi_id: "BS002",
+    hoTen: "Trần Thị B",
+    gioiTinh: "F",
+    email: "thib.tran@example.com",
+    soDienThoai: "0912233445",
+    chuyenKhoaId: 2,
+    chungChi: "Chứng chỉ Sản phụ khoa",
+    trinhDo: "Thạc sĩ Y học",
+    kinhNghiem: 7,
+    ngayTuyenDung: "2018-03-10",
+    ghiChu: "Chuyên tư vấn sản",
+    trangThaiHoatDong: true,
   },
   {
-    accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => <span>{row.getValue("email")}</span>,
+    bacsi_id: "BS003",
+    hoTen: "Lê Quốc C",
+    gioiTinh: "M",
+    email: "quoc.le@example.com",
+    soDienThoai: "0988991122",
+    chuyenKhoaId: 3,
+    chungChi: "Chứng chỉ Tai - Mũi - Họng",
+    trinhDo: "Tiến sĩ Y khoa",
+    kinhNghiem: 10,
+    ngayTuyenDung: "2015-11-20",
+    ghiChu: "Từng công tác ở Nhật",
+    trangThaiHoatDong: false,
   },
   {
-    accessorKey: "role",
-    header: "Role",
-    cell: ({ row }) => <span>{row.getValue("role")}</span>,
+    bacsi_id: "BS004",
+    hoTen: "Phạm Ngọc D",
+    gioiTinh: "F",
+    email: "ngocd.pham@example.com",
+    soDienThoai: "0977332211",
+    chuyenKhoaId: 4,
+    chungChi: "Chứng chỉ Da liễu",
+    trinhDo: "Bác sĩ đa khoa",
+    kinhNghiem: 3,
+    ngayTuyenDung: "2022-01-05",
+    ghiChu: "",
+    trangThaiHoatDong: true,
   },
-  {
-    accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("createdAt"));
-      return <span>{date.toLocaleDateString()}</span>;
-    },
-  },
-];
+]
 
-
-export default function UsersPage() {
-  const handleEdit = (user: User) => {
-    toastSuccess(`Edit user: ${user.name}`)
-  }
-
-  const handleDelete = (user: User) => {
-    toastSuccess(`Delete user: ${user.name}`)
-  }
-
+export default function DoctorPage() {
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-semibold mb-4">Users</h1>
-      <DataTable
-        data={mockUsers}
-        columns={userColumns}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        filterColumn="name"
-      />
+    <div>
+      <DataTable columns={doctorColumns} data={mockDoctors} filterColumn="hoTen" />
     </div>
   )
 }

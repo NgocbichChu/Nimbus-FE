@@ -1,103 +1,70 @@
+import { doctorColumns } from "@/components/data-table/doctor-column"
 import { DataTable } from "@/components/data-table/table"
-import { toastSuccess } from "@/helper/toast"
-import type { ColumnDef } from "@tanstack/react-table"
-
-type Doctor = {
-  id: string
-  name: string
-  email: string
-  role: string
-  ChuyenKhoa: string
-  createdAt: string
-}
+import type { Doctor } from "@/components/data-table/type-table"
 
 const mockDoctors: Doctor[] = [
   {
-    id: "1",
-    name: "Phan Huy Hoàng",
-    email: "hoang@gmail.com",
-    role: "Bác sĩ",
-    ChuyenKhoa: "Khoa Nội",
-    createdAt: "2025-07-01T10:30:00Z",
+    bacsi_id: "BS001",
+    hoTen: "Nguyễn Văn A",
+    gioiTinh: "M",
+    email: "vana.nguyen@example.com",
+    soDienThoai: "0909123456",
+    chuyenKhoaId: 1,
+    chungChi: "Chứng chỉ Nội tổng quát",
+    trinhDo: "Bác sĩ chuyên khoa I",
+    kinhNghiem: 5,
+    ngayTuyenDung: "2020-06-15",
+    ghiChu: "",
+    trangThaiHoatDong: true,
   },
   {
-    id: "2",
-    name: "Chu Thị Ngọc Bích",
-    email: "bich@gmail.com",
-    role: "Bác sĩ",
-    ChuyenKhoa: "Khoa Nội",
-    createdAt: "2025-07-01T10:30:00Z",
-  },
-    {
-    id: "3",
-    name: "Nguyễn Văn A",
-    email: "a@gmail.com",
-    role: "Bác sĩ",
-    ChuyenKhoa: "Khoa Ngoại",
-    createdAt: "2025-07-01T10:30:00Z",
+    bacsi_id: "BS002",
+    hoTen: "Trần Thị B",
+    gioiTinh: "F",
+    email: "thib.tran@example.com",
+    soDienThoai: "0912233445",
+    chuyenKhoaId: 2,
+    chungChi: "Chứng chỉ Sản phụ khoa",
+    trinhDo: "Thạc sĩ Y học",
+    kinhNghiem: 7,
+    ngayTuyenDung: "2018-03-10",
+    ghiChu: "Chuyên tư vấn sản",
+    trangThaiHoatDong: true,
   },
   {
-    id: "4",
-    name: "Trần Thị B",
-    email: "b@gmail.com",
-    role: "Bác sĩ",
-    ChuyenKhoa: "Khoa Nhi",
-    createdAt: "2025-07-01T10:30:00Z",
+    bacsi_id: "BS003",
+    hoTen: "Lê Quốc C",
+    gioiTinh: "M",
+    email: "quoc.le@example.com",
+    soDienThoai: "0988991122",
+    chuyenKhoaId: 3,
+    chungChi: "Chứng chỉ Tai - Mũi - Họng",
+    trinhDo: "Tiến sĩ Y khoa",
+    kinhNghiem: 10,
+    ngayTuyenDung: "2015-11-20",
+    ghiChu: "Từng công tác ở Nhật",
+    trangThaiHoatDong: false,
   },
-];
+  {
+    bacsi_id: "BS004",
+    hoTen: "Phạm Ngọc D",
+    gioiTinh: "F",
+    email: "ngocd.pham@example.com",
+    soDienThoai: "0977332211",
+    chuyenKhoaId: 4,
+    chungChi: "Chứng chỉ Da liễu",
+    trinhDo: "Bác sĩ đa khoa",
+    kinhNghiem: 3,
+    ngayTuyenDung: "2022-01-05",
+    ghiChu: "",
+    trangThaiHoatDong: true,
+  },
+]
 
-
-const userColumns: ColumnDef<Doctor>[] = [
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => <span>{row.getValue("name")}</span>,
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => <span>{row.getValue("email")}</span>,
-  },
-  {
-    accessorKey: "role",
-    header: "Role",
-    cell: ({ row }) => <span>{row.getValue("role")}</span>,
-  },
-  {
-    accessorKey: "ChuyenKhoa",
-    header: "Chuyên Khoa",
-    cell: ({ row }) => <span>{row.getValue("ChuyenKhoa")}</span>,
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("createdAt"));
-      return <span>{date.toLocaleDateString()}</span>;
-    },
-  },
-];
-
-
-export default function DoctorsPage() {
-  const handleEdit = (doctor: Doctor) => {
-    toastSuccess(`Edit doctor: ${doctor.name}`)
-  }
-
-  const handleDelete = (doctor: Doctor) => {
-    toastSuccess(`Delete doctor: ${doctor.name}`)
-  }
-
+export default function DoctorPage() {
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-semibold mb-4">Doctors</h1>
-      <DataTable
-        data={mockDoctors}
-        columns={userColumns}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        filterColumn="name"
-      />
+    <div>
+      <DataTable columns={doctorColumns} data={mockDoctors} filterColumn="hoTen" />
     </div>
   )
 }
