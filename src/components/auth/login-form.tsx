@@ -13,6 +13,8 @@ import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { loginSchema, type LoginSchemaType } from "@/validation/auth-valid"
 
+const inputErrorClass = "border-red-500 focus:ring-red-500 focus:border-red-500 dark:border-red-500"
+
 export function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
   const [showPassword, setShowPassword] = useState(false)
   const dispatch = useAppDispatch()
@@ -75,21 +77,31 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Email *</Label>
-          <Input id="email" type="email" placeholder="m@example.com" {...register("email")} />
+          <Input
+            id="email"
+            type="email"
+            placeholder="m@example.com"
+            {...register("email")}
+            className={errors.email ? inputErrorClass : ""}
+          />
           {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
             <Label htmlFor="password">Mật khẩu *</Label>
-            <a href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
+            <Link
+              to={"/forgot-password"}
+              className="ml-auto text-sm underline-offset-4 hover:underline"
+            >
               Quên mật khẩu?
-            </a>
+            </Link>
           </div>
           <div className="relative">
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
               {...register("matKhau")}
+              className={errors.matKhau ? inputErrorClass : ""}
             />
             <button
               type="button"

@@ -61,3 +61,9 @@ export const appointmentSchema = yup.object().shape({
 
   note: yup.string().max(500, "Vấn đề không được vượt quá 500 ký tự"),
 })
+
+export const ForgetPasswordSchema = yup.object({
+  email: yup.string().required("Vui lòng nhập email").email("Email không hợp lệ"),
+})
+
+export type ForgetPasswordSchema = yup.InferType<typeof ForgetPasswordSchema>

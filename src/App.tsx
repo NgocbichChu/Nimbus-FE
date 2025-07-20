@@ -18,6 +18,7 @@ import LienHePage from "./pages/user/LienHe"
 import ChuyenKhoaPage from "./pages/user/ChuyenKhoaPage"
 import ChuyenGiaPage from "./pages/user/ChuyenGiaPage"
 import ProfilePage from "./pages/user/ProfilePage"
+import ForgotPassword from "./pages/auth/ForgotPasswordPage"
 
 function App() {
   const dispatch = useAppDispatch()
@@ -34,6 +35,7 @@ function App() {
           {/* Login Route - No Layout */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
           {/* User Routes - With Navbar */}
           <Route path="/" element={<UserLayout />}>
@@ -44,6 +46,9 @@ function App() {
             <Route path="/dat-lich" element={<AppointmentPage />} />
             <Route path="/lien-he" element={<LienHePage />} />
             <Route path="/ho-so" element={<ProfilePage />} />
+            <Route path="/tai-khoan" element={<ProfilePage />} />
+            <Route path="/ho-so-benh-an" element={<ProfilePage />} />
+            <Route path="/lich-su-kham" element={<ProfilePage />} />
           </Route>
 
           {/* Admin Routes - With Sidebar */}

@@ -6,6 +6,12 @@ import {
 } from "@/components/ui/navigation-menu"
 import type { NavigationMenuProps } from "@radix-ui/react-navigation-menu"
 import { Link } from "react-router-dom"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export const NavMenu = (props: NavigationMenuProps) => (
   <NavigationMenu {...props}>
@@ -36,9 +42,22 @@ export const NavMenu = (props: NavigationMenuProps) => (
         </NavigationMenuLink>
       </NavigationMenuItem>
       <NavigationMenuItem>
-        <NavigationMenuLink asChild>
-          <Link to="/ho-so">Hồ sơ </Link>
-        </NavigationMenuLink>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <NavigationMenuLink className="cursor-pointer">Thông tin cá nhân</NavigationMenuLink>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="start">
+            <DropdownMenuItem asChild>
+              <Link to="/tai-khoan">Tài khoản</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/ho-so-benh-an">Hồ sơ bệnh án</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/lich-su-kham">Lịch sử khám</Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </NavigationMenuItem>
     </NavigationMenuList>
   </NavigationMenu>

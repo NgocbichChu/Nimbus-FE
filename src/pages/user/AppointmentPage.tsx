@@ -333,7 +333,7 @@ const AppointmentPage = () => {
             <p>Bác sĩ khám : {selectDoctor?.label}</p>
             <p>Ngày khám : {formatDate(date)}</p>
             <p>Giờ khám : {selectedTime}</p>
-            <p>Ghi chú : {note}</p>
+            <p className="max-w-max-w-md whitespace-pre-wrap break-words">Ghi chú : {note}</p>
           </CardContent>
           <CardFooter className="flex flex-col gap-4 items-start justify-start px-0">
             {showPaymentMethod && (
