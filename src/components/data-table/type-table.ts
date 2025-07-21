@@ -1,9 +1,3 @@
-export type Payment = {
-  id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  email: string
-}
 export type Doctor = {
   bacsi_id: string
   hoTen: string
@@ -16,5 +10,17 @@ export type Doctor = {
   kinhNghiem: number
   ngayTuyenDung: string
   ghiChu: string
+  trangThaiHoatDong: boolean
+}
+export type Patient = {
+  benhnhan_id: string
+  hoTen: string
+  gioiTinh: "M" | "F" | "O"
+  ngaySinh: string
+  email: string
+  soDienThoai: string
+  cccd: string
+  diaChi: string
+  nhomMau: "A" | "B" | "AB" | "O"
   trangThaiHoatDong: boolean
 }

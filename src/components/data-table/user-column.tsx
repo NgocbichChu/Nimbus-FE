@@ -1,7 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table"
-// import { Checkbox } from "@/components/ui/checkbox"
+import {  MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -10,10 +9,10 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import type { Doctor } from "./type-table"
-import { DoctorStatusCell } from "./status-cell"
+import type { Patient } from "./type-table"
+// import { PatientStatusCell } from "./status-cell" // tạo giống DoctorStatusCell
 
-export const doctorColumns: ColumnDef<Doctor>[] = [
+export const patientColumns: ColumnDef<Patient>[] = [
   {
     id: "index",
     header: "STT",
@@ -41,6 +40,14 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
     },
   },
   {
+    accessorKey: "ngaySinh",
+    header: "Ngày sinh",
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("ngaySinh"))
+      return <div className="text-right">{date.toLocaleDateString()}</div>
+    },
+  },
+  {
     accessorKey: "email",
     header: "Email",
     cell: ({ row }) => <span className="lowercase">{row.getValue("email")}</span>,
@@ -51,45 +58,33 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
     cell: ({ row }) => <span>{row.getValue("soDienThoai")}</span>,
   },
   {
-    accessorKey: "chungChi",
-    header: "Chứng chỉ",
-    cell: ({ row }) => <span>{row.getValue("chungChi")}</span>,
+    accessorKey: "cccd",
+    header: "CCCD",
+    cell: ({ row }) => <span>{row.getValue("cccd")}</span>,
   },
   {
-    accessorKey: "trinhDo",
-    header: "Trình độ",
-    cell: ({ row }) => <span>{row.getValue("trinhDo")}</span>,
+    accessorKey: "diaChi",
+    header: "Địa chỉ",
+    cell: ({ row }) => <span className="capitalize">{row.getValue("diaChi")}</span>,
   },
   {
-    accessorKey: "kinhNghiem",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        Kinh nghiệm (Năm) <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => <div className="text-right me-12">{row.getValue("kinhNghiem")}</div>,
+    accessorKey: "nhomMau",
+    header: "Nhóm máu",
+    cell: ({ row }) => <span>{row.getValue("nhomMau")}</span>,
   },
-  {
-    accessorKey: "ngayTuyenDung",
-    header: "Ngày tuyển dụng",
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("ngayTuyenDung"))
-      return <div className="text-right">{date.toLocaleDateString()}</div>
-    },
-  },
-  {
-    accessorKey: "trangThaiHoatDong",
-    header: "Trạng thái",
-    cell: ({ getValue }) => {
-      const value = getValue() as boolean
-      return <DoctorStatusCell value={value} />
-    },
-  },
+  // {
+  //   accessorKey: "trangThaiHoatDong",
+  //   header: "Trạng thái",
+  //   cell: ({ getValue }) => {
+  //     const value = getValue() as boolean
+  //     return <PatientStatusCell value={value} />
+  //   },
+  // },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const doctor = row.original
+      const patient = row.original
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -99,7 +94,7 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(doctor.bacsi_id)}>
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(patient.benhnhan_id)}>
               Sao chép ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
