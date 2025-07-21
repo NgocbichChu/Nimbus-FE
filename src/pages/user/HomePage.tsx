@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 const HomePage = () => {
   const itemsBanner = [
     {
-      title: " Tìm chuyên gia",
+      title: "Chuyên gia",
       icon: <Icon icon="mdi:doctor" width="25" height="25" />,
       link: "/chuyen-gia",
     },

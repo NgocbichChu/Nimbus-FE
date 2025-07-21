@@ -17,8 +17,9 @@ import AppointmentPage from "./pages/user/AppointmentPage"
 import LienHePage from "./pages/user/LienHe"
 import ChuyenKhoaPage from "./pages/user/ChuyenKhoaPage"
 import ChuyenGiaPage from "./pages/user/ChuyenGiaPage"
-import ProfilePage from "./pages/user/ProfilePage"
+import AccountPage from "./pages/user/AccountPage"
 import ForgotPassword from "./pages/auth/ForgotPasswordPage"
+import HoSoPage from "./pages/user/HoSoPage"
 
 function App() {
   const dispatch = useAppDispatch()
@@ -45,10 +46,9 @@ function App() {
             <Route path="/chuyen-gia" element={<ChuyenGiaPage />} />
             <Route path="/dat-lich" element={<AppointmentPage />} />
             <Route path="/lien-he" element={<LienHePage />} />
-            <Route path="/ho-so" element={<ProfilePage />} />
-            <Route path="/tai-khoan" element={<ProfilePage />} />
-            <Route path="/ho-so-benh-an" element={<ProfilePage />} />
-            <Route path="/lich-su-kham" element={<ProfilePage />} />
+            <Route path="/tai-khoan" element={<AccountPage />} />
+            <Route path="/ho-so" element={<HoSoPage />} />
+            <Route path="/lich-su-kham" element={<AccountPage />} />
           </Route>
 
           {/* Admin Routes - With Sidebar */}

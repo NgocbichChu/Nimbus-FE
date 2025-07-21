@@ -23,12 +23,12 @@ export const NavMenu = (props: NavigationMenuProps) => (
       </NavigationMenuItem>
       <NavigationMenuItem>
         <NavigationMenuLink asChild>
-          <Link to="/chuyen-khoa">Chuyên khoa</Link>
+          <Link to="/chuyen-gia">Chuyên gia</Link>
         </NavigationMenuLink>
       </NavigationMenuItem>
       <NavigationMenuItem>
         <NavigationMenuLink asChild>
-          <Link to="/chuyen-gia">Chuyên gia</Link>
+          <Link to="/chuyen-khoa">Chuyên khoa</Link>
         </NavigationMenuLink>
       </NavigationMenuItem>
       <NavigationMenuItem>
@@ -51,7 +51,7 @@ export const NavMenu = (props: NavigationMenuProps) => (
               <Link to="/tai-khoan">Tài khoản</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/ho-so-benh-an">Hồ sơ bệnh án</Link>
+              <Link to="/ho-so">Hồ sơ</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link to="/lich-su-kham">Lịch sử khám</Link>
