@@ -13,7 +13,7 @@ const data = {
     },
     {
       title: "Quản lý bệnh nhân ",
-      url: "/dashboard/users",
+      url: "/dashboard/patients",
       icon: BookUser,
     },
     {

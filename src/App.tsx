@@ -17,6 +17,7 @@ import AppointmentPage from "./pages/user/AppointmentPage"
 import LienHePage from "./pages/user/LienHe"
 import ChuyenKhoaPage from "./pages/user/ChuyenKhoaPage"
 import ChuyenGiaPage from "./pages/user/ChuyenGiaPage"
+import AppointmentAdmin from "./pages/admin/AppointmentAdmin"
 
 function App() {
   const dispatch = useAppDispatch()
@@ -54,8 +55,9 @@ function App() {
             }
           >
             <Route index element={<DashboardPage />} />
-            <Route path="users" element={<UsersPage />} />
+            <Route path="patients" element={<UsersPage />} />
             <Route path="doctors" element={<DoctorsPage />} />
+            <Route path="appointments" element={<AppointmentAdmin />} />
           </Route>
         </Routes>
       </Router>
