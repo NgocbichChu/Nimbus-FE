@@ -3,7 +3,7 @@ import { SectionCards } from "@/components/section-card/section-card"
 
 const DashboardPage = () => {
   return (
-    <div className="p-4">
+    <div className="pt-4">
       <SectionCards />
       <ChartBarMultiple />
     </div>

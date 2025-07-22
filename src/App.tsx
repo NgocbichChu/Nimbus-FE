@@ -18,6 +18,7 @@ import LienHePage from "./pages/user/LienHe"
 import ChuyenKhoaPage from "./pages/user/ChuyenKhoaPage"
 import ChuyenGiaPage from "./pages/user/ChuyenGiaPage"
 import AppointmentAdmin from "./pages/admin/AppointmentAdmin"
+import NotFoundPage from "./pages/not-found"
 
 function App() {
   const dispatch = useAppDispatch()
@@ -59,6 +60,7 @@ function App() {
             <Route path="doctors" element={<DoctorsPage />} />
             <Route path="appointments" element={<AppointmentAdmin />} />
           </Route>
+           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
     </ThemeProvider>
