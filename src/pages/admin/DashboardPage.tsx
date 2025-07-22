@@ -1,8 +1,11 @@
+import { ChartBarMultiple } from "@/components/chart/chart-dashboard"
+
 const DashboardPage = () => {
   return (
-    <div>
-      dashboard
-    </div>
+    // <div>
+    //   dashboard
+    // </div>
+    <ChartBarMultiple/>
   )
 }
 
