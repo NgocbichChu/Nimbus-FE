@@ -18,6 +18,7 @@ import LienHePage from "./pages/user/LienHe"
 import ChuyenKhoaPage from "./pages/user/ChuyenKhoaPage"
 import ChuyenGiaPage from "./pages/user/ChuyenGiaPage"
 import AppointmentAdmin from "./pages/admin/AppointmentAdmin"
+import Certifications from "./pages/admin/Certification"
 
 function App() {
   const dispatch = useAppDispatch()
@@ -58,6 +59,7 @@ function App() {
             <Route path="patients" element={<UsersPage />} />
             <Route path="doctors" element={<DoctorsPage />} />
             <Route path="appointments" element={<AppointmentAdmin />} />
+            <Route path="certifications" element={<Certifications/>} />
           </Route>
         </Routes>
       </Router>
