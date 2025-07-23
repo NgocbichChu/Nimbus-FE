@@ -87,6 +87,34 @@ const HomePage = () => {
           ))}
         </div>
       </div>
+
+      <div className="grid grid-flow-col grid-cols-3 grid-rows-2 text-center mt-5 ">
+        <div className="row-span-2 bg-blue-100 ">
+          <img
+            src={"https://ui.shadcn.com/placeholder.svg"}
+            alt="Ảnh bệnh nhân"
+            className="w-full h-[400px] object-cover border"
+          />
+        </div>
+        <div className="bg-blue-100">
+          <p className="m-5">
+            Chúng tôi cung cấp dịch vụ chăm sóc chất lượng cao, phối hợp cho bệnh nhân và gia đình
+            thông qua các ứng dụng đi động, video, email,...
+          </p>
+        </div>
+        <div className="col-span-2 bg-gray-100">
+          <p className="m-5">
+            Chúng tôi cam kết cung cấp dịch vụ chất lượng cao nhất và chăm sóc an toàn nhất có thể
+            cho mọi bệnh nhân.
+          </p>
+        </div>
+        <div className="col-span-2  bg-white">
+          <p className="m-5">
+            Là bệnh viện giảng dạy ban đầu cho các trường y khoa tại TP Hồ Chí Minh, Đào tạo thế hệ
+            lãnh đạo tiếp theo trong nghiên cứu khoa học và y học.
+          </p>
+        </div>
+      </div>
     </div>
   )
 }
