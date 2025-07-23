@@ -15,17 +15,17 @@ const UserLayout = () => {
   const dispatch = useAppDispatch()
   const user = useAppSelector((state) => state.auth.user as any)
   const handleLogout = async () => {
-  try {
-    await logoutUser() // gọi API logout
-  } catch (error) {
-    console.warn("Logout failed, token may be expired:", error)
-  } finally {
-    // Xoá token, clear state bất kể API logout có thành công hay không
-    localStorage.removeItem("token")
-    dispatch(logout())
-    navigate("/login")
+    try {
+      await logoutUser() // gọi API logout
+    } catch (error) {
+      console.warn("Logout failed, token may be expired:", error)
+    } finally {
+      // Xoá token, clear state bất kể API logout có thành công hay không
+      localStorage.removeItem("token")
+      dispatch(logout())
+      navigate("/login")
+    }
   }
-}
   return (
     <div className="min-h-screen bg-muted">
       <nav className="h-16 bg-blue-200 dark:bg-black dark:text-white border-b z-50 w-full fixed">

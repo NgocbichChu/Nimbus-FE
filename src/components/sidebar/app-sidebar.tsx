@@ -1,19 +1,18 @@
 import { BookUser, ClipboardPlus, House, Users } from "lucide-react"
-
 import { NavMain } from "@/components/sidebar/nav-main"
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from "@/components/ui/sidebar"
 
 const data = {
   navMain: [
     {
-      title: "Trang chủ",
+      title: "Thống kê",
       url: "/dashboard",
       icon: House,
       isActive: true,
     },
     {
       title: "Quản lý bệnh nhân ",
-      url: "/dashboard/users",
+      url: "/dashboard/patients",
       icon: BookUser,
     },
     {

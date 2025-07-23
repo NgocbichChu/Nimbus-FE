@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react"
 import { Link } from "react-router-dom"
 
 const footer = () => {
@@ -35,6 +36,26 @@ const footer = () => {
             </p>
           </div>
 
+          <div>
+            <div className="font-bold text-center text-xl mb-2">THEO DÕI CHÚNG TÔI</div>
+            <p className="flex justify-center gap-4 ">
+              <Link to="#">
+                <Icon icon="line-md:facebook" width="24" height="24" />
+              </Link>
+              <Link to="#">
+                <Icon icon="line-md:youtube" width="24" height="24" />
+              </Link>
+              <Link to="#">
+                <Icon icon="line-md:tiktok" width="24" height="24" />{" "}
+              </Link>
+              <Link to="#">
+                <Icon icon="line-md:telegram" width="24" height="24" />{" "}
+              </Link>
+              <Link to="#">
+                <Icon icon="line-md:instagram" width="24" height="24" />{" "}
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

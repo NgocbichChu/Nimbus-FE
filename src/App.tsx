@@ -17,6 +17,11 @@ import AppointmentPage from "./pages/user/AppointmentPage"
 import LienHePage from "./pages/user/LienHe"
 import ChuyenKhoaPage from "./pages/user/ChuyenKhoaPage"
 import ChuyenGiaPage from "./pages/user/ChuyenGiaPage"
+import AppointmentAdmin from "./pages/admin/AppointmentAdmin"
+import NotFoundPage from "./pages/not-found"
+import AccountPage from "./pages/user/AccountPage"
+import ForgotPassword from "./pages/auth/ForgotPasswordPage"
+import HoSoPage from "./pages/user/HoSoPage"
 
 function App() {
   const dispatch = useAppDispatch()
@@ -33,6 +38,7 @@ function App() {
           {/* Login Route - No Layout */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
           {/* User Routes - With Navbar */}
           <Route path="/" element={<UserLayout />}>
@@ -42,6 +48,9 @@ function App() {
             <Route path="/chuyen-gia" element={<ChuyenGiaPage />} />
             <Route path="/dat-lich" element={<AppointmentPage />} />
             <Route path="/lien-he" element={<LienHePage />} />
+            <Route path="/tai-khoan" element={<AccountPage />} />
+            <Route path="/ho-so" element={<HoSoPage />} />
+            <Route path="/lich-su-kham" element={<AccountPage />} />
           </Route>
 
           {/* Admin Routes - With Sidebar */}
@@ -54,9 +63,11 @@ function App() {
             }
           >
             <Route index element={<DashboardPage />} />
-            <Route path="users" element={<UsersPage />} />
+            <Route path="patients" element={<UsersPage />} />
             <Route path="doctors" element={<DoctorsPage />} />
+            <Route path="appointments" element={<AppointmentAdmin />} />
           </Route>
+           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
     </ThemeProvider>
