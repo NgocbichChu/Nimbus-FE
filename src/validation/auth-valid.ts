@@ -2,7 +2,10 @@ import * as yup from "yup"
 
 export const loginSchema = yup.object({
   email: yup.string().required("Vui lòng nhập email").email("Email không hợp lệ"),
-  matKhau: yup.string().required("Vui lòng nhập mật khẩu").min(3, "Mật khẩu phải có ít nhất 3 ký tự"),
+  matKhau: yup
+    .string()
+    .required("Vui lòng nhập mật khẩu")
+    .min(3, "Mật khẩu phải có ít nhất 3 ký tự"),
 })
 
 export type LoginSchemaType = yup.InferType<typeof loginSchema>
@@ -18,10 +21,7 @@ export const signUpSchema = yup.object({
     .required("Vui lòng chọn giới tính")
     .oneOf(["M", "F"], "Giới tính không hợp lệ"),
 
-  email: yup
-    .string()
-    .required("Vui lòng nhập email")
-    .email("Email không hợp lệ"),
+  email: yup.string().required("Vui lòng nhập email").email("Email không hợp lệ"),
 
   soDienThoai: yup
     .string()
@@ -47,3 +47,23 @@ export const signUpSchema = yup.object({
 })
 
 export type SignUpSchemaType = yup.InferType<typeof signUpSchema>
+
+export const appointmentSchema = yup.object().shape({
+  serviceType: yup.string().required("Vui lòng chọn loại hình khám"),
+
+  specialty: yup.string().required("Vui lòng chọn chuyên khoa"),
+
+  doctor: yup.string().required("Vui lòng chọn bác sĩ"),
+
+  selectedDate: yup.string().required("Vui lòng chọn ngày khám"),
+
+  selectedTime: yup.string().required("Vui lòng chọn giờ khám"),
+
+  note: yup.string().max(500, "Vấn đề không được vượt quá 500 ký tự"),
+})
+
+export const ForgetPasswordSchema = yup.object({
+  email: yup.string().required("Vui lòng nhập email").email("Email không hợp lệ"),
+})
+
+export type ForgetPasswordSchema = yup.InferType<typeof ForgetPasswordSchema>
