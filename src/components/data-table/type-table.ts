@@ -24,3 +24,10 @@ export type Patient = {
   nhomMau: "A" | "B" | "AB" | "O"
   trangThaiHoatDong: boolean
 }
+export type Certification = {
+  benhnhan_id: string
+  hoTen: string
+  email: string
+  ngayNop: string
+  trangThai: string
+}
