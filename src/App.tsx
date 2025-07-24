@@ -23,6 +23,7 @@ import AccountPage from "./pages/user/AccountPage"
 import ForgotPassword from "./pages/auth/ForgotPasswordPage"
 import HoSoPage from "./pages/user/HoSoPage"
 import Certifications from "./pages/admin/Certification"
+import AccessPage from "./pages/admin/AccessPage"
 
 function App() {
   const dispatch = useAppDispatch()
@@ -67,9 +68,11 @@ function App() {
             <Route path="patients" element={<UsersPage />} />
             <Route path="doctors" element={<DoctorsPage />} />
             <Route path="appointments" element={<AppointmentAdmin />} />
+            <Route path="access" element={<AccessPage />} />
+
             <Route path="certifications" element={<Certifications/>} />
           </Route>
-           <Route path="*" element={<NotFoundPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
     </ThemeProvider>
