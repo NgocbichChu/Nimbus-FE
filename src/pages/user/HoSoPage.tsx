@@ -110,7 +110,7 @@ const HoSoPage = () => {
         <Separator className="bg-gray-300 h-[1px]" />
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent>
-            <div className="font-bold text-base">Thông tin cơ bản</div>
+            <h3 className="font-semibold text-lg mb-1">Thông tin cơ bản</h3>
             <div className="flex flex-col gap-2 mt-2">
               <div className="grid grid-cols-2">
                 <Label className="text-base">Họ và tên:</Label>
@@ -171,7 +171,7 @@ const HoSoPage = () => {
               </div>
             </div>
 
-            <div className="font-bold mt-4 mb-2">Thông tin bổ sung</div>
+            <h3 className="font-semibold text-lg mb-1 mt-4">Thông tin bổ sung</h3>
             <div className="flex flex-col gap-2">
               <div className="grid grid-cols-2">
                 <Label className="text-base">Mã BHYT:</Label>

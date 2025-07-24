@@ -78,12 +78,12 @@ const ChuyenGiaPage = () => {
         </form>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-10 place-items-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-pnp6 mt-5 place-items-center">
         {doiNguChuyenGia.map((item) => (
           <div
             key={item.id}
             className="bg-white dark:bg-blue-900 text-sky-500 dark:text-white text-center 
-                       py-6 px-4 rounded-xl shadow-sm flex flex-col items-center w-full max-w-sm dark:bg-gray-700"
+                       py-6 px-4 mt-5 rounded-xl shadow-sm flex flex-col items-center w-full max-w-sm dark:bg-gray-700"
           >
             <img
               src={item.img}
