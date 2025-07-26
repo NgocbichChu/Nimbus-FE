@@ -1,8 +1,22 @@
 import bsImage from "../../assets/bs.png"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react"
+import { getDanhSachChuyenGia } from "../../api/chuyenGiaApi"
 
 const ChuyenGiaPage = () => {
+  const [listSachChuyenGia, setListDanhSachChuyenGia] = useState<any[]>([])
+  useEffect(() => {
+    const fetchChuyenKhoa = async () => {
+      try {
+        const res = await getDanhSachChuyenGia()
+        setListDanhSachChuyenGia(res.data || [])
+      } catch (error) {
+        console.log("Lỗi : ", error)
+      }
+    }
+    fetchChuyenKhoa()
+  }, [])
   const banLanhDao = [
     { id: 1, name: "Nguyễn Văn A", img: bsImage, chucVu: "Giám đốc" },
     { id: 2, name: "Nguyễn Văn B", img: bsImage, chucVu: "Phó giám đốc" },
@@ -79,7 +93,7 @@ const ChuyenGiaPage = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-pnp6 mt-5 place-items-center">
-        {doiNguChuyenGia.map((item) => (
+        {listSachChuyenGia.map((item) => (
           <div
             key={item.id}
             className="bg-white dark:bg-blue-900 text-sky-500 dark:text-white text-center 

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link } from "react-router-dom"
 import { useState, useEffect } from "react"
+import { doiMatKhau } from "../../api/accountApi"
 
 type User = {
   name: string
@@ -15,6 +16,10 @@ type User = {
 }
 
 const AccountPage = () => {
+  const [oldPassword, setOldPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState("")
   const [user, setUser] = useState<User>({
     name: "Nguyễn Tuấn Anh",
     soDT: "0898123123",
@@ -23,6 +28,24 @@ const AccountPage = () => {
     maBHYT: "",
     CCCD: "",
   })
+
+  const handleDoiMatKhau = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setMessage("")
+    setLoading(true)
+    try {
+      await doiMatKhau({
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      })
+      setMessage("Đổi mật khâu thành công")
+      setOldPassword("")
+      setNewPassword("")
+    } catch (error) {
+      setMessage("Đổi mật khâu thất bại")
+      console.log(error)
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 bg-white dark:bg-black">
@@ -70,7 +93,7 @@ const AccountPage = () => {
         </Card>
 
         <Card className="w-full shadow-lg border">
-          <form>
+          <form onSubmit={handleDoiMatKhau}>
             <CardContent>
               <h3 className="font-semibold text-lg mb-4">Thay đổi mật khẩu</h3>
               <div className="flex flex-col gap-4">
@@ -78,14 +101,29 @@ const AccountPage = () => {
                   <Label className="text-sm font-medium">
                     Mật khẩu hiện tại <span className="text-red-500">*</span>
                   </Label>
-                  <Input type="password" placeholder="Nhập mật khẩu hiện tại" />
+                  <Input
+                    type="password"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    placeholder="Nhập mật khẩu hiện tại"
+                  />
                 </div>
                 <div className="flex flex-col gap-1">
                   <Label className="text-sm font-medium">
                     Mật khẩu mới <span className="text-red-500">*</span>
                   </Label>
-                  <Input type="password" placeholder="Nhập mật khẩu mới" />
+                  <Input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Nhập mật khẩu mới"
+                  />
                 </div>
+                {message && (
+                  <p className="text-sm mt-2 text-center text-red-500 dark:text-red-400">
+                    {message}
+                  </p>
+                )}
               </div>
             </CardContent>
             <CardFooter className="justify-end mt-4">
