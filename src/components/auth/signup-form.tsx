@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useAppDispatch } from "@/helper"
 import { confirmOTP, registerUser } from "@/api/authApi"
 import { authActions } from "@/redux/authSlice"
@@ -26,6 +26,38 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
+  const [countdown, setCountdown] = useState(10)
+
+  const startCountdown = () => {
+    setCountdown(10)
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return interval
+  }
+
+  useEffect(() => {
+    if (!showOTP) return
+    const interval = startCountdown()
+    return () => clearInterval(interval)
+  }, [showOTP])
+
+  const handleResendOTP = async () => {
+    try {
+      startCountdown()
+      // Gọi lại API nếu có, ví dụ:
+      // await resendOTP({ soDienThoai: watch("soDienThoai") })
+    } catch (error) {
+      console.log(error)
+      toastError("Không thể gửi lại OTP. Vui lòng thử lại.")
+    }
+  }
   const {
     register,
     handleSubmit,
@@ -124,9 +156,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
                   </Label>
                 </div>
               </RadioGroup>
-              {errors.gioiTinh && (
-                <p className="text-sm text-red-500">{errors.gioiTinh.message}</p>
-              )}
+              {errors.gioiTinh && <p className="text-sm text-red-500">{errors.gioiTinh.message}</p>}
             </div>
 
             {/* Email */}
@@ -137,14 +167,13 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
             </div>
 
             {/* SĐT và liên hệ khẩn cấp */}
-              <div className="grid gap-3 w-full">
-                <Label htmlFor="phone">Số điện thoại</Label>
-                <Input id="phone" type="text" {...register("soDienThoai")} />
-                {errors.soDienThoai && (
-                  <p className="text-sm text-red-500">{errors.soDienThoai.message}</p>
-                )}
-              </div>
-            
+            <div className="grid gap-3 w-full">
+              <Label htmlFor="phone">Số điện thoại</Label>
+              <Input id="phone" type="text" {...register("soDienThoai")} />
+              {errors.soDienThoai && (
+                <p className="text-sm text-red-500">{errors.soDienThoai.message}</p>
+              )}
+            </div>
 
             {/* Mật khẩu */}
             <div className="grid gap-3">
@@ -164,9 +193,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
                   {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
               </div>
-              {errors.matKhau && (
-                <p className="text-sm text-red-500">{errors.matKhau.message}</p>
-              )}
+              {errors.matKhau && <p className="text-sm text-red-500">{errors.matKhau.message}</p>}
             </div>
 
             {/* Xác nhận mật khẩu */}
@@ -184,11 +211,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                   aria-label="Toggle Confirm Password"
                 >
-                  {showConfirmPassword ? (
-                    <EyeOff className="size-4" />
-                  ) : (
-                    <Eye className="size-4" />
-                  )}
+                  {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
               </div>
               {errors.confirmPassword && (
@@ -227,9 +250,22 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
               <InputOTPSlot index={5} />
             </InputOTPGroup>
           </InputOTP>
-          <Button className="mt-2" onClick={handleConfirmOTP}>
+          <p className="text-center text-sm text-muted-foreground">
+            OTP sẽ hết hạn sau: <span className="font-semibold text-primary">{countdown}s</span>
+          </p>
+          <Button className="mt-1" onClick={handleConfirmOTP} disabled={countdown === 0}>
             Xác nhận
           </Button>
+          {countdown === 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleResendOTP}
+              className="text-sm text-blue-600"
+            >
+              Gửi lại mã OTP
+            </Button>
+          )}
         </div>
       )}
     </form>
