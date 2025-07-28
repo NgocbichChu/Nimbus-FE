@@ -12,8 +12,6 @@ interface RegisterRequest {
   email: string
   soDienThoai: string
   matKhau: string
-  baoHiem: string
-  lienHeKhanCap: string
 }
 
 export const loginUser = async (loginData: LoginRequest): Promise<any> => {
