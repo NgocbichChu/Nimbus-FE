@@ -5,12 +5,12 @@ import { useEffect, useState } from "react"
 import { getDanhSachChuyenGia } from "../../api/chuyenGiaApi"
 
 const ChuyenGiaPage = () => {
-  const [listSachChuyenGia, setListDanhSachChuyenGia] = useState<any[]>([])
+  const [listChuyenGia, setListChuyenGia] = useState<any[]>([])
   useEffect(() => {
     const fetchChuyenKhoa = async () => {
       try {
         const res = await getDanhSachChuyenGia()
-        setListDanhSachChuyenGia(res.data || [])
+        setListChuyenGia(res.data || [])
       } catch (error) {
         console.log("Lỗi : ", error)
       }
@@ -92,20 +92,20 @@ const ChuyenGiaPage = () => {
         </form>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-pnp6 mt-5 place-items-center">
-        {listSachChuyenGia.map((item) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-10 place-items-center">
+        {listChuyenGia.map((item) => (
           <div
             key={item.id}
             className="bg-white dark:bg-blue-900 text-sky-500 dark:text-white text-center 
-                       py-6 px-4 mt-5 rounded-xl shadow-sm flex flex-col items-center w-full max-w-sm dark:bg-gray-700"
+                       py-6 px-4 rounded-xl shadow-sm flex flex-col items-center w-full max-w-sm dark:bg-gray-700"
           >
             <img
               src={item.img}
-              alt={item.name}
+              alt={item.hoTen}
               className="w-24 h-24 object-cover rounded-full mb-4 border-4 border-sky-500"
             />
-            <div className="text-2xl font-semibold">{item.name}</div>
-            <div className="text-lg text-yellow-600 dark:text-yellow-300">{item.chucVu}</div>
+            <div className="text-2xl font-semibold">{item.hoTen}</div>
+            <div className="text-lg text-yellow-600 dark:text-yellow-300">{item.trinhDo}</div>
           </div>
         ))}
       </div>

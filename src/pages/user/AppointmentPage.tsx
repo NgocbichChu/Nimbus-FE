@@ -128,18 +128,7 @@ const AppointmentPage = () => {
     { value: "BS2", label: "Nguyễn Văn B" },
   ]
 
-  const timeSlots = [
-    "06:00-7:00",
-    "07:00-8:00",
-    "08:00-9:00",
-    "09:00-10:00",
-    "10:00-11:00",
-    "12:30-13:30",
-    "13:30-14:30",
-    "14:30-15:30",
-    "15:30-16:30",
-    "16:30-17:30",
-  ]
+  const timeSlots = ["Ca sáng", "Ca chiều"]
 
   const paymentOptions = [
     { value: "cash", label: "Trực tiếp tại quầy" },
@@ -156,8 +145,8 @@ const AppointmentPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-20 items-start ">
         <div className="flex flex-col gap-5 w-full">
           <div className="font-bold text-center text-xl mb-5 mt-3">Đặt lịch khám</div>
-          <div className="flex flex-col gap-2 w-full max-w-md ">
-            <Label className="font-bold">1. Loại hình khám</Label>
+          {/* <div className="flex flex-col gap-2 w-full max-w-md ">
+            <Label className="font-bold">1. Kiểu lịch khám</Label>
             <Select
               value={selectedServiceId?.toString()}
               onValueChange={(value) => setSelectedServiceId(Number(value))}
@@ -169,7 +158,7 @@ const AppointmentPage = () => {
               </SelectTrigger>
               <SelectContent className="dark:border-white">
                 <SelectGroup>
-                  <SelectLabel>Loại hình khám</SelectLabel>
+                  <SelectLabel>Kiểu lịch khám</SelectLabel>
                   {serviceType.map((option) => (
                     <SelectItem key={option.dichVuId} value={option.dichVuId.toString()}>
                       <div className="flex justify-between items-center w-full py-1">
@@ -186,10 +175,10 @@ const AppointmentPage = () => {
             {errors.serviceType && (
               <span className="text-sm text-red-500">{errors.serviceType.message}</span>
             )}
-          </div>
+          </div> */}
 
-          <div className="flex flex-col gap-2 w-full max-w-md">
-            <Label className="font-bold">2. Chuyên khoa</Label>
+          <div className="flex flex-col gap-2 w-full max-w-md ">
+            <Label className="font-bold">1. Kiểu lịch khám</Label>
             <Select value={specialty} onValueChange={setSpecialty}>
               <SelectTrigger
                 className={`w-full dark:border-white ${errors.specialty ? inputErrorClass : ""}`}
@@ -198,7 +187,7 @@ const AppointmentPage = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Chuyên khoa</SelectLabel>
+                  <SelectLabel>Bác sĩ khám</SelectLabel>
                   {specialtyOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
@@ -213,7 +202,7 @@ const AppointmentPage = () => {
           </div>
 
           <div className="flex flex-col gap-2 w-full max-w-md ">
-            <Label className="font-bold">3. Bác sĩ khám</Label>
+            <Label className="font-bold">2. Bác sĩ khám</Label>
             <Select value={doctor} onValueChange={setDoctor}>
               <SelectTrigger
                 className={`w-full dark:border-white ${errors.doctor ? inputErrorClass : ""}`}
@@ -235,7 +224,7 @@ const AppointmentPage = () => {
           </div>
 
           <div className="flex flex-col gap-2 w-full max-w-md">
-            <Label className="font-bold">4. Ngày khám</Label>
+            <Label className="font-bold">3. Ngày khám</Label>
             <div className="relative flex gap-2">
               <Input
                 id="date"
@@ -283,7 +272,7 @@ const AppointmentPage = () => {
           </div>
 
           <div className="flex flex-col gap-2 w-full max-w-md">
-            <Label className="font-bold">5. Thời gian khám</Label>
+            <Label className="font-bold">4. Ca khám</Label>
             <div
               className={`grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 border rounded-xl dark:bg-zinc-800 shadow-sm ${
                 errors.selectedTime ? "border-red-500 " : "border-gray-200"
@@ -308,7 +297,7 @@ const AppointmentPage = () => {
           </div>
 
           <div className="flex flex-col gap-2 w-full max-w-md ">
-            <Label className="font-bold">6. Ghi chú bệnh</Label>
+            <Label className="font-bold">5. Ghi chú bệnh</Label>
             <Textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
@@ -320,7 +309,7 @@ const AppointmentPage = () => {
           {showPaymentMethod && (
             <div className="w-full max-w-md mb-5">
               <Label className="block text-base font-medium mb-2 ml-1">
-                7. Phương thức thanh toán
+                6. Phương thức thanh toán
               </Label>
               <div className="grid grid-cols-2 gap-4">
                 {paymentOptions.map((option) => (
@@ -352,11 +341,11 @@ const AppointmentPage = () => {
             <p className="mb-2">Tên bệnh nhân :</p>
           </CardTitle>
           <CardContent className="flex flex-col gap-1 px-0">
-            <p>
-              Loại dịch vụ : {selectedService?.tenDichVu}{" "}
+            {/* <p>
+              Kiểu lịch khám : {selectedService?.tenDichVu}{" "}
               <span className="pl-2 text-blue-500">{selectedService?.gia}</span>
-            </p>
-            <p>Chuyên khoa : {selectedSpecialty?.label}</p>
+            </p> */}
+            <p>Kiểu lịch khám : {selectedSpecialty?.label}</p>
             <p>Bác sĩ khám : {selectDoctor?.label}</p>
             <p>Ngày khám : {formatDate(date)}</p>
             <p>Giờ khám : {selectedTime}</p>
