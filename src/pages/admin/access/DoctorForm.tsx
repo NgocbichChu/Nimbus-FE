@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -15,8 +14,8 @@ const DoctorForm = () => {
     setShowPassword(!showPassword)
   }
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <div className="grid gap-4">
         <div className="grid gap-3">
           <Label htmlFor="fullName">Họ tên *</Label>
           <Input id="fullName" type="text" placeholder="Nhập họ tên đầy đủ" />
@@ -87,12 +86,9 @@ const DoctorForm = () => {
           <DateInput date={ngayTuyenBacSi} setDate={setNgayTuyenBacSi} />
         </div>
       </div>
-      <div className="grid gap-3">
+      <div className="grid gap-3 mt-4">
         <Label>Ghi chú</Label>
         <Textarea placeholder="Thêm thông tin bổ sung (nếu có)" />
-        <div className="flex justify-end pt-4">
-          <Button className="bg-sky-600 hover:bg-sky-700">Tạo tài khoản bác sĩ</Button>
-        </div>
       </div>
     </div>
   )

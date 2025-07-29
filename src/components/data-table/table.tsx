@@ -29,8 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from "lucide-react"
 import { useState } from "react"
-import DialogDemo from "./doctor-dialog"
-
+import DialogDemo from "../../pages/admin/doctor/doctor-dialog"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]

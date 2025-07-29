@@ -7,7 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useAppDispatch } from "@/helper"
-import { confirmOTP, registerUser } from "@/api/authApi"
+import { confirmOTP, registerUser, resendOTP } from "@/api/authApi"
 import { authActions } from "@/redux/authSlice"
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"
@@ -50,6 +50,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
 
   const handleResendOTP = async () => {
     try {
+      await resendOTP()
       startCountdown()
       // Gọi lại API nếu có, ví dụ:
       // await resendOTP({ soDienThoai: watch("soDienThoai") })
