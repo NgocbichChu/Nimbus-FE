@@ -1,38 +1,8 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit"
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { Doctor } from "@/components/data-table/type-table"
-import { get, post, put } from "@/api/axiosConfig"
-import { toastError, toastSuccess } from "@/helper/toast"
+import { addDoctor, fetchDoctors, toggleDoctorStatus, updateDoctor } from "@/api/apiDoctor"
 
-// Interface for creating a new doctor
-export interface CreateDoctorRequest {
-  hoTen: string
-  gioiTinh: string
-  email: string
-  soDienThoai: string
-  matKhau: string
-  chuyenKhoaId: number
-  chungChi: string
-  trinhDo: string
-  kinhNghiem: number
-  ngayTuyenDung: string
-  ghiChu?: string
-}
 
-// Interface for updating a doctor
-export interface UpdateDoctorRequest {
-  bacsi_id: string
-  hoTen?: string
-  gioiTinh?: string
-  email?: string
-  soDienThoai?: string
-  chuyenKhoaId?: number
-  chungChi?: string
-  trinhDo?: string
-  kinhNghiem?: number
-  ngayTuyenDung?: string
-  ghiChu?: string
-  trangThaiHoatDong?: boolean
-}
 
 interface DoctorState {
   doctors: Doctor[]
@@ -48,68 +18,14 @@ const initialState: DoctorState = {
   currentDoctor: null,
 }
 
-// Async thunk to fetch all doctors
-export const fetchDoctors = createAsyncThunk(
-  "doctors/fetchDoctors",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await get<Doctor[]>("/bacsi/danhsach")
-      return response
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Lỗi khi tải danh sách bác sĩ"
-      toastError(errorMessage)
-      return rejectWithValue(errorMessage)
-    }
-  }
-)
+export interface ApiResponse<T> {
+  code: string
+  message: string
+  data: T
+}
 
-// Async thunk to add a new doctor
-export const addDoctor = createAsyncThunk(
-  "doctors/addDoctor",
-  async (doctorData: CreateDoctorRequest, { rejectWithValue }) => {
-    try {
-      const response = await post<Doctor>("/bacsi/them", doctorData)
-      toastSuccess("Thêm bác sĩ thành công!")
-      return response
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Lỗi khi thêm bác sĩ"
-      toastError(errorMessage)
-      return rejectWithValue(errorMessage)
-    }
-  }
-)
 
-// Async thunk to update a doctor
-export const updateDoctor = createAsyncThunk(
-  "doctors/updateDoctor",
-  async ({ bacsi_id, ...updateData }: UpdateDoctorRequest, { rejectWithValue }) => {
-    try {
-      const response = await put<Doctor>(`/bacsi/capnhat/${bacsi_id}`, updateData)
-      toastSuccess("Cập nhật bác sĩ thành công!")
-      return response
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Lỗi khi cập nhật bác sĩ"
-      toastError(errorMessage)
-      return rejectWithValue(errorMessage)
-    }
-  }
-)
 
-// Async thunk to toggle doctor status
-export const toggleDoctorStatus = createAsyncThunk(
-  "doctors/toggleDoctorStatus",
-  async ({ bacsi_id, trangThaiHoatDong }: { bacsi_id: string; trangThaiHoatDong: boolean }, { rejectWithValue }) => {
-    try {
-      const response = await put<Doctor>(`/bacsi/trangthai/${bacsi_id}`, { trangThaiHoatDong })
-      toastSuccess("Cập nhật trạng thái thành công!")
-      return response
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Lỗi khi cập nhật trạng thái"
-      toastError(errorMessage)
-      return rejectWithValue(errorMessage)
-    }
-  }
-)
 
 const doctorSlice = createSlice({
   name: "doctors",

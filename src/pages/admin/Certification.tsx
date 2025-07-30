@@ -1,5 +1,5 @@
 import { CertColumns } from "@/components/data-table/certification/cert-column"
-import { DataTable } from "@/components/data-table/table"
+import { DataTable } from "@/pages/admin/doctor/table"
 import type { Certification } from "@/components/data-table/type-table"
 
 const mockCert: Certification[] = [
