@@ -10,7 +10,6 @@ import { useAppDispatch } from "@/helper"
 import { confirmOTP, registerUser, resendOTP } from "@/api/authApi"
 import { authActions } from "@/redux/authSlice"
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
-import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"
 import { toastError } from "@/helper/toast"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -52,8 +51,6 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
     try {
       await resendOTP()
       startCountdown()
-      // Gọi lại API nếu có, ví dụ:
-      // await resendOTP({ soDienThoai: watch("soDienThoai") })
     } catch (error) {
       console.log(error)
       toastError("Không thể gửi lại OTP. Vui lòng thử lại.")
@@ -240,7 +237,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
             value={otp}
             onChange={(e) => setOtp(e)}
             maxLength={6}
-            pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+            pattern="^[0-9]+$"
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} />
