@@ -3,7 +3,7 @@ import { User, Stethoscope, UserCheck } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import AdminForm from "./access/AdminForm"
-import DoctorForm from "./access/DoctorForm"
+import DoctorForm from "./doctor/DoctorForm"
 import ReceptionForm from "./access/ReceptionForm"
 
 export default function AccessPage() {

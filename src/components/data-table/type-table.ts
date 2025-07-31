@@ -1,15 +1,15 @@
 export type Doctor = {
-  bacsi_id: string
   hoTen: string
   gioiTinh: string
   email: string
   soDienThoai: string
-  chuyenKhoaId: number
+  matKhau: string
+  tenKhoa: string
   chungChi: string
   trinhDo: string
   kinhNghiem: number
   ngayTuyenDung: string
-  ghiChu: string
+  ghiChu?: string
   trangThaiHoatDong: boolean
 }
 export type Patient = {

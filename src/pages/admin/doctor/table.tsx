@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from "lucide-react"
 import { useState } from "react"
-import DialogDemo from "./doctor-dialog"
+import DoctorDialog from "./doctor-dialog"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -81,7 +81,9 @@ export function DataTable<TData, TValue>({
             className="max-w-sm"
           />
         )}
-        <DialogDemo></DialogDemo>
+       <div className="ps-4">
+         <DoctorDialog mode="add"/>
+       </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

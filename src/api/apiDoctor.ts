@@ -11,12 +11,13 @@ import type { Doctor } from "@/components/data-table/type-table"
   email: string
   soDienThoai: string
   matKhau: string
-  chuyenKhoaId: number
+  tenKhoa: string
   chungChi: string
   trinhDo: string
   kinhNghiem: number
   ngayTuyenDung: string
   ghiChu?: string
+  trangThaiHoatDong: boolean
 }
 
 // Interface for updating a doctor
@@ -40,7 +41,7 @@ export const fetchDoctors = createAsyncThunk(
   "doctors/fetchDoctors",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await get<ApiResponse<Doctor[]>>("/api/bac-si/LayDanhSachBacSi")
+      const response = await get<ApiResponse<Doctor[]>>("/bac-si/LayDanhSachBacSi")
       return response.data
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "Lỗi khi tải danh sách bác sĩ"
@@ -55,7 +56,7 @@ export const addDoctor = createAsyncThunk(
   "doctors/addDoctor",
   async (doctorData: CreateDoctorRequest, { rejectWithValue }) => {
     try {
-      const response = await post<Doctor>("/bacsi/them", doctorData)
+      const response = await post<Doctor>("/bac-si/TaoMoiBacSi", doctorData)
       toastSuccess("Thêm bác sĩ thành công!")
       return response
     } catch (error: any) {
@@ -82,18 +83,18 @@ export const updateDoctor = createAsyncThunk(
   }
 )
 
-// Async thunk to toggle doctor status
-export const toggleDoctorStatus = createAsyncThunk(
-  "doctors/toggleDoctorStatus",
-  async ({ bacsi_id, trangThaiHoatDong }: { bacsi_id: string; trangThaiHoatDong: boolean }, { rejectWithValue }) => {
-    try {
-      const response = await put<Doctor>(`/bacsi/trangthai/${bacsi_id}`, { trangThaiHoatDong })
-      toastSuccess("Cập nhật trạng thái thành công!")
-      return response
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Lỗi khi cập nhật trạng thái"
-      toastError(errorMessage)
-      return rejectWithValue(errorMessage)
-    }
-  }
-)
+// // Async thunk to toggle doctor status
+// export const toggleDoctorStatus = createAsyncThunk(
+//   "doctors/toggleDoctorStatus",
+//   async ({ bacsi_id, trangThaiHoatDong }: { bacsi_id: string; trangThaiHoatDong: boolean }, { rejectWithValue }) => {
+//     try {
+//       const response = await put<Doctor>(`/bacsi/trangthai/${bacsi_id}`, { trangThaiHoatDong })
+//       toastSuccess("Cập nhật trạng thái thành công!")
+//       return response
+//     } catch (error: any) {
+//       const errorMessage = error.response?.data?.message || "Lỗi khi cập nhật trạng thái"
+//       toastError(errorMessage)
+//       return rejectWithValue(errorMessage)
+//     }
+//   }
+// )
