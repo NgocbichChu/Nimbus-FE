@@ -1,4 +1,4 @@
-import { DataTable } from "@/components/data-table/table"
+import { DataTable } from "@/pages/admin/doctor/table"
 import type { Patient } from "@/components/data-table/type-table"
 import { patientColumns } from "@/components/data-table/user-column"
 

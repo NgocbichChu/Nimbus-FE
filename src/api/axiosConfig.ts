@@ -2,6 +2,7 @@ import axios, { type AxiosRequestConfig, type AxiosResponse } from "axios"
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:9999/",
+  // baseURL: "https://booking-nimbus-backend-latest.onrender.com/",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

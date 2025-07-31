@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import type { Doctor } from "./type-table"
+import type { Doctor } from "../../../components/data-table/type-table"
 import { DoctorStatusCell } from "./status-cell"
 
 export const doctorColumns: ColumnDef<Doctor>[] = [

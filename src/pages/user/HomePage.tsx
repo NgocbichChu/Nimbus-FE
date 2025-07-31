@@ -1,93 +1,107 @@
+import { Card, CardContent } from "@/components/ui/card"
 import { Icon } from "@iconify/react"
 import { Link } from "react-router-dom"
+import CountUp from "react-countup"
 
 const HomePage = () => {
   const itemsBanner = [
     {
       title: "Chuyên gia",
-      icon: <Icon icon="mdi:doctor" width="25" height="25" />,
+      icon: <Icon icon="mdi:doctor" width="32" height="32" />,
       link: "/chuyen-gia",
     },
     {
-      title: " Chuyên khoa",
-      icon: <Icon icon="mdi:hospital" width="25" height="25" />,
+      title: "Chuyên khoa",
+      icon: <Icon icon="mdi:hospital" width="32" height="32" />,
       link: "/chuyen-khoa",
     },
     {
       title: "Đặt lịch khám",
-      icon: <Icon icon="uil:calender" width="25" height="25" />,
+      icon: <Icon icon="uil:calender" width="32" height="32" />,
       link: "/dat-lich",
     },
     {
-      title: " Bảng giá khám bệnh",
-      icon: <Icon icon="tabler:zoom-money" width="25" height="25" />,
+      title: "Bảng giá khám bệnh",
+      icon: <Icon icon="tabler:zoom-money" width="32" height="32" />,
       link: "/bang-gia",
     },
   ]
-  const items = [
+
+  const stats = [
     {
       title: "Chuyên gia",
-      icon: <Icon icon="mdi:doctor" width="25" height="25" />,
-
-      quantity: "5+",
+      icon: <Icon icon="mdi:doctor" width="28" height="28" />,
+      quantity: 5,
     },
     {
-      title: " Chuyên khoa",
-      icon: <Icon icon="mdi:hospital" width="25" height="25" />,
-
-      quantity: "5+",
+      title: "Chuyên khoa",
+      icon: <Icon icon="mdi:hospital-building" width="28" height="28" />,
+      quantity: 10,
     },
     {
       title: "Năm kinh nghiệm",
-      icon: <Icon icon="uil:calender" width="25" height="25" />,
-      quantity: "1-",
+      icon: <Icon icon="uil:calender" width="28" height="28" />,
+      quantity: 15,
     },
     {
-      title: " Viện-khoa-phòng",
-      icon: <Icon icon="tabler:zoom-money" width="25" height="25" />,
-      quantity: "50+",
+      title: "Khoa - phòng",
+      icon: <Icon icon="carbon:building" width="28" height="28" />,
+      quantity: 50,
     },
     {
-      title: " Giường bệnh",
-      icon: <Icon icon="tabler:zoom-money" width="25" height="25" />,
-      quantity: "5",
+      title: "Giường bệnh",
+      icon: <Icon icon="material-symbols:bed" width="28" height="28" />,
+      quantity: 120,
     },
   ]
 
   return (
-    <div className="container mx-auto px-4 py-2 ">
-      <div className="w-full h-[100px] bg-gradient-to-r from-sky-400 to-blue-600 text-white flex items-center justify-center text-2xl font-bold">
-        Banner quảng cáo
+    <div className="container mx-auto px-6 py-6">
+      {/* Banner */}
+      <div className="bg-gradient-to-r from-sky-500 to-blue-700 text-white rounded-2xl p-8 shadow-md text-center mb-8">
+        <h1 className="text-4xl font-bold mb-2">Phòng Khám Đa Khoa Nimbus</h1>
+        <p className="text-lg font-light">
+          Chăm sóc sức khỏe toàn diện - Nơi gửi trọn niềm tin
+        </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-[-20px]">
+
+      {/* Quick Links */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         {itemsBanner.map((item, idx) => (
-          <Link to={item.link} key={idx}>
-            <div className="bg-white text-black font-bold text-center py-6 rounded-xl shadow-sm hover:bg-sky-50 transition-colors dark:bg-blue-900 dark:text-white">
-              <div className="flex justify-center mr-auto">
-                <div className="mr-2">{item.title}</div>
-                <div className="text-blue-500">{item.icon}</div>
-              </div>
-            </div>
+          <Link to={item.link} key={idx} className="hover:scale-105 transition-transform">
+            <Card className="bg-white dark:bg-blue-900 shadow-sm hover:shadow-lg">
+              <CardContent className="flex flex-col items-center justify-center py-6">
+                <div className="text-blue-600 mb-2">{item.icon}</div>
+                <div className="font-semibold text-lg text-center text-gray-800 dark:text-white">
+                  {item.title}
+                </div>
+              </CardContent>
+            </Card>
           </Link>
         ))}
       </div>
 
-      <div className="w-full bg-blue-300 justify-center text-center text-white items-center text-2xl  mt-5">
-        <p className="font-bold pt-3 pb-1">Phòng Khám Nimbus</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 ">
-          {items.map((item, idx) => (
-            <div
-              key={idx}
-              className=" text-black text-center py-6 dark:bg-blue-900 dark:text-white flex flex-col items-center   "
-            >
-              <div className=" mb-2">{item.icon}</div>
-              <div className="text-4xl font-medium">{item.quantity}</div>
-              <div className="text-xl font-medium">{item.title}</div>
-            </div>
+      {/* Statistics */}
+      <div className="bg-blue-100 dark:bg-blue-900 rounded-xl py-10 px-6">
+        <h2 className="text-2xl font-bold text-center text-blue-800 dark:text-white mb-6">
+          Thông tin tổng quan
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          {stats.map((item, idx) => (
+            <Card key={idx} className="bg-white dark:bg-blue-800 text-center shadow-sm">
+              <CardContent className="flex flex-col items-center py-6">
+                <div className="text-blue-600 dark:text-white mb-2">{item.icon}</div>
+                <div className="text-3xl font-bold text-black dark:text-white">
+                  <CountUp end={item.quantity} duration={2} suffix="+" />
+                </div>
+                <div className="text-md text-gray-600 dark:text-gray-200">{item.title}</div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
     </div>
   )
 }
+
 export default HomePage

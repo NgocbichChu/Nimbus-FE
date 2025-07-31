@@ -24,6 +24,7 @@ import ForgotPassword from "./pages/auth/ForgotPasswordPage"
 import HoSoPage from "./pages/user/HoSoPage"
 import Certifications from "./pages/admin/Certification"
 import AccessPage from "./pages/admin/AccessPage"
+import UnsupportedScreen from "./pages/un-support-screen"
 
 function App() {
   const dispatch = useAppDispatch()
@@ -59,9 +60,11 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <SidebarProvider>
-                <AdminLayout />
-              </SidebarProvider>
+              <UnsupportedScreen>
+                <SidebarProvider>
+                  <AdminLayout />
+                </SidebarProvider>
+              </UnsupportedScreen>
             }
           >
             <Route index element={<DashboardPage />} />
@@ -70,7 +73,7 @@ function App() {
             <Route path="appointments" element={<AppointmentAdmin />} />
             <Route path="access" element={<AccessPage />} />
 
-            <Route path="certifications" element={<Certifications/>} />
+            <Route path="certifications" element={<Certifications />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
