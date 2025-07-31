@@ -24,15 +24,6 @@ const ChuyenGiaPage = () => {
     { id: 4, name: "Nguyễn Văn D", img: bsImage, chucVu: "Phó giám đốc" },
   ]
 
-  const doiNguChuyenGia = [
-    { id: 1, name: "Nguyễn Văn A", img: bsImage, chucVu: "Nhân viên" },
-    { id: 2, name: "Nguyễn Văn B", img: bsImage, chucVu: "Nhân viên" },
-    { id: 3, name: "Nguyễn Văn C", img: bsImage, chucVu: "Nhân viên" },
-    { id: 4, name: "Nguyễn Văn D", img: bsImage, chucVu: "Nhân viên" },
-    { id: 5, name: "Nguyễn Văn E", img: bsImage, chucVu: "Nhân viên" },
-    { id: 6, name: "Nguyễn Văn F", img: bsImage, chucVu: "Nhân viên" },
-  ]
-
   const giamDoc = banLanhDao.filter((item) => item.chucVu === "Giám đốc")
   const phoGiamDoc = banLanhDao.filter((item) => item.chucVu === "Phó giám đốc")
 

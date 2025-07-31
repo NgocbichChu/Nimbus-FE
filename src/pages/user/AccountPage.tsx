@@ -192,8 +192,8 @@ const AccountPage = () => {
               </div>
             </CardContent>
             <CardFooter className="justify-end mt-4">
-              <Button type="submit" className="px-6">
-                Thay đổi mật khẩu
+              <Button type="submit" className="px-6" disabled={loading}>
+                {loading ? "Đang xử lý..." : "Thay đổi mật khẩu"}
               </Button>
             </CardFooter>
           </form>

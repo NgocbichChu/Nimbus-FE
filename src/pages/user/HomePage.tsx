@@ -54,15 +54,34 @@ const HomePage = () => {
       quantity: 120,
     },
   ]
-
+  const services = [
+    {
+      title: "Khám tổng quát",
+      description: "Dịch vụ khám sức khỏe tổng quát định kỳ, phù hợp mọi lứa tuổi.",
+      icon: <Icon icon="healthicons:health-worker" width="28" height="28" />,
+    },
+    {
+      title: "Gọi điện tư vấn trực tuyến",
+      description: "Tư vấn sức khỏe với bác sĩ qua video call mọi lúc mọi nơi.",
+      icon: <Icon icon="mdi:chat-outline" width="28" height="28" />,
+    },
+    {
+      title: "Cấp cứu 24/7",
+      description: "Hệ thống hỗ trợ cấp cứu và chăm sóc khẩn cấp luôn sẵn sàng.",
+      icon: <Icon icon="mdi:ambulance" width="28" height="28" />,
+    },
+    {
+      title: "Xét nghiệm & chẩn đoán",
+      description: "Dịch vụ xét nghiệm và chẩn đoán hình ảnh hiện đại, nhanh chóng.",
+      icon: <Icon icon="mdi:microscope" width="28" height="28" />,
+    },
+  ]
   return (
     <div className="container mx-auto px-6 py-6">
       {/* Banner */}
       <div className="bg-gradient-to-r from-sky-500 to-blue-700 text-white rounded-2xl p-8 shadow-md text-center mb-8">
         <h1 className="text-4xl font-bold mb-2">Phòng Khám Đa Khoa Nimbus</h1>
-        <p className="text-lg font-light">
-          Chăm sóc sức khỏe toàn diện - Nơi gửi trọn niềm tin
-        </p>
+        <p className="text-lg font-light">Chăm sóc sức khỏe toàn diện - Nơi gửi trọn niềm tin</p>
       </div>
 
       {/* Quick Links */}
@@ -128,6 +147,44 @@ const HomePage = () => {
           </p>
         </div>
       </div>
+
+      <section className="bg-white dark:bg-gray-900 py-12">
+        <h3 className="text-3xl font-bold text-center mb-8 dark:text-white">Dịch vụ nổi bật</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-5">
+          {services.map((item, idx) => (
+            <Card
+              key={idx}
+              className={`shadow-md dark:bg-blue-900 h-full transition-transform duration-300 ${
+                idx % 2 === 1 ? "translate-y-10" : ""
+              }`}
+            >
+              <CardContent className="h-full flex flex-col justify-between p-6">
+                <div className="flex flex-col flex-grow">
+                  <div className="flex items-start gap-3 text-blue-600 dark:text-white mb-2 min-h-[52px]">
+                    {item.icon}
+                    <h4 className="text-base font-semibold leading-snug">{item.title}</h4>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-auto">
+                  {item.description}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-10">
+        <h3 className="text-2xl font-bold text-center mb-6 dark:text-white">
+          Hướng dẫn đặt lịch khám
+        </h3>
+        <ol className="list-decimal list-inside space-y-4 text-gray-700 dark:text-gray-300">
+          <li>Chọn mục “Đặt lịch” từ trang chủ hoặc thanh điều hướng</li>
+          <li>Chọn loại dịch vụ, chuyên khoa, chuyên gia và thời gian khám phù hợp</li>
+          <li>Nhập thông tin bệnh nhân và xác nhận đặt lịch</li>
+          <li>Nhận email xác nhận và có thể kiểm tra lại trong mục “Lịch khám”</li>
+        </ol>
+      </section>
     </div>
   )
 }
