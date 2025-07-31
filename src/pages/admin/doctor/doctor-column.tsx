@@ -1,17 +1,9 @@
 import type { ColumnDef } from "@tanstack/react-table"
-// import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
+import { ArrowUpDown } from "lucide-react"
 import type { Doctor } from "../../../components/data-table/type-table"
 import { DoctorStatusCell } from "./status-cell"
+import DoctorDialog from "./doctor-dialog"
 
 export const doctorColumns: ColumnDef<Doctor>[] = [
   {
@@ -86,28 +78,12 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
     },
   },
   {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const doctor = row.original
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(doctor.bacsi_id)}>
-              Sao chép ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Xem chi tiết</DropdownMenuItem>
-            <DropdownMenuItem>Chỉnh sửa</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
+  id: "actions",
+  header: "Trạng thái",
+  cell: ({ row }) => {
+    const doctor = row.original as Doctor
+
+    return <DoctorDialog mode="edit" doctor={doctor} />
   },
+}
 ]
