@@ -42,6 +42,11 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
     header: "Số điện thoại",
     cell: ({ row }) => <span>{row.getValue("soDienThoai")}</span>,
   },
+   {
+    accessorKey: "tenKhoa",
+    header: "Khoa",
+    cell: ({ row }) => <span>{row.getValue("tenKhoa")}</span>,
+  },
   {
     accessorKey: "chungChi",
     header: "Chứng chỉ",
@@ -56,7 +61,8 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
     accessorKey: "kinhNghiem",
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        Kinh nghiệm (Năm) <ArrowUpDown className="ml-2 h-4 w-4" />
+        Kinh nghiệm
+        <br/> (Năm) <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => <div className="text-right me-12">{row.getValue("kinhNghiem")}</div>,

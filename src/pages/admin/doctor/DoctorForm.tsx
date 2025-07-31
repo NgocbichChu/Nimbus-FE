@@ -124,7 +124,7 @@ const DoctorForm = ({ doctor, mode = "add" }: DoctorFormProps) => {
           <Input
             id="chuyenKhoa"
             type="text"
-            defaultValue={doctor?.chuyenKhoaId ?? ""}
+            defaultValue={doctor?.tenKhoa ?? ""}
             placeholder="Nhập chuyên khoa"
           />
         </div>
