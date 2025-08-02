@@ -20,12 +20,24 @@ const AdminLayout = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const user = useAppSelector((state) => state.auth.user)
+  const isLoading = useAppSelector((state) => state.auth.isLoading)
+  
+    // Show loading state while authentication is being restored
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
+
   const handleLogout = async () => {
     await logoutUser()
     dispatch(logout())
     navigate("/login")
   }
-  if (!user || !( user.roles.includes("ROLE_QUANLY"))) {
+  
+  if (!user || !(user.roles.includes("ROLE_QUANLY"))) {
     return <Navigate to="/login" replace />
   }
   return (

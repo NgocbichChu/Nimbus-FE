@@ -23,7 +23,7 @@ const UserLayout = () => {
       // Xoá token, clear state bất kể API logout có thành công hay không
       localStorage.removeItem("token")
       dispatch(logout())
-      navigate("/login")
+      navigate("/")
     }
   }
   return (
