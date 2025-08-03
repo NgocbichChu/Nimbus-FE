@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { Doctor } from "@/components/data-table/type-table"
-import { addDoctor, fetchDoctors, updateDoctor } from "@/api/apiDoctor"
+import { addDoctor, fetchDoctors } from "@/api/apiDoctor"
 
 
 
@@ -73,25 +73,25 @@ const doctorSlice = createSlice({
       })
 
     // Update doctor
-    builder
-      .addCase(updateDoctor.pending, (state) => {
-        state.loading = true
-        state.error = null
-      })
-      .addCase(updateDoctor.fulfilled, (state, action: PayloadAction<Doctor>) => {
-        state.loading = false
-        const index = state.doctors.findIndex(doc => doc.bacsi_id === action.payload.bacsi_id)
-        if (index !== -1) {
-          state.doctors[index] = action.payload
-        }
-        if (state.currentDoctor?.bacsi_id === action.payload.bacsi_id) {
-          state.currentDoctor = action.payload
-        }
-      })
-      .addCase(updateDoctor.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload as string
-      })
+    // builder
+    //   .addCase(updateDoctor.pending, (state) => {
+    //     state.loading = true
+    //     state.error = null
+    //   })
+    //   .addCase(updateDoctor.fulfilled, (state, action: PayloadAction<Doctor>) => {
+    //     state.loading = false
+    //     const index = state.doctors.findIndex(doc => doc.bacsi_id === action.payload.bacsi_id)
+    //     if (index !== -1) {
+    //       state.doctors[index] = action.payload
+    //     }
+    //     if (state.currentDoctor?.bacsi_id === action.payload.bacsi_id) {
+    //       state.currentDoctor = action.payload
+    //     }
+    //   })
+    //   .addCase(updateDoctor.rejected, (state, action) => {
+    //     state.loading = false
+    //     state.error = action.payload as string
+    //   })
 
     // Toggle doctor status
     // builder
