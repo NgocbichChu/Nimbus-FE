@@ -2,8 +2,6 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { Doctor } from "@/components/data-table/type-table"
 import { addDoctor, fetchDoctors, updateDoctor } from "@/api/apiDoctor"
 
-
-
 interface DoctorState {
   doctors: Doctor[]
   loading: boolean
@@ -23,9 +21,6 @@ export interface ApiResponse<T> {
   message: string
   data: T
 }
-
-
-
 
 const doctorSlice = createSlice({
   name: "doctors",

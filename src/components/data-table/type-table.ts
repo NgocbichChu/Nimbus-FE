@@ -1,4 +1,5 @@
 export type Doctor = {
+  id: number,
   hoTen: string
   gioiTinh: string
   email: string
