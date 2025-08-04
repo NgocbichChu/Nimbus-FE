@@ -37,7 +37,6 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-
       hoTen: doctor?.hoTen ?? "",
       gioiTinh: doctor?.gioiTinh ?? "M",
       email: doctor?.email ?? "",
@@ -72,6 +71,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
   }
 
   const handleEdit = async (data: any) => {
+    console.log(data)
     if (!doctor?.id) {
       console.error("Không có ID bác sĩ để cập nhật.")
       return
