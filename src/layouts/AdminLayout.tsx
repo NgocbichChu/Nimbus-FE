@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useNavigate } from "react-router-dom"
+import { Navigate, Outlet, useNavigate, useLocation } from "react-router-dom"
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import {
   Breadcrumb,
@@ -18,11 +18,32 @@ import { logout } from "@/redux"
 
 const AdminLayout = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const dispatch = useAppDispatch()
   const user = useAppSelector((state) => state.auth.user)
   const isLoading = useAppSelector((state) => state.auth.isLoading)
-  
-    // Show loading state while authentication is being restored
+
+  // Route to title mapping
+  const routeTitles: Record<string, string> = {
+    "/dashboard": "Thống kê",
+    "/dashboard/patients": "Quản lý bệnh nhân",
+    "/dashboard/doctors": "Quản lý bác sĩ",
+    "/dashboard/appointments": "Quản lý lịch khám",
+    "/dashboard/access": "Quyền truy cập",
+    "/dashboard/certifications": "Duyệt chứng chỉ",
+  }
+
+  // Get current page title based on route
+  const getCurrentPageTitle = () => {
+    const pathname = location.pathname
+    const matchingRoute = Object.keys(routeTitles)
+      .filter((route) => pathname.startsWith(route))
+      .sort((a, b) => b.length - a.length)[0] // Ưu tiên route dài nhất
+
+    return routeTitles[matchingRoute] || "Dashboard"
+  }
+
+  // Show loading state while authentication is being restored
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -36,8 +57,8 @@ const AdminLayout = () => {
     dispatch(logout())
     navigate("/login")
   }
-  
-  if (!user || !(user.roles.includes("ROLE_QUANLY"))) {
+
+  if (!user || !user.roles.includes("ROLE_QUANLY")) {
     return <Navigate to="/login" replace />
   }
   return (
@@ -52,11 +73,11 @@ const AdminLayout = () => {
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">Admin Dashboard</BreadcrumbLink>
+                    <BreadcrumbLink href="/dashboard">Admin Dashboard</BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                    <BreadcrumbPage>{getCurrentPageTitle()}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
