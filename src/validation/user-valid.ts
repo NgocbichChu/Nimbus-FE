@@ -8,10 +8,7 @@ export const DoctorSchema = yup.object({
     .string()
     .matches(/^[0-9]{10,11}$/, "Số điện thoại không hợp lệ")
     .required("Vui lòng nhập số điện thoại"),
-  matKhau: yup
-    .string()
-    .min(6, "Mật khẩu tối thiểu 6 ký tự")
-    .required("Mật khẩu không được để trống"),
+  matKhau: yup.string().notRequired(), 
   tenKhoa: yup.string().required("Tên khoa là bắt buộc"),
   chungChi: yup.string().required("Chứng chỉ là bắt buộc"),
   trinhDo: yup.string().required("Trình độ là bắt buộc"),
@@ -21,3 +18,15 @@ export const DoctorSchema = yup.object({
   trangThaiHoatDong: yup.boolean(),
 })
 export type DoctorSchemaType = yup.InferType<typeof DoctorSchema>
+
+// export const DoctorEditSchema = DoctorSchema.shape({
+//   id: yup.number().optional(),
+//   matKhau: yup.string().notRequired(), // không bắt buộc khi edit
+// })
+export const DoctorAddSchema = DoctorSchema.shape({
+  matKhau: yup.string().required("Mật khẩu không được để trống"),
+})
+
+export const DoctorEditSchema = DoctorSchema.shape({
+  id: yup.number().optional(), // 👈 thêm id
+})

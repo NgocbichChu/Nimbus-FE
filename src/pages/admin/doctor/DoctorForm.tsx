@@ -11,11 +11,11 @@ import { cn } from "@/lib/utils"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import type { Doctor } from "@/components/data-table/type-table"
 import { Switch } from "@/components/ui/switch"
-import { DoctorSchema } from "@/validation/user-valid"
+import { DoctorEditSchema, DoctorSchema } from "@/validation/user-valid"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Controller, useForm } from "react-hook-form"
 import { useAppDispatch } from "@/helper"
-import { addDoctor, fetchDoctors } from "@/api/apiDoctor"
+import { addDoctor, fetchDoctors, updateDoctor } from "@/api/apiDoctor"
 
 interface DoctorFormProps {
   doctor?: Doctor
@@ -25,8 +25,9 @@ interface DoctorFormProps {
 
 const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
   const disInput = mode === "edit"
-  const dispatch = useAppDispatch() 
+  const dispatch = useAppDispatch()
   const [showPassword, setShowPassword] = useState(false)
+  const schema = mode === "add" ? DoctorSchema : DoctorEditSchema
 
   const {
     control,
@@ -34,8 +35,9 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(DoctorSchema),
+    resolver: yupResolver(schema),
     defaultValues: {
+
       hoTen: doctor?.hoTen ?? "",
       gioiTinh: doctor?.gioiTinh ?? "M",
       email: doctor?.email ?? "",
@@ -50,8 +52,16 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
       trangThaiHoatDong: doctor?.trangThaiHoatDong ?? true,
     },
   })
-
-  const onSubmit = async (data: any) => {
+  // const onSubmit = async (data: any) => {
+  //   try {
+  //     await dispatch(addDoctor(data)).unwrap()
+  //     dispatch(fetchDoctors())
+  //     onClose?.()
+  //   } catch (error) {
+  //     console.error("Thêm bác sĩ thất bại:", error)
+  //   }
+  // }
+  const handleAdd = async (data: any) => {
     try {
       await dispatch(addDoctor(data)).unwrap()
       dispatch(fetchDoctors())
@@ -59,11 +69,37 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
     } catch (error) {
       console.error("Thêm bác sĩ thất bại:", error)
     }
-
   }
 
+  const handleEdit = async (data: any) => {
+    if (!doctor?.id) {
+      console.error("Không có ID bác sĩ để cập nhật.")
+      return
+    }
+    const dataWithId = { ...data, id: doctor.id } // ✅ thêm id ở đây
+    try {
+      await dispatch(updateDoctor(dataWithId)).unwrap()
+      console.log("Lưu thông tin nè:", dataWithId)
+      dispatch(fetchDoctors())
+      onClose?.()
+    } catch (error) {
+      console.log("Update thất bại:", error)
+    }
+    // try {
+    //   await dispatch(updateDoctor(data)).unwrap()
+    //   console.log("Lưu thông tin nè:", data)
+    //   dispatch(fetchDoctors())
+    //   onClose?.()
+    // } catch (error) {
+    //   console.log("Update thất bại:", error)
+    // }
+  }
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+    <form
+      className="grid gap-4"
+      key={mode}
+      onSubmit={mode === "add" ? handleSubmit(handleAdd) : handleSubmit(handleEdit)}
+    >
       <div className="grid gap-2">
         <Label>Họ tên *</Label>
         <Input {...register("hoTen")} placeholder="Nhập họ tên" disabled={disInput} />
@@ -209,7 +245,12 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         <Button variant="outline" type="button" onClick={() => onClose?.()}>
           Huỷ
         </Button>
-        <Button type="submit">{mode === "add" ? "Thêm Bác sĩ" : "Lưu thông tin"}</Button>
+
+        {mode === "add" ? (
+          <Button type="submit">Thêm Bác sĩ</Button>
+        ) : (
+          <Button type="submit">Lưu thông tin</Button>
+        )}
       </div>
     </form>
   )

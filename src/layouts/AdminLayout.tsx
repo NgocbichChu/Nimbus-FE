@@ -65,7 +65,7 @@ const AdminLayout = () => {
     <>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex sticky bg-background top-0 h-14 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 border-b">
+        <header className="flex sticky top-0 z-50 bg-background h-14 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-14 border-b">
           <div className="flex items-center justify-between px-4 w-full">
             <div className="flex items-center gap-2">
               <SidebarTrigger className="-ml-1" />
