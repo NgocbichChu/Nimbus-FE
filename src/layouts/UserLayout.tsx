@@ -71,7 +71,6 @@ const UserLayout = () => {
       {/* Main Content */}
       <main className="flex-1 pt-16 mb-10">
         <Outlet />
-        {/* <div className="h-300"></div> */}
       </main>
       <Footer />
     </div>

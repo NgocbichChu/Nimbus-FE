@@ -123,7 +123,7 @@ const HomePage = () => {
       <div className="grid grid-flow-col grid-cols-3 grid-rows-2 text-center mt-5 dark:text-white ">
         <div className="row-span-2 bg-blue-100 ">
           <img
-            src={"https://ui.shadcn.com/placeholder.svg"}
+            src="https://i.pinimg.com/1200x/16/78/24/1678246ece2b70ec1021e01f95758141.jpg"
             alt="Ảnh bệnh nhân"
             className="w-full h-[400px] object-cover border"
           />
