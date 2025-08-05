@@ -32,3 +32,10 @@ export type Certification = {
   ngayNop: string
   trangThai: string
 }
+
+export type Specialty = {
+  chuyenKhoaId: string
+  tenKhoa: string
+  moTa: string 
+}
+

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -9,14 +9,21 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import type { Doctor } from "@/components/data-table/type-table"
+import type { Doctor, Specialty } from "@/components/data-table/type-table"
 import { Switch } from "@/components/ui/switch"
 import { DoctorEditSchema, DoctorSchema } from "@/validation/user-valid"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Controller, useForm } from "react-hook-form"
 import { useAppDispatch } from "@/helper"
 import { addDoctor, fetchDoctors, updateDoctor } from "@/api/apiDoctor"
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { getDanhSachChuyenKhoa } from "@/api/chuyenKhoaApi"
 interface DoctorFormProps {
   doctor?: Doctor
   mode?: "add" | "edit"
@@ -28,6 +35,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
   const dispatch = useAppDispatch()
   const [showPassword, setShowPassword] = useState(false)
   const schema = mode === "add" ? DoctorSchema : DoctorEditSchema
+  const [danhSachChuyenKhoa, setDanhSachChuyenKhoa] = useState<Specialty[]>([])
 
   const {
     control,
@@ -37,13 +45,12 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-
       hoTen: doctor?.hoTen ?? "",
       gioiTinh: doctor?.gioiTinh ?? "M",
       email: doctor?.email ?? "",
       soDienThoai: doctor?.soDienThoai ?? "",
       matKhau: "",
-      tenKhoa: doctor?.tenKhoa ?? "",
+tenKhoa: doctor?.tenKhoa?.[0]?.toString() ?? "",
       chungChi: doctor?.chungChi ?? "",
       trinhDo: doctor?.trinhDo ?? "",
       kinhNghiem: doctor?.kinhNghiem ?? 0,
@@ -93,6 +100,21 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
     //   console.log("Update thất bại:", error)
     // }
   }
+
+  useEffect(() => {
+    const fetchChuyenKhoa = async () => {
+      try {
+        const res = await getDanhSachChuyenKhoa()
+        console.log("chuyen khoa", res)
+        setDanhSachChuyenKhoa(res.data)
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách chuyên khoa:", error)
+      }
+    }
+
+    fetchChuyenKhoa()
+  }, [])
+
   return (
     <form
       className="grid gap-4"
@@ -194,9 +216,27 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         )}
       </div>
 
-      <div className="grid gap-2">
+      <div className="grid gap-2 w-full max-w-[500px]">
         <Label>Chuyên khoa *</Label>
-        <Input {...register("tenKhoa")} placeholder="Nhập chuyên khoa" />
+        <Controller
+          control={control}
+          name="tenKhoa"
+          render={({ field }) => (
+            <Select onValueChange={field.onChange} value={field.value}>
+              <SelectTrigger className="w-full min-w-[300px]">
+                <SelectValue placeholder="Chọn chuyên khoa" />
+              </SelectTrigger>
+              <SelectContent className="w-full min-w-[300px]">
+                {danhSachChuyenKhoa?.map((khoa) => (
+                  <SelectItem key={khoa.chuyenKhoaId} value={khoa.chuyenKhoaId.toString()}>
+                    {khoa.tenKhoa}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+
         {errors.tenKhoa && <p className="text-red-500 text-sm">{errors.tenKhoa.message}</p>}
       </div>
 
