@@ -18,7 +18,7 @@ interface DoctorDialogProps {
 
 const DoctorDialog = ({ mode, doctor }: DoctorDialogProps) => {
   const [open, setOpen] = useState(false)
-
+ 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -34,7 +34,7 @@ const DoctorDialog = ({ mode, doctor }: DoctorDialogProps) => {
         <DialogHeader>
           <DialogTitle>{mode === "add" ? "Thêm bác sĩ" : "Chỉnh sửa bác sĩ"}</DialogTitle>
         </DialogHeader>
-        <DoctorForm doctor={doctor} mode={mode} onClose={() => setOpen(false)} />
+        <DoctorForm doctor={doctor} mode={mode} onClose={() => setOpen(false)}   key={mode + (doctor?.bacsi_id ?? "")}></DoctorForm>
       </DialogContent>
     </Dialog>
   )
