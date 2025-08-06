@@ -2,7 +2,6 @@ import type { ColumnDef } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown } from "lucide-react"
 import type { Doctor } from "../../../components/data-table/type-table"
-import { DoctorStatusCell } from "./status-cell"
 import DoctorDialog from "./doctor-dialog"
 
 export const doctorColumns: ColumnDef<Doctor>[] = [
@@ -42,7 +41,7 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
     header: "Số điện thoại",
     cell: ({ row }) => <span>{row.getValue("soDienThoai")}</span>,
   },
-   {
+  {
     accessorKey: "tenKhoa",
     header: "Khoa",
     cell: ({ row }) => <span>{row.getValue("tenKhoa")}</span>,
@@ -62,7 +61,7 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
         Kinh nghiệm
-        <br/> (Năm) <ArrowUpDown className="ml-2 h-4 w-4" />
+        <br /> (Năm) <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => <div className="text-right me-12">{row.getValue("kinhNghiem")}</div>,
@@ -77,18 +76,17 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
   },
   {
     accessorKey: "trangThaiHoatDong",
-    header: "Trạng thái",
+    header: "Trạng thái", 
     cell: ({ row }) => {
-      const doctorActive = row.original as Doctor
-      return <DoctorStatusCell value={doctorActive} />
+       return <div className="text-right">{row.getValue("trangThaiHoatDong") === true ? 'Hoạt động' : 'Nghỉ'}</div> 
+  },
+},
+  {
+    id: "actions",
+    header: "...",
+    cell: ({ row }) => {
+      const doctor = row.original as Doctor
+      return <DoctorDialog mode="edit" doctor={doctor} />
     },
   },
-  {
-  id: "actions",
-  header: "...",
-  cell: ({ row }) => {
-    const doctor = row.original as Doctor
-    return <DoctorDialog mode="edit" doctor={doctor} />
-  },
-}
 ]

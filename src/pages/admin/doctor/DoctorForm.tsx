@@ -51,7 +51,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
       email: doctor?.email ?? "",
       soDienThoai: doctor?.soDienThoai ?? "",
       matKhau: "",
-      tenKhoa: "",
+      tenKhoa: doctor?.tenKhoa,
       chungChi: doctor?.chungChi ?? "",
       trinhDo: doctor?.trinhDo ?? "",
       kinhNghiem: doctor?.kinhNghiem ?? 0,
@@ -118,7 +118,6 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
 
   useEffect(() => {
     if (mode === "edit" && doctor && danhSachChuyenKhoa.length > 0 && doctor.tenKhoa) {
-      // Find the specialty ID that matches the doctor's specialty name
       const selectedKhoa = danhSachChuyenKhoa.find(
         (khoa) => khoa.tenKhoa === doctor.tenKhoa
       )
