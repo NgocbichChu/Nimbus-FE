@@ -137,7 +137,7 @@ function PatientDetail() {
       <h1 className="text-3xl font-bold mb-6 text-primary"> Chi tiết bệnh nhân: {patient.hoTen}</h1>
 
       <Tabs defaultValue="info" className="space-y-4">
-        <TabsList className="grid w-full max-w-md grid-cols-3 mx-auto">
+        <TabsList className="grid w-full max-w-md grid-cols-3">
           <TabsTrigger value="info" className="flex items-center gap-2 justify-center">
             <FileText className="w-4 h-4" />
             Thông tin
