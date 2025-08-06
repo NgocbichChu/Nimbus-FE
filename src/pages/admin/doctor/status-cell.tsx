@@ -9,7 +9,6 @@ import {
 import type { Doctor } from "@/components/data-table/type-table"
 import { fetchDoctors, updateDoctor } from "@/api/apiDoctor"
 import { useAppDispatch } from "@/helper" 
-import { toastSuccess } from "@/helper/toast"  
 
 type Props = {
   value: Doctor
@@ -27,8 +26,6 @@ export function DoctorStatusCell({ value }: Props) {
       await dispatch(
         updateDoctor(dataWithId)
       ).unwrap()
-
-      toastSuccess("Trạng thái đã được cập nhật")
       dispatch(fetchDoctors()) // reload lại danh sách
     } catch (error) {
       console.error("Update thất bại:", error)

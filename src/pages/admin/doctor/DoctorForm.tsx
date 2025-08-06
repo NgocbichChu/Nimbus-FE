@@ -41,6 +41,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
     control,
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -50,7 +51,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
       email: doctor?.email ?? "",
       soDienThoai: doctor?.soDienThoai ?? "",
       matKhau: "",
-tenKhoa: doctor?.tenKhoa?.[0]?.toString() ?? "",
+      tenKhoa: "",
       chungChi: doctor?.chungChi ?? "",
       trinhDo: doctor?.trinhDo ?? "",
       kinhNghiem: doctor?.kinhNghiem ?? 0,
@@ -114,6 +115,18 @@ tenKhoa: doctor?.tenKhoa?.[0]?.toString() ?? "",
 
     fetchChuyenKhoa()
   }, [])
+
+  useEffect(() => {
+    if (mode === "edit" && doctor && danhSachChuyenKhoa.length > 0 && doctor.tenKhoa) {
+      // Find the specialty ID that matches the doctor's specialty name
+      const selectedKhoa = danhSachChuyenKhoa.find(
+        (khoa) => khoa.tenKhoa === doctor.tenKhoa
+      )
+      if (selectedKhoa) {
+        setValue("tenKhoa", selectedKhoa.chuyenKhoaId.toString())
+      }
+    }
+  }, [mode, doctor, danhSachChuyenKhoa, setValue])
 
   return (
     <form
