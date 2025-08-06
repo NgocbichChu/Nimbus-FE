@@ -83,19 +83,3 @@ export const updateDoctor = createAsyncThunk(
     }
   }
 )
-
-// // Async thunk to toggle doctor status
-// export const toggleDoctorStatus = createAsyncThunk(
-//   "doctors/toggleDoctorStatus",
-//   async ({ bacsi_id, trangThaiHoatDong }: { bacsi_id: string; trangThaiHoatDong: boolean }, { rejectWithValue }) => {
-//     try {
-//       const response = await put<Doctor>(`/bacsi/trangthai/${bacsi_id}`, { trangThaiHoatDong })
-//       toastSuccess("Cập nhật trạng thái thành công!")
-//       return response
-//     } catch (error: any) {
-//       const errorMessage = error.response?.data?.message || "Lỗi khi cập nhật trạng thái"
-//       toastError(errorMessage)
-//       return rejectWithValue(errorMessage)
-//     }
-//   }
-// )

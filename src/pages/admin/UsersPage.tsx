@@ -1,6 +1,6 @@
-import { DataTable } from "@/pages/admin/doctor/table"
 import type { Patient } from "@/components/data-table/type-table"
 import { patientColumns } from "@/components/data-table/user-column"
+import { DataTableUser } from "./patient/table-user"
 
 const mockPatients: Patient[] = [
   {
@@ -128,7 +128,7 @@ const mockPatients: Patient[] = [
 export default function PatientPage() {
   return (
     <div>
-      <DataTable columns={patientColumns} data={mockPatients} filterColumn="cccd" />
+      <DataTableUser columns={patientColumns} data={mockPatients} filterColumn="cccd" />
     </div>
   )
 }
