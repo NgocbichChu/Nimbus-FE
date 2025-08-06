@@ -78,17 +78,16 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
   {
     accessorKey: "trangThaiHoatDong",
     header: "Trạng thái",
-    cell: ({ getValue }) => {
-      const value = getValue() as boolean
-      return <DoctorStatusCell value={value} />
+    cell: ({ row }) => {
+      const doctorActive = row.original as Doctor
+      return <DoctorStatusCell value={doctorActive} />
     },
   },
   {
   id: "actions",
-  header: "Trạng thái",
+  header: "...",
   cell: ({ row }) => {
     const doctor = row.original as Doctor
-
     return <DoctorDialog mode="edit" doctor={doctor} />
   },
 }

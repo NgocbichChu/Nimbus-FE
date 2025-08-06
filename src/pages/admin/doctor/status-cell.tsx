@@ -1,19 +1,38 @@
-// DoctorStatusCell.tsx
 import { useState } from "react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { toastSuccess } from "@/helper/toast"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import type { Doctor } from "@/components/data-table/type-table"
+import { fetchDoctors, updateDoctor } from "@/api/apiDoctor"
+import { useAppDispatch } from "@/helper" 
+import { toastSuccess } from "@/helper/toast"  
 
 type Props = {
-  value: boolean
+  value: Doctor
 }
 
 export function DoctorStatusCell({ value }: Props) {
-  const [status, setStatus] = useState(value)
-  const handleChange = (val: string) => {
+  const dispatch = useAppDispatch()
+  const [status, setStatus] = useState(value.trangThaiHoatDong)
+
+  const handleChange = async (val: string) => {
     const newVal = val === "true"
     setStatus(newVal)
-    toastSuccess(`Trạng thái đã được cập nhật`)
+    const dataWithId = { ...value, trangThaiHoatDong: newVal, id: value.bacsi_id } // ✅ thêm id ở đây
+    try {
+      await dispatch(
+        updateDoctor(dataWithId)
+      ).unwrap()
 
+      toastSuccess("Trạng thái đã được cập nhật")
+      dispatch(fetchDoctors()) // reload lại danh sách
+    } catch (error) {
+      console.error("Update thất bại:", error)
+    }
   }
 
   return (

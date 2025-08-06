@@ -71,15 +71,13 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
   }
 
   const handleEdit = async (data: any) => {
-    console.log(data)
-    if (!doctor?.id) {
+    if (!doctor?.bacsi_id) {
       console.error("Không có ID bác sĩ để cập nhật.")
       return
     }
-    const dataWithId = { ...data, id: doctor.id } // ✅ thêm id ở đây
+    const dataWithId = { ...data, id: doctor.bacsi_id } // ✅ thêm id ở đây
     try {
       await dispatch(updateDoctor(dataWithId)).unwrap()
-      console.log("Lưu thông tin nè:", dataWithId)
       dispatch(fetchDoctors())
       onClose?.()
     } catch (error) {
