@@ -1,4 +1,5 @@
 export type Doctor = {
+  bacsi_id: number,
   hoTen: string
   gioiTinh: string
   email: string
@@ -31,3 +32,10 @@ export type Certification = {
   ngayNop: string
   trangThai: string
 }
+
+export type Specialty = {
+  chuyenKhoaId: string
+  tenKhoa: string
+  moTa: string 
+}
+

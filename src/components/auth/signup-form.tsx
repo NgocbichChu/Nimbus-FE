@@ -25,10 +25,10 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  const [countdown, setCountdown] = useState(10)
+  const [countdown, setCountdown] = useState(60)
 
   const startCountdown = () => {
-    setCountdown(10)
+    setCountdown(60)
     const interval = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
