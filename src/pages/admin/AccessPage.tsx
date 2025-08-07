@@ -1,9 +1,8 @@
 import { useState } from "react"
-import { User, Stethoscope, UserCheck } from "lucide-react"
+import { User, UserCheck } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import AdminForm from "./access/AdminForm"
-import DoctorForm from "./doctor/DoctorForm"
 import ReceptionForm from "./access/ReceptionForm"
 
 export default function AccessPage() {
@@ -14,12 +13,6 @@ export default function AccessPage() {
       label: "Quản lý",
       icon: User,
       description: "Thêm tài khoản quản lý mới vào hệ thống",
-    },
-    {
-      id: "bacsi",
-      label: "Bác sĩ",
-      icon: Stethoscope,
-      description: "Thêm bác sĩ mới vào hệ thống",
     },
     {
       id: "letan",
@@ -74,7 +67,6 @@ export default function AccessPage() {
               </CardHeader>
               <CardContent>
                 {activeTab === "quanly" && <AdminForm />}
-                {activeTab === "bacsi" && <DoctorForm />}
                 {activeTab === "letan" && <ReceptionForm />}
               </CardContent>
             </Card>

@@ -22,7 +22,7 @@ import type { Doctor } from "@/components/data-table/type-table"
 
 // Interface for updating a doctor
  interface UpdateDoctorRequest {
-  bacsi_id: string
+  id: number
   hoTen?: string
   gioiTinh?: string
   email?: string
@@ -70,9 +70,10 @@ export const addDoctor = createAsyncThunk(
 // Async thunk to update a doctor
 export const updateDoctor = createAsyncThunk(
   "doctors/updateDoctor",
-  async ({ bacsi_id, ...updateData }: UpdateDoctorRequest, { rejectWithValue }) => {
+  async ({ id, ...updateData }: UpdateDoctorRequest, { rejectWithValue }) => {
+    console.log("id",id);
     try {
-      const response = await put<Doctor>(`/bacsi/capnhat/${bacsi_id}`, updateData)
+      const response = await put<Doctor>(`/bac-si/CapNhatBacSi/${id}`, updateData)
       toastSuccess("Cập nhật bác sĩ thành công!")
       return response
     } catch (error: any) {
@@ -82,19 +83,3 @@ export const updateDoctor = createAsyncThunk(
     }
   }
 )
-
-// // Async thunk to toggle doctor status
-// export const toggleDoctorStatus = createAsyncThunk(
-//   "doctors/toggleDoctorStatus",
-//   async ({ bacsi_id, trangThaiHoatDong }: { bacsi_id: string; trangThaiHoatDong: boolean }, { rejectWithValue }) => {
-//     try {
-//       const response = await put<Doctor>(`/bacsi/trangthai/${bacsi_id}`, { trangThaiHoatDong })
-//       toastSuccess("Cập nhật trạng thái thành công!")
-//       return response
-//     } catch (error: any) {
-//       const errorMessage = error.response?.data?.message || "Lỗi khi cập nhật trạng thái"
-//       toastError(errorMessage)
-//       return rejectWithValue(errorMessage)
-//     }
-//   }
-// )
