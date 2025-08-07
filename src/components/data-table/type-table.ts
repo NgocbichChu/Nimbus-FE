@@ -14,16 +14,13 @@ export type Doctor = {
   trangThaiHoatDong: boolean
 }
 export type Patient = {
-  benhnhan_id: string
+  benhnhan_id: number
   hoTen: string
-  gioiTinh: "M" | "F" | "O"
-  ngaySinh: string
+  gioiTinh: "M" | "F" 
   email: string
   soDienThoai: string
   cccd: string
   diaChi: string
-  nhomMau: "A" | "B" | "AB" | "O"
-  trangThaiHoatDong: boolean
 }
 export type Certification = {
   benhnhan_id: string
