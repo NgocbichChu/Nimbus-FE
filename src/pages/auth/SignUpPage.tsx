@@ -22,7 +22,7 @@ const LoginPage = () => {
       </div>
       <div className="bg-muted relative hidden lg:block">
         <img
-          src="https://ui.shadcn.com/placeholder.svg"
+          src="https://i.pinimg.com/1200x/16/78/24/1678246ece2b70ec1021e01f95758141.jpg"
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />

@@ -11,42 +11,27 @@ export const loginSchema = yup.object({
 export type LoginSchemaType = yup.InferType<typeof loginSchema>
 
 export const signUpSchema = yup.object({
-  hoTen: yup
+  hoTen: yup.string().required("Họ tên không được để trống"),
+  gioiTinh: yup.string().oneOf(["M", "F"]).required("Giới tính là bắt buộc"),
+  email: yup
     .string()
-    .required("Vui lòng nhập họ và tên")
-    .min(2, "Họ và tên phải có ít nhất 2 ký tự"),
-
-  gioiTinh: yup
-    .string()
-    .required("Vui lòng chọn giới tính")
-    .oneOf(["M", "F"], "Giới tính không hợp lệ"),
-
-  email: yup.string().required("Vui lòng nhập email").email("Email không hợp lệ"),
-
+    .email("Email không hợp lệ")
+    .required("Email không được để trống"),
   soDienThoai: yup
     .string()
-    .required("Vui lòng nhập số điện thoại")
-    .matches(/^(03|05|07|08|09)\d{8}$/, "Số điện thoại không hợp lệ"),
-
+    .matches(/^[0-9]{10,11}$/, "Số điện thoại không hợp lệ")
+    .required("Vui lòng nhập số điện thoại"),
   matKhau: yup
     .string()
-    .required("Vui lòng nhập mật khẩu")
-    .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
-
-  baoHiem: yup.string().optional(),
-
-  lienHeKhanCap: yup
-    .string()
-    .matches(/^(03|05|07|08|09)\d{8}$/, "Số điện thoại không hợp lệ")
-    .optional(),
-
+    .min(3, "Mật khẩu tối thiểu 3 ký tự")
+    .required("Mật khẩu không được để trống"),
   confirmPassword: yup
     .string()
-    .required("Vui lòng xác nhận mật khẩu")
-    .oneOf([yup.ref("matKhau")], "Mật khẩu xác nhận không khớp"),
-})
+    .oneOf([yup.ref("matKhau")], "Xác nhận mật khẩu không khớp")
+    .required("Vui lòng xác nhận mật khẩu"),
+});
 
-export type SignUpSchemaType = yup.InferType<typeof signUpSchema>
+export type SignUpSchemaType = yup.InferType<typeof signUpSchema>;
 
 export const appointmentSchema = yup.object().shape({
   serviceType: yup.string().required("Vui lòng chọn loại hình khám"),
