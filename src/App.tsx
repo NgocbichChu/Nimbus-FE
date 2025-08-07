@@ -25,6 +25,7 @@ import HoSoPage from "./pages/user/HoSoPage"
 import Certifications from "./pages/admin/Certification"
 import AccessPage from "./pages/admin/AccessPage"
 import UnsupportedScreen from "./pages/un-support-screen"
+import LichKhamPage from "./pages/user/LichKhamPage"
 import PatientDetail from "./pages/admin/patient/patient-detail"
 
 function App() {
@@ -54,7 +55,7 @@ function App() {
             <Route path="/lien-he" element={<LienHePage />} />
             <Route path="/tai-khoan" element={<AccountPage />} />
             <Route path="/ho-so" element={<HoSoPage />} />
-            <Route path="/lich-su-kham" element={<AccountPage />} />
+            <Route path="/lich-kham" element={<LichKhamPage />} />
           </Route>
 
           {/* Admin Routes - With Sidebar */}

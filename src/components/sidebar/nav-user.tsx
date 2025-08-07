@@ -1,4 +1,4 @@
-import { ChevronDown, LogOut, User } from "lucide-react"
+import { ChevronDown, LogOut, User, Contact, ClipboardList } from "lucide-react"
 
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "../ui/button"
 import { Avatar, AvatarFallback } from "../ui/avatar"
+import { Link } from "react-router-dom"
 
 export function NavUser({
   user,
@@ -58,9 +59,23 @@ export function NavUser({
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <User />
-          Thông tin cá nhân
+        <DropdownMenuItem asChild>
+          <Link to="/tai-khoan">
+            <User />
+            Tài khoản
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/ho-so">
+            <Contact />
+            Hồ sơ
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/lich-kham">
+            <ClipboardList />
+            Lịch khám
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem
           className="hover:!bg-destructive/10 !text-destructive cursor-pointer"

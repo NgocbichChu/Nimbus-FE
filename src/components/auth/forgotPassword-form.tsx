@@ -4,9 +4,8 @@ import { ForgetPasswordSchema } from "@/validation/auth-valid"
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { forgotPassword, resetPassword } from "../../api/forgotPasswordApi"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { toastSuccess, toastError } from "@/helper/toast"
 import { useNavigate } from "react-router-dom"
 
@@ -61,6 +60,7 @@ const ForgotPasswordForm = () => {
         toastError("Mã OTP không đúng hoặc đã hết hạn")
       }
     } catch (error) {
+      console.log("Lỗi : ", error)
       toastError("Lỗi đặt lại mật khẩu")
     }
   }
@@ -102,14 +102,14 @@ const ForgotPasswordForm = () => {
       {step == "otp" && (
         <div className="w-full max-w-sm mx-auto flex flex-col gap-6 items-center">
           <div className="w-full flex flex-col gap-2">
-            <label className="text-sm font-medium text-left text-white">Nhập mã OTP</label>
+            <label className="text-sm font-medium text-left text-dark">Nhập mã OTP</label>
             <InputOTP value={otp} onChange={setOtp} maxLength={6}>
               <InputOTPGroup className="grid grid-cols-6 gap-2 w-full">
                 {Array.from({ length: 6 }).map((_, index) => (
                   <InputOTPSlot
                     key={index}
                     index={index}
-                    className="h-14 w-full text-center text-lg bg-zinc-800 text-white border border-gray-600 rounded"
+                    className="h-14 w-full text-center text-lg bg-zinc-800 text-dark bg-whited border border-gray-600 rounded"
                   />
                 ))}
               </InputOTPGroup>
@@ -117,7 +117,7 @@ const ForgotPasswordForm = () => {
           </div>
 
           <div className="w-full flex flex-col gap-2">
-            <label className="text-sm font-medium text-left text-white">Mật khẩu mới</label>
+            <label className="text-sm font-medium text-left text-dark">Mật khẩu mới</label>
             <Input
               type="password"
               placeholder="Nhập mật khẩu mới"

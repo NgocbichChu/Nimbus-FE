@@ -44,13 +44,17 @@ const AccountPage = () => {
         setMessage(response?.message || "Đổi mật khẩu thất bại")
       }
     } catch (error) {
-      setMessage("Đổi mật khâu thất bại")
+      setMessage("Đổi mật khẩu thất bại")
       console.log(error)
+    } finally {
+      setLoading(false)
     }
   }
+
   const { register, handleSubmit, reset } = useForm<User>({
     defaultValues: user,
   })
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -75,14 +79,14 @@ const AccountPage = () => {
     try {
       await capNhatThongTin({
         hoTen: data.name,
-        gioiTinh: data.gioiTinh === "Nam" ? "M" : "F",
+        gioiTinh: data.gioiTinh === "M" ? "Nam" : "Nữ",
         email: data.email,
         soDienThoai: data.soDT,
       })
       setUser((prev) => ({
         ...prev,
         hoTen: data.name,
-        gioiTinh: data.gioiTinh === "Nam" ? "M" : "F",
+        gioiTinh: data.gioiTinh === "M" ? "Nam" : "Nữ",
         email: data.email,
         soDT: data.soDT,
       }))
@@ -95,109 +99,112 @@ const AccountPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-white dark:bg-black">
-      <h2 className="text-2xl font-semibold mb-6">Tài khoản</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="w-full">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <CardContent>
-              <h3 className="font-semibold text-lg mb-4">Thông tin tài khoản</h3>
-              <div className="flex flex-col gap-2">
-                <div className="grid grid-cols-2 gap-1">
-                  <Label className="text-base">Họ và tên:</Label>
-                  <p>{user.name}</p>
-                </div>
-                <div className="grid grid-cols-2">
-                  <Label className="text-base">Số điện thoại:</Label>
-                  {isEditing ? <Input {...register("soDT")} /> : <p>{user.soDT}</p>}
-                </div>
-                <div className="grid grid-cols-2 gap-1">
-                  <Label className="text-base">Giới tính:</Label>
-                  <p>{user.gioiTinh}</p>
-                </div>
-                <div className="grid grid-cols-2">
-                  <Label className="text-base">Email:</Label>
-                  {isEditing ? (
-                    <Input {...register("email")} />
-                  ) : (
-                    <p>{user.email || "------------"}</p>
+    <div className="bg-white dark:bg-black px-4 py-8">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-2xl font-semibold mb-6">Tài khoản</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center">
+          <Card className="w-full max-w-2xl">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <CardContent>
+                <h3 className="font-semibold text-lg mb-4">Thông tin tài khoản</h3>
+                <div className="flex flex-col gap-2">
+                  <div className="grid grid-cols-2 gap-1">
+                    <Label className="text-base">Họ và tên:</Label>
+                    <p>{user.name}</p>
+                  </div>
+                  <div className="grid grid-cols-2">
+                    <Label className="text-base">Số điện thoại:</Label>
+                    {isEditing ? <Input {...register("soDT")} /> : <p>{user.soDT}</p>}
+                  </div>
+                  <div className="grid grid-cols-2 gap-1">
+                    <Label className="text-base">Giới tính:</Label>
+                    <p>{user.gioiTinh}</p>
+                  </div>
+                  <div className="grid grid-cols-2">
+                    <Label className="text-base">Email:</Label>
+                    {isEditing ? (
+                      <Input {...register("email")} />
+                    ) : (
+                      <p>{user.email || "------------"}</p>
+                    )}
+                  </div>
+                  {updateMessage && (
+                    <p className="text-sm mt-2 text-center text-green-600 dark:text-green-400">
+                      {updateMessage}
+                    </p>
                   )}
                 </div>
-                {updateMessage && (
-                  <p className="text-sm mt-2 text-center text-green-600 dark:text-green-400">
-                    {updateMessage}
-                  </p>
+              </CardContent>
+              <CardFooter className="justify-end mt-4">
+                {isEditing ? (
+                  <div className="flex gap-3">
+                    <Button type="submit" className="w-fit px-6">
+                      Lưu
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        reset(user)
+                        setIsEditing(false)
+                      }}
+                      className="w-fit px-6"
+                    >
+                      Hủy
+                    </Button>
+                  </div>
+                ) : (
+                  <Button className="w-fit px-6" onClick={() => setIsEditing(true)}>
+                    Thay đổi thông tin
+                  </Button>
                 )}
-              </div>
-            </CardContent>
-            <CardFooter className="justify-end max-w-[700px] mt-4">
-              {isEditing ? (
-                <div className="flex gap-3">
-                  <Button type="submit" className="w-fit px-6">
-                    Lưu
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      reset(user)
-                      setIsEditing(false)
-                    }}
-                    className="w-fit px-6"
-                  >
-                    Hủy
-                  </Button>
-                </div>
-              ) : (
-                <Button className="w-fit px-6" onClick={() => setIsEditing(true)}>
-                  Thay đổi thông tin
-                </Button>
-              )}
-            </CardFooter>
-          </form>
-        </Card>
+              </CardFooter>
+            </form>
+          </Card>
 
-        <Card className="w-full shadow-lg border">
-          <form onSubmit={handleDoiMatKhau}>
-            <CardContent>
-              <h3 className="font-semibold text-lg mb-4">Thay đổi mật khẩu</h3>
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                  <Label className="text-sm font-medium">
-                    Mật khẩu hiện tại <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="password"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    placeholder="Nhập mật khẩu hiện tại"
-                  />
+          <Card className="w-full max-w-2xl">
+            <form onSubmit={handleDoiMatKhau}>
+              <CardContent>
+                <h3 className="font-semibold text-lg mb-4">Thay đổi mật khẩu</h3>
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-1">
+                    <Label className="text-sm font-medium">
+                      Mật khẩu hiện tại <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      type="password"
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      placeholder="Nhập mật khẩu hiện tại"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Label className="text-sm font-medium">
+                      Mật khẩu mới <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Nhập mật khẩu mới"
+                    />
+                  </div>
+                  {message && (
+                    <p className="text-sm mt-2 text-center text-red-500 dark:text-red-400">
+                      {message}
+                    </p>
+                  )}
                 </div>
-                <div className="flex flex-col gap-1">
-                  <Label className="text-sm font-medium">
-                    Mật khẩu mới <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Nhập mật khẩu mới"
-                  />
-                </div>
-                {message && (
-                  <p className="text-sm mt-2 text-center text-red-500 dark:text-red-400">
-                    {message}
-                  </p>
-                )}
-              </div>
-            </CardContent>
-            <CardFooter className="justify-end mt-4">
-              <Button type="submit" className="px-6">
-                Thay đổi mật khẩu
-              </Button>
-            </CardFooter>
-          </form>
-        </Card>
+              </CardContent>
+              <CardFooter className="justify-end mt-4">
+                <Button type="submit" className="px-6" disabled={loading}>
+                  {loading ? "Đang xử lý..." : "Thay đổi mật khẩu"}
+                </Button>
+              </CardFooter>
+            </form>
+          </Card>
+        </div>
       </div>
     </div>
   )
