@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Loader2 } from "lucide-react"
-import { CalendarDays, ClipboardList, FileText } from "lucide-react"
+import { CalendarDays, ClipboardList } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 
@@ -136,13 +136,9 @@ function PatientDetail() {
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6 text-primary"> Chi tiết bệnh nhân: {patient.hoTen}</h1>
 
-      <Tabs defaultValue="info" className="space-y-4">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
-          <TabsTrigger value="info" className="flex items-center gap-2 justify-center">
-            <FileText className="w-4 h-4" />
-            Thông tin
-          </TabsTrigger>
-          <TabsTrigger value="appointments" className="flex items-center gap-2 justify-center">
+      <Tabs defaultValue="appointments" className="space-y-4">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="appointments" className="flex items-center gap-2 justify-center ">
             <CalendarDays className="w-4 h-4" />
             Đặt lịch
           </TabsTrigger>
@@ -151,49 +147,6 @@ function PatientDetail() {
             Bệnh án
           </TabsTrigger>
         </TabsList>
-
-        {/* Thông tin bệnh nhân */}
-        <TabsContent value="info">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold text-foreground">
-                Thông tin cá nhân
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 text-base">
-              <div>
-                <p className="text-muted-foreground font-medium mb-1">Họ tên</p>
-                <p className="text-foreground">{patient.hoTen}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground font-medium mb-1">Giới tính</p>
-                <p className="text-foreground">
-                  {patient.gioiTinh === "M"
-                    ? "Nam"
-                    : patient.gioiTinh === "F"
-                      ? "Nữ"
-                      : patient.gioiTinh}
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground font-medium mb-1">Email</p>
-                <p className="text-foreground">{patient.email}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground font-medium mb-1">Số điện thoại</p>
-                <p className="text-foreground">{patient.soDienThoai}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground font-medium mb-1">CCCD</p>
-                <p className="text-foreground">{patient.cccd}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground font-medium mb-1">Địa chỉ</p>
-                <p className="text-foreground">{patient.diaChi}</p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         {/* Lịch sử đặt lịch */}
         <TabsContent value="appointments">

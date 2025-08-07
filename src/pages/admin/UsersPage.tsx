@@ -1,134 +1,20 @@
-import type { Patient } from "@/components/data-table/type-table"
 import { patientColumns } from "@/components/data-table/user-column"
 import { DataTableUser } from "./patient/table-user"
-
-const mockPatients: Patient[] = [
-  {
-    benhnhan_id: "BN001",
-    hoTen: "Nguyễn Văn A",
-    gioiTinh: "M",
-    ngaySinh: "1990-05-12",
-    email: "a.nguyen@example.com",
-    soDienThoai: "0909123456",
-    cccd: "012345678901",
-    diaChi: "Quận 1, TP. HCM",
-    nhomMau: "O",
-    trangThaiHoatDong: true,
-  },
-  {
-    benhnhan_id: "BN002",
-    hoTen: "Trần Thị B",
-    gioiTinh: "F",
-    ngaySinh: "1985-08-24",
-    email: "b.tran@example.com",
-    soDienThoai: "0911223344",
-    cccd: "032145678912",
-    diaChi: "TP. Thủ Đức",
-    nhomMau: "A",
-    trangThaiHoatDong: true,
-  },
-  {
-    benhnhan_id: "BN003",
-    hoTen: "Lê Văn C",
-    gioiTinh: "M",
-    ngaySinh: "1978-02-18",
-    email: "c.le@example.com",
-    soDienThoai: "0988112233",
-    cccd: "054987123654",
-    diaChi: "Quận Bình Thạnh",
-    nhomMau: "B",
-    trangThaiHoatDong: false,
-  },
-  {
-    benhnhan_id: "BN004",
-    hoTen: "Phạm Thị D",
-    gioiTinh: "F",
-    ngaySinh: "2000-12-01",
-    email: "d.pham@example.com",
-    soDienThoai: "0977665544",
-    cccd: "065498712365",
-    diaChi: "Quận 7, TP. HCM",
-    nhomMau: "AB",
-    trangThaiHoatDong: true,
-  },
-  {
-    benhnhan_id: "BN005",
-    hoTen: "Đỗ Mạnh E",
-    gioiTinh: "M",
-    ngaySinh: "1995-07-20",
-    email: "e.do@example.com",
-    soDienThoai: "0933445566",
-    cccd: "098712365478",
-    diaChi: "Hóc Môn, TP. HCM",
-    nhomMau: "O",
-    trangThaiHoatDong: true,
-  },
-  {
-    benhnhan_id: "BN006",
-    hoTen: "Ngô Thị F",
-    gioiTinh: "F",
-    ngaySinh: "1992-03-15",
-    email: "f.ngo@example.com",
-    soDienThoai: "0922112233",
-    cccd: "023456789012",
-    diaChi: "Quận Gò Vấp",
-    nhomMau: "B",
-    trangThaiHoatDong: false,
-  },
-  {
-    benhnhan_id: "BN007",
-    hoTen: "Phan Văn G",
-    gioiTinh: "M",
-    ngaySinh: "1988-11-09",
-    email: "g.phan@example.com",
-    soDienThoai: "0911555666",
-    cccd: "087654321098",
-    diaChi: "Bình Dương",
-    nhomMau: "A",
-    trangThaiHoatDong: true,
-  },
-  {
-    benhnhan_id: "BN008",
-    hoTen: "Hoàng Thị H",
-    gioiTinh: "F",
-    ngaySinh: "1999-06-06",
-    email: "h.hoang@example.com",
-    soDienThoai: "0966888777",
-    cccd: "098761234567",
-    diaChi: "Quận 10, TP. HCM",
-    nhomMau: "AB",
-    trangThaiHoatDong: true,
-  },
-  {
-    benhnhan_id: "BN009",
-    hoTen: "Bùi Mạnh I",
-    gioiTinh: "M",
-    ngaySinh: "1980-01-30",
-    email: "i.bui@example.com",
-    soDienThoai: "0909111222",
-    cccd: "076543210987",
-    diaChi: "Quận 2, TP. HCM",
-    nhomMau: "O",
-    trangThaiHoatDong: false,
-  },
-  {
-    benhnhan_id: "BN010",
-    hoTen: "Tô Thị J",
-    gioiTinh: "F",
-    ngaySinh: "1993-09-10",
-    email: "j.to@example.com",
-    soDienThoai: "0988777666",
-    cccd: "065432198765",
-    diaChi: "Quận Phú Nhuận",
-    nhomMau: "A",
-    trangThaiHoatDong: true,
-  },
-]
+import { useEffect } from "react"
+import { useAppDispatch, useAppSelector } from "@/helper"
+import { fetchPatient } from "@/api/petientApi"
 
 export default function PatientPage() {
+  const dispatch = useAppDispatch()
+  const patients = useAppSelector((state) => state.patient.patients)
+
+  useEffect(() => {
+    dispatch(fetchPatient())
+  }, [dispatch])
+
   return (
     <div>
-      <DataTableUser columns={patientColumns} data={mockPatients} filterColumn="cccd" />
+      <DataTableUser columns={patientColumns} data={patients} filterColumn="cccd" />
     </div>
   )
 }
