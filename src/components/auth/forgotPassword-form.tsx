@@ -60,6 +60,7 @@ const ForgotPasswordForm = () => {
         toastError("Mã OTP không đúng hoặc đã hết hạn")
       }
     } catch (error) {
+      console.log("Lỗi : ", error)
       toastError("Lỗi đặt lại mật khẩu")
     }
   }

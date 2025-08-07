@@ -123,7 +123,7 @@ const HomePage = () => {
       <div className="grid grid-flow-col grid-cols-3 grid-rows-2 text-center mt-5 dark:text-white ">
         <div className="row-span-2 bg-blue-100 ">
           <img
-            src="https://i.pinimg.com/1200x/16/78/24/1678246ece2b70ec1021e01f95758141.jpg"
+            src="https://i.pinimg.com/736x/2c/8a/90/2c8a9004feae986bbc7282ba4aa8cda2.jpg"
             alt="Ảnh bệnh nhân"
             className="w-full h-[400px] object-cover border"
           />
@@ -150,13 +150,22 @@ const HomePage = () => {
 
       <section className="bg-white dark:bg-gray-900 py-12">
         <h3 className="text-3xl font-bold text-center mb-8 dark:text-white">Dịch vụ nổi bật</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-5">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-5 items-stretch">
           {services.map((item, idx) => (
             <Card
               key={idx}
-              className={`shadow-md dark:bg-blue-900 h-full transition-transform duration-300 ${
-                idx % 2 === 1 ? "translate-y-10" : ""
-              }`}
+              className={`
+          shadow-md 
+          dark:bg-blue-900 
+          h-full 
+          transition-transform 
+          duration-300 
+          transform 
+          hover:-translate-y-5
+          hover:shadow-xl
+          }
+        `}
             >
               <CardContent className="h-full flex flex-col justify-between p-6">
                 <div className="flex flex-col flex-grow">
