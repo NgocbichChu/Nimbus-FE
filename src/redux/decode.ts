@@ -1,4 +1,4 @@
-import { setUser } from "@/redux/authSlice"
+import { setUser, setLoading } from "@/redux/authSlice"
 import type { AppDispatch } from "./store"
 
 export interface DecodedUser {
@@ -37,5 +37,6 @@ export const decodeAndStoreUserFromToken = (token: string, dispatch: AppDispatch
     return payload
   } catch (error) {
     console.error("Lỗi khi decode token:", error)
+    dispatch(setLoading(false))
   }
 }

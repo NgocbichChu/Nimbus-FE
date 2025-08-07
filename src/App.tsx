@@ -26,6 +26,7 @@ import Certifications from "./pages/admin/Certification"
 import AccessPage from "./pages/admin/AccessPage"
 import UnsupportedScreen from "./pages/un-support-screen"
 import LichKhamPage from "./pages/user/LichKhamPage"
+import PatientDetail from "./pages/admin/patient/patient-detail"
 
 function App() {
   const dispatch = useAppDispatch()
@@ -70,6 +71,7 @@ function App() {
           >
             <Route index element={<DashboardPage />} />
             <Route path="patients" element={<UsersPage />} />
+            <Route path="patients/:benhnhan_id" element={<PatientDetail />} />
             <Route path="doctors" element={<DoctorsPage />} />
             <Route path="appointments" element={<AppointmentAdmin />} />
             <Route path="access" element={<AccessPage />} />

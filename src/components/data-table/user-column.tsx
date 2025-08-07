@@ -1,16 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table"
-import {  MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
 import type { Patient } from "./type-table"
-// import { PatientStatusCell } from "./status-cell" // tạo giống DoctorStatusCell
+import { Link } from "react-router-dom"
 
 export const patientColumns: ColumnDef<Patient>[] = [
   {
@@ -40,14 +31,6 @@ export const patientColumns: ColumnDef<Patient>[] = [
     },
   },
   {
-    accessorKey: "ngaySinh",
-    header: "Ngày sinh",
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("ngaySinh"))
-      return <div className="text-right">{date.toLocaleDateString()}</div>
-    },
-  },
-  {
     accessorKey: "email",
     header: "Email",
     cell: ({ row }) => <span className="lowercase">{row.getValue("email")}</span>,
@@ -68,40 +51,16 @@ export const patientColumns: ColumnDef<Patient>[] = [
     cell: ({ row }) => <span className="capitalize">{row.getValue("diaChi")}</span>,
   },
   {
-    accessorKey: "nhomMau",
-    header: "Nhóm máu",
-    cell: ({ row }) => <span>{row.getValue("nhomMau")}</span>,
-  },
-  // {
-  //   accessorKey: "trangThaiHoatDong",
-  //   header: "Trạng thái",
-  //   cell: ({ getValue }) => {
-  //     const value = getValue() as boolean
-  //     return <PatientStatusCell value={value} />
-  //   },
-  // },
-  {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
       const patient = row.original
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(patient.benhnhan_id)}>
-              Sao chép ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Xem chi tiết</DropdownMenuItem>
-            <DropdownMenuItem>Chỉnh sửa</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Link to={`/dashboard/patients/${patient.benhnhan_id}`}>
+          <Button variant="outline" size="sm">
+            Xem chi tiết
+          </Button>
+        </Link>
       )
     },
   },
