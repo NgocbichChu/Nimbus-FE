@@ -134,6 +134,7 @@ const AppointmentPage = () => {
 
   useEffect(() => {
     const fetchChuyenGiaByChuyenKhoa = async () => {
+      setDoctor("")
       try {
         if (!specialty) return
         const selected = listChuyenKhoa.find((item) => item.chuyenKhoaId === specialty)
