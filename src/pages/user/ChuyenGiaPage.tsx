@@ -16,15 +16,7 @@ const ChuyenGiaPage = () => {
     }
     fetchChuyenGia()
   }, [])
-  const banLanhDao = [
-    { id: 1, name: "Nguyễn Văn A", chucVu: "Giám đốc" },
-    { id: 2, name: "Nguyễn Văn B", chucVu: "Phó giám đốc" },
-    { id: 3, name: "Nguyễn Văn C", chucVu: "Phó giám đốc" },
-    { id: 4, name: "Nguyễn Văn D", chucVu: "Phó giám đốc" },
-  ]
 
-  const giamDoc = banLanhDao.filter((item) => item.chucVu === "Giám đốc")
-  const phoGiamDoc = banLanhDao.filter((item) => item.chucVu === "Phó giám đốc")
 
   const chuyenGiaImg = [
     { bacsi_id: 1, img: "https://bvtn.org.vn/wp-content/uploads/2024/05/Le-Van-Quang.jpg.webp" },
@@ -55,45 +47,7 @@ const ChuyenGiaPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* <div className="text-center text-white text-3xl font-bold mb-4 mt-[-15px]">
-        <p className="bg-blue-300 px-6 py-2 rounded-md dark:bg-blue-900">Ban Lãnh Đạo Nimbus</p>
-      </div> */}
-
-      {/* <div className="grid place-items-center gap-6 mt-8">
-        {giamDoc.map((item, index) => (
-          <div
-            key={item.id}
-            className="bg-white dark:bg-blue-900 text-sky-500 dark:text-white text-center 
-                       py-6 px-4 rounded-xl shadow-sm flex flex-col items-center w-full max-w-sm dark:bg-gray-700"
-          >
-            <img
-              src={`https://i.pravatar.cc/150?u=${index}`}
-              alt={item.name}
-              className="w-24 h-24 object-cover rounded-full mb-4 border-4 border-sky-500"
-            />
-            <div className="text-2xl font-semibold">{item.name}</div>
-            <div className="text-lg text-yellow-600 dark:text-yellow-300">{item.chucVu}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-10 place-items-center">
-        {phoGiamDoc.map((item, index) => (
-          <div
-            key={item.id}
-            className="bg-white dark:bg-blue-900 text-sky-500 dark:text-white text-center 
-                       py-6 px-4 rounded-xl shadow-sm flex flex-col items-center w-full max-w-sm dark:bg-gray-700"
-          >
-            <img
-              src={`https://i.pravatar.cc/150?u=${index}`}
-              alt={item.name}
-              className="w-24 h-24 object-cover rounded-full mb-4 border-4 border-sky-500"
-            />
-            <div className="text-2xl font-semibold">{item.name}</div>
-            <div className="text-lg text-yellow-600 dark:text-yellow-300">{item.chucVu}</div>
-          </div>
-        ))}
-      </div> */}
+     
 
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-blue-300 dark:bg-blue-900 px-6 py-4 rounded-md mt-[-10px]">
         <p className="text-white text-2xl font-bold">Đội Ngũ Chuyên Gia</p>
@@ -110,7 +64,7 @@ const ChuyenGiaPage = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-10 place-items-center">
-        {listChuyenGia.slice(0, 9).map((item, index) => {
+        {listChuyenGia.slice(0, 9).map((item) => {
           const imgData = chuyenGiaImg.find(
             (i) => i.bacsi_id.toString() === item.bacsi_id.toString()
           )
@@ -119,8 +73,8 @@ const ChuyenGiaPage = () => {
           return (
             <div
               key={item.bacsi_id}
-              className="bg-white dark:bg-blue-900 text-sky-500 dark:text-white text-center 
-                  py-6 px-4 rounded-xl shadow-sm flex flex-col items-center w-full max-w-sm dark:bg-gray-700"
+              className="bg-white dark:bg-blue-500 text-sky-500 dark:text-white text-center 
+                  py-6 px-4 rounded-xl shadow-sm flex flex-col items-center w-full max-w-sm "
             >
               <img
                 src={imgSrc}
