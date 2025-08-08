@@ -75,9 +75,10 @@ export default function DoctorSchedule() {
   )
 
   return (
-    <Card className="p-4">
+    <div className="pt-4">
+      <Card className="p-4">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-primary">📅 Lịch làm việc bác sĩ</CardTitle>
+        <CardTitle className="text-2xl font-bold text-primary"> Lịch làm việc bác sĩ</CardTitle>
       </CardHeader>
       <CardContent>
         {/* Bộ lọc */}
@@ -140,5 +141,6 @@ export default function DoctorSchedule() {
         </Table>
       </CardContent>
     </Card>
+    </div>
   )
 }
