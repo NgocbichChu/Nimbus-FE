@@ -39,3 +39,23 @@ export const taoBenhNhan = async () => {
     throw error
   }
 }
+
+export const getThongTinBenhNhan = async () => {
+  try {
+    const response = await get<any>("/benh-nhan/LayThongTinBenhNhan")
+    return response
+  } catch (error) {
+    console.error("Lỗi : ", error)
+    throw error
+  }
+}
+
+export const capNhatBenhNhan = async (data: any) => {
+  try {
+    const response = await put<any>("/benh-nhan/CapNhatBenhNhan", data)
+    return response
+  } catch (error) {
+    console.error("Lỗi : ", error)
+    throw error
+  }
+}

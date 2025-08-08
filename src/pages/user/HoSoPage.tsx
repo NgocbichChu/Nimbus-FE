@@ -12,17 +12,13 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@radix-ui/react-separator"
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon } from "lucide-react"
-import { vi } from "date-fns/locale"
-import { format, parse } from "date-fns"
+import { getThongTinBenhNhan } from "../../api/accountApi"
+import { capNhatBenhNhan } from "../../api/accountApi"
 
 type User = {
   name: string
   email: string
   soDT: string
-  ngaySinh: string
   gioiTinh: string
   diaChi: string
   maBN: string
@@ -30,61 +26,95 @@ type User = {
   maBHYT: string
   CCCD: string
   danToc: string
-  ngheNghiep: string
+  lienHeKhanCap: string
 }
 
 const HoSoPage = () => {
   const [isEditing, setIsEditing] = useState(false)
+  const [updateMessage, setUpdateMessage] = useState("")
   const [user, setUser] = useState<User>({
-    name: "Nguyễn Tuấn Anh",
+    name: "",
     email: "",
-    soDT: "0898123123",
-    ngaySinh: "21/01/2005",
-    gioiTinh: "Nam",
-    diaChi: "Quận Tân Phú, TPHCM",
-    maBN: "9999",
+    soDT: "",
+    gioiTinh: "",
+    diaChi: "",
+    maBN: "",
     img: "",
     maBHYT: "",
     CCCD: "",
     danToc: "",
-    ngheNghiep: "",
+    lienHeKhanCap: "",
   })
-
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(() => {
-    try {
-      return parse(user.ngaySinh, "dd/MM/yyyy", new Date())
-    } catch {
-      return undefined
-    }
-  })
-
-  const [open, setOpen] = useState(false)
 
   const { register, handleSubmit, reset } = useForm<User>({
     defaultValues: user,
   })
 
-  const onSubmit = (data: User) => {
-    if (selectedDate) {
-      data.ngaySinh = format(selectedDate, "dd/MM/yyyy")
+  const onSubmit = async (data: User) => {
+    setUpdateMessage("")
+    try {
+      const payload = {
+        benhNhanId: user.maBN,
+        hoTen: user.name,
+        gioiTinh: data.gioiTinh === "M" ? "Nam" : "Nữ",
+        email: user.email,
+        soDienThoai: data.soDT,
+        diaChi: data.diaChi,
+        baoHiem: data.maBHYT,
+        canCuocCongDan: data.CCCD,
+        danToc: data.danToc,
+        lienHeKhanCap: data.lienHeKhanCap,
+      }
+      await capNhatBenhNhan(payload)
+      setUser((prev) => ({
+        ...prev,
+        name: prev.name,
+        gioiTinh: data.gioiTinh === "M" ? "Nam" : "Nữ",
+        email: prev.email,
+        soDT: data.soDT,
+        diaChi: data.diaChi,
+        maBHYT: data.maBHYT,
+        CCCD: data.CCCD,
+        danToc: data.danToc,
+        lienHeKhanCap: data.lienHeKhanCap,
+      }))
+      setIsEditing(false)
+      setUpdateMessage("Cập nhật thông tin thành công")
+    } catch (error) {
+      console.log("Lỗi : ", error)
+      setUpdateMessage("Cập nhật thông tin thất bại")
     }
-    setUser(data)
-    setIsEditing(false)
   }
 
   useEffect(() => {
     if (isEditing) {
       reset(user)
-      try {
-        const parsed = parse(user.ngaySinh, "dd/MM/yyyy", new Date())
-        if (!isNaN(parsed.getTime())) {
-          setSelectedDate(parsed)
-        }
-      } catch {
-        setSelectedDate(undefined)
-      }
     }
   }, [isEditing, user, reset])
+
+  useEffect(() => {
+    const fetchBenhNhan = async () => {
+      try {
+        const res = await getThongTinBenhNhan()
+        const user = {
+          name: res.data.hoTen || "",
+          soDT: res.data.soDienThoai || "",
+          gioiTinh: res.data.gioiTinh === "M" ? "Nam" : "Nữ",
+          email: res.data.email || "",
+          diaChi: res.data.diaChi || "",
+          maBN: res.data.benhNhanId || "",
+          img: "",
+          maBHYT: res.data.baoHiem || "",
+          CCCD: res.data.canCuocCongDan || "",
+          danToc: res.data.danToc || "",
+          lienHeKhanCap: res.data.lienHeKhanCap || "",
+        }
+        setUser(user)
+        reset(user)
+      } catch (error) {}
+    }
+    fetchBenhNhan()
+  }, [reset])
 
   return (
     <div className="container mx-auto px-4 py-8 bg-white justify-items-center dark:bg-black ">
@@ -125,39 +155,6 @@ const HoSoPage = () => {
                 )}
               </div>
               <div className="grid grid-cols-2">
-                <Label className="text-base">Ngày sinh:</Label>
-                {isEditing ? (
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="justify-start text-left font-normal w-full"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "Chọn ngày"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        locale={vi}
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={(date) => {
-                          if (date) setSelectedDate(date)
-                          setOpen(false)
-                        }}
-                        captionLayout="dropdown"
-                        fromYear={1900}
-                        toYear={2025}
-                        disabled={(date) => date > new Date()}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                ) : (
-                  <p>{user.ngaySinh}</p>
-                )}
-              </div>
-              <div className="grid grid-cols-2">
                 <Label className="text-base">Giới tính:</Label>
                 <p>{user.gioiTinh}</p>
               </div>
@@ -166,8 +163,12 @@ const HoSoPage = () => {
                 {isEditing ? (
                   <Input {...register("diaChi")} defaultValue={user.diaChi} />
                 ) : (
-                  <p>{user.diaChi}</p>
+                  <p>{user.diaChi || "------------"}</p>
                 )}
+              </div>
+              <div className="grid grid-cols-2">
+                <Label className="text-base">Email:</Label>
+                <p>{user.email || "------------"}</p>
               </div>
             </div>
 
@@ -198,22 +199,19 @@ const HoSoPage = () => {
                 )}
               </div>
               <div className="grid grid-cols-2">
-                <Label className="text-base">Nghề nghiệp:</Label>
+                <Label className="text-base">Số liên hệ khẩn cấp:</Label>
                 {isEditing ? (
-                  <Input {...register("ngheNghiep")} defaultValue={user.ngheNghiep} />
+                  <Input {...register("lienHeKhanCap")} defaultValue={user.lienHeKhanCap} />
                 ) : (
-                  <p>{user.ngheNghiep || "------------"}</p>
-                )}
-              </div>
-              <div className="grid grid-cols-2">
-                <Label className="text-base">Email:</Label>
-                {isEditing ? (
-                  <Input {...register("email")} defaultValue={user.email} />
-                ) : (
-                  <p>{user.email || "------------"}</p>
+                  <p>{user.lienHeKhanCap || "------------"}</p>
                 )}
               </div>
             </div>
+            {updateMessage && (
+              <p className="text-sm mt-2 text-center text-green-600 dark:text-green-400">
+                {updateMessage}
+              </p>
+            )}
           </CardContent>
           <CardFooter className="justify-end max-w-[700px] mt-4">
             {isEditing ? (
