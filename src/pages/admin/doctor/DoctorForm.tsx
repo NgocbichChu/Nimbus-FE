@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { getDanhSachChuyenKhoa } from "@/api/chuyenKhoaApi"
+import { getChuyenKhoaAdmin } from "@/api/chuyenKhoaApi"
 interface DoctorFormProps {
   doctor?: Doctor
   mode?: "add" | "edit"
@@ -51,7 +51,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
       email: doctor?.email ?? "",
       soDienThoai: doctor?.soDienThoai ?? "",
       matKhau: "",
-      tenKhoa: doctor?.tenKhoa,
+      tenKhoa: "",
       chungChi: doctor?.chungChi ?? "",
       trinhDo: doctor?.trinhDo ?? "",
       kinhNghiem: doctor?.kinhNghiem ?? 0,
@@ -105,7 +105,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
   useEffect(() => {
     const fetchChuyenKhoa = async () => {
       try {
-        const res = await getDanhSachChuyenKhoa()
+        const res = await getChuyenKhoaAdmin()
         console.log("chuyen khoa", res)
         setDanhSachChuyenKhoa(res.data)
       } catch (error) {
@@ -117,7 +117,8 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
   }, [])
 
   useEffect(() => {
-    if (mode === "edit" && doctor && danhSachChuyenKhoa.length > 0 && doctor.tenKhoa) {
+    if (mode === "edit" && doctor && danhSachChuyenKhoa.length > 0) {
+      // Find the specialty by name and set the ID
       const selectedKhoa = danhSachChuyenKhoa.find(
         (khoa) => khoa.tenKhoa === doctor.tenKhoa
       )

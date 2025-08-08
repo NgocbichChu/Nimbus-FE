@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowUpDown } from "lucide-react"
 import type { Doctor } from "../../../components/data-table/type-table"
 import DoctorDialog from "./doctor-dialog"
+import { Badge } from "@/components/ui/badge"
 
 export const doctorColumns: ColumnDef<Doctor>[] = [
   {
@@ -76,11 +77,25 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
   },
   {
     accessorKey: "trangThaiHoatDong",
-    header: "Trạng thái", 
+    header: "Trạng thái",
     cell: ({ row }) => {
-       return <div className="text-right">{row.getValue("trangThaiHoatDong") === true ? 'Hoạt động' : 'Nghỉ'}</div> 
+      const isActive = row.getValue("trangThaiHoatDong") === true
+      return (
+        <div className="text-right">
+          {isActive ? (
+            <Badge className="bg-green-500 text-white hover:bg-green-600">Hoạt động</Badge>
+          ) : (
+            <Badge className="bg-secondary text-black">Nghỉ</Badge>
+          )}
+        </div>
+      )
+    },
+    filterFn: (row, columnId, filterValue) => {
+      if (filterValue === "") return true
+      const value = row.getValue(columnId)
+      return String(value) === filterValue
+    },
   },
-},
   {
     id: "actions",
     header: "...",
