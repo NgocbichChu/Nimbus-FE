@@ -33,7 +33,7 @@ import { Check, ChevronsUpDown } from "lucide-react"
 import { getDanhSachChuyenGia } from "@/api/chuyenGiaApi"
 import { getLoaiDichVu } from "@/api/appointmentApi"
 import { getDanhSachChuyenKhoa } from "../../api/chuyenKhoaApi"
-import { layThongTinTaiKhoan } from "../../api/accountApi"
+import { getThongTinBenhNhan } from "../../api/accountApi"
 import { getBacSiByChuyenKhoa } from "../../api/appointmentApi"
 import { getNgayKhamByChuyenGia } from "../../api/appointmentApi"
 import { getGioTheoNgay } from "../../api/appointmentApi"
@@ -79,10 +79,12 @@ const AppointmentPage = () => {
 
   const [user, setUser] = useState<User>({
     name: "",
+    maBN: "",
   })
 
   type User = {
     name: string
+    maBN: string
   }
 
   type NgayLamViecItem = {
@@ -108,9 +110,10 @@ const AppointmentPage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await layThongTinTaiKhoan()
+        const res = await getThongTinBenhNhan()
         const user = {
           name: res.data.hoTen,
+          maBN: res.data.benhNhanId,
         }
         setUser(user)
       } catch (error) {
@@ -279,10 +282,8 @@ const AppointmentPage = () => {
     })
 
     const ngayKham = dayjs(date).format("YYYY-MM-DD")
-    const gioHen = selectedTime?.start
-    const gioDen = selectedTime?.end
-    // const thoiGianHen = dayjs(`${gioHen}:00`).toISOString()
-    // const thoiGianDen = dayjs(`${gioDen}:00`).toISOString()
+    const gioHen = selectedTime?.start.slice(0, 5)
+    const gioDen = selectedTime?.end.slice(0, 5)
     const resNgay = await getNgayKhamByChuyenGia(Number(doctor))
     const list: NgayLamViecItem[] = resNgay.data || []
     const info = list.find((item) => item.ngay === ngayKham)
@@ -290,14 +291,13 @@ const AppointmentPage = () => {
 
     const payload = {
       bacSiId: Number(doctor),
-      benhNhanId: 1,
-      thoiGianHen: gioHen || "",
+      benhNhanId: Number(user.maBN),
+      thoiGianTu: gioHen || "",
       thoiGianDen: gioDen || "",
-      kieuLichKham: serviceType,
+      loaiHinhKham: serviceType,
       trangThai: "Chờ duyệt",
       ghiChu: note || "",
       ngayKham,
-      ngayCapNhat: new Date().toISOString(),
       caKham,
     }
     try {

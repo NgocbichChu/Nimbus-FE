@@ -32,7 +32,7 @@ export const capNhatThongTin = async (data: any) => {
 
 export const taoBenhNhan = async () => {
   try {
-    const response = await post<any>("/auth/thong-tin-bo-sung")
+    const response = await post<any>("/benh-nhan/TaoMoiBenhNhan")
     return response
   } catch (error) {
     console.error("Lỗi : ", error)
