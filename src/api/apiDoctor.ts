@@ -71,7 +71,6 @@ export const addDoctor = createAsyncThunk(
 export const updateDoctor = createAsyncThunk(
   "doctors/updateDoctor",
   async ({ id, ...updateData }: UpdateDoctorRequest, { rejectWithValue }) => {
-    console.log("id",id);
     try {
       const response = await put<Doctor>(`/bac-si/CapNhatBacSi/${id}`, updateData)
       toastSuccess("Cập nhật bác sĩ thành công!")

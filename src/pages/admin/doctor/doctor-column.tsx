@@ -28,7 +28,7 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
     header: "Giới tính",
     cell: ({ row }) => {
       const value = row.getValue("gioiTinh")
-      const gender = value === "F" ? "Nữ" : value === "M" ? "Nam" : String(value)
+      const gender = value === "Nữ" ? "Nữ" : value === "Nam" ? "Nam" : String(value)
       return <span>{gender}</span>
     },
   },

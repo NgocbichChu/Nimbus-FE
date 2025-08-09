@@ -52,7 +52,7 @@ const AdminForm = () => {
           <Controller
             name="gioiTinh"
             control={control}
-            defaultValue="M" // hoặc lấy từ defaultValues
+            defaultValue="Nam" // hoặc lấy từ defaultValues
             render={({ field }) => (
               <RadioGroup
                 onValueChange={field.onChange}
@@ -60,13 +60,13 @@ const AdminForm = () => {
                 className="flex gap-6"
               >
                 <div className="flex items-center gap-2">
-                  <RadioGroupItem id="male" value="M" />
+                  <RadioGroupItem id="male" value="Nam" />
                   <Label htmlFor="male" className="cursor-pointer">
                     Nam
                   </Label>
                 </div>
                 <div className="flex items-center gap-2">
-                  <RadioGroupItem id="female" value="F" />
+                  <RadioGroupItem id="female" value="Nữ" />
                   <Label htmlFor="female" className="cursor-pointer">
                     Nữ
                   </Label>

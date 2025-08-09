@@ -62,7 +62,7 @@ function PatientDetail() {
           patient: {
             benhnhan_id: "1",
             hoTen: "Nguyễn Văn A",
-            gioiTinh: "M",
+            gioiTinh: "Nam",
             email: "a@gmail.com",
             soDienThoai: "0123456789",
             cccd: "123456789012",
