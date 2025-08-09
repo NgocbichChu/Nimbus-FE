@@ -47,7 +47,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
     resolver: yupResolver(schema),
     defaultValues: {
       hoTen: doctor?.hoTen ?? "",
-      gioiTinh: doctor?.gioiTinh ?? "M",
+      gioiTinh: doctor?.gioiTinh ?? "Nam",
       email: doctor?.email ?? "",
       soDienThoai: doctor?.soDienThoai ?? "",
       matKhau: "",
@@ -92,7 +92,6 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
     const fetchChuyenKhoa = async () => {
       try {
         const res = await getChuyenKhoaAdmin()
-        console.log("chuyen khoa", res)
         setDanhSachChuyenKhoa(res.data)
       } catch (error) {
         console.error("Lỗi khi lấy danh sách chuyên khoa:", error)
@@ -134,11 +133,11 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
           render={({ field }) => (
             <RadioGroup value={field.value} onValueChange={field.onChange} className="flex gap-4">
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="M" id="male" />
+                <RadioGroupItem value="Nam" id="male" />
                 <Label htmlFor="male">Nam</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="F" id="female" />
+                <RadioGroupItem value="Nữ" id="female" />
                 <Label htmlFor="female">Nữ</Label>
               </div>
             </RadioGroup>

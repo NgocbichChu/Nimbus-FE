@@ -24,18 +24,16 @@ const ReceptionForm = () => {
                       <div className="grid gap-3">
                         <Label className="min-w-[80px]">Giới tính:</Label>
                         <RadioGroup
-                          // value={state.gioiTinh}
-                          // onValueChange={(value) => setState({ ...state, gioiTinh: value })}
                           className="flex gap-6"
                         >
                           <div className="flex items-center gap-2">
-                            <RadioGroupItem id="male" value="M" />
+                            <RadioGroupItem id="male" value="Nam" />
                             <Label htmlFor="male" className="cursor-pointer">
                               Nam
                             </Label>
                           </div>
                           <div className="flex items-center gap-2">
-                            <RadioGroupItem id="female" value="F" />
+                            <RadioGroupItem id="female" value="Nữ" />
                             <Label htmlFor="female" className="cursor-pointer">
                               Nữ
                             </Label>

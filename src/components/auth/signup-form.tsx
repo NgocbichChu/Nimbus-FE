@@ -66,7 +66,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
     resolver: yupResolver(signUpSchema),
     defaultValues: {
       hoTen: "",
-      gioiTinh: "M",
+      gioiTinh: "Nam",
       email: "",
       soDienThoai: "",
       matKhau: "",
@@ -142,13 +142,13 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
                 className="flex gap-6"
               >
                 <div className="flex items-center gap-2">
-                  <RadioGroupItem id="male" value="M" />
+                  <RadioGroupItem id="male" value="Nam" />
                   <Label htmlFor="male" className="cursor-pointer">
                     Nam
                   </Label>
                 </div>
                 <div className="flex items-center gap-2">
-                  <RadioGroupItem id="female" value="F" />
+                  <RadioGroupItem id="female" value="Nữ" />
                   <Label htmlFor="female" className="cursor-pointer">
                     Nữ
                   </Label>

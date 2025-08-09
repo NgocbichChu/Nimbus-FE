@@ -12,7 +12,7 @@ export type LoginSchemaType = yup.InferType<typeof loginSchema>
 
 export const signUpSchema = yup.object({
   hoTen: yup.string().required("Họ tên không được để trống"),
-  gioiTinh: yup.string().oneOf(["M", "F"]).required("Giới tính là bắt buộc"),
+  gioiTinh: yup.string().oneOf(["Nam", "Nữ"]).required("Giới tính là bắt buộc"),
   email: yup
     .string()
     .email("Email không hợp lệ")
