@@ -119,15 +119,11 @@ const AccountPage = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-1">
                     <Label className="text-base">Giới tính:</Label>
-                    <p>{user.gioiTinh}</p>
+                    {isEditing ? <Input {...register("gioiTinh")} /> : <p>{user.gioiTinh}</p>}
                   </div>
                   <div className="grid grid-cols-2">
                     <Label className="text-base">Email:</Label>
-                    {isEditing ? (
-                      <Input {...register("email")} />
-                    ) : (
-                      <p>{user.email || "------------"}</p>
-                    )}
+                    <p>{user.email || "------------"}</p>
                   </div>
                   {updateMessage && (
                     <p className="text-sm mt-2 text-center text-green-600 dark:text-green-400">
