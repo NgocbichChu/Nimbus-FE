@@ -4,16 +4,16 @@ import { ArrowUpDown } from "lucide-react"
 import type { Doctor } from "../../../components/data-table/type-table"
 import DoctorDialog from "./doctor-dialog"
 import { Badge } from "@/components/ui/badge"
+import { format } from "date-fns"
 
 export const doctorColumns: ColumnDef<Doctor>[] = [
   {
     id: "index",
     header: "STT",
     cell: ({ row, table }) => {
-      const pageIndex = table.getState().pagination.pageIndex
-      const pageSize = table.getState().pagination.pageSize
-      const rowIndex = row.index + 1 + pageIndex * pageSize
-      return <div className="text-center">{rowIndex}</div>
+      const allRows = table.getSortedRowModel().rows
+      const indexInAllRows = allRows.findIndex((r) => r.id === row.id)
+      return <div className="text-center">{indexInAllRows + 1}</div>
     },
     enableSorting: false,
     enableHiding: false,
@@ -71,8 +71,19 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
     accessorKey: "ngayTuyenDung",
     header: "Ngày tuyển dụng",
     cell: ({ row }) => {
-      const date = new Date(row.getValue("ngayTuyenDung"))
-      return <div className="text-right">{date.toLocaleDateString()}</div>
+      const rawDate = row.getValue("ngayTuyenDung") as string | number | Date | null
+
+      if (!rawDate) {
+        return <div className="text-right">-</div>
+      }
+
+      const dateObj = new Date(rawDate)
+      if (isNaN(dateObj.getTime())) {
+        return <div className="text-right">-</div>
+      }
+
+      const formattedDate = format(dateObj, "dd/MM/yyyy")
+      return <div className="text-right">{formattedDate}</div>
     },
   },
   {
