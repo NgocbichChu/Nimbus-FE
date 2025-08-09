@@ -5,7 +5,7 @@ export const loginSchema = yup.object({
   matKhau: yup
     .string()
     .required("Vui lòng nhập mật khẩu")
-    .min(3, "Mật khẩu phải có ít nhất 3 ký tự"),
+    .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
 })
 
 export type LoginSchemaType = yup.InferType<typeof loginSchema>
@@ -23,7 +23,7 @@ export const signUpSchema = yup.object({
     .required("Vui lòng nhập số điện thoại"),
   matKhau: yup
     .string()
-    .min(3, "Mật khẩu tối thiểu 3 ký tự")
+    .min(6, "Mật khẩu tối thiểu 6 ký tự")
     .required("Mật khẩu không được để trống"),
   confirmPassword: yup
     .string()
