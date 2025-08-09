@@ -16,7 +16,7 @@ export type Doctor = {
 export type Patient = {
   benhnhan_id: number
   hoTen: string
-  gioiTinh: "M" | "F" 
+  gioiTinh: "Nam" | "Nữ"
   email: string
   soDienThoai: string
   cccd: string
