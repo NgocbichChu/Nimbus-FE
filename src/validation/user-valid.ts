@@ -19,10 +19,6 @@ export const DoctorSchema = yup.object({
 })
 export type DoctorSchemaType = yup.InferType<typeof DoctorSchema>
 
-// export const DoctorEditSchema = DoctorSchema.shape({
-//   id: yup.number().optional(),
-//   matKhau: yup.string().notRequired(), // không bắt buộc khi edit
-// })
 export const DoctorAddSchema = DoctorSchema.shape({
   matKhau: yup.string().required("Mật khẩu không được để trống"),
 })
