@@ -60,15 +60,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
       trangThaiHoatDong: doctor?.trangThaiHoatDong ?? true,
     },
   })
-  // const onSubmit = async (data: any) => {
-  //   try {
-  //     await dispatch(addDoctor(data)).unwrap()
-  //     dispatch(fetchDoctors())
-  //     onClose?.()
-  //   } catch (error) {
-  //     console.error("Thêm bác sĩ thất bại:", error)
-  //   }
-  // }
+  
   const handleAdd = async (data: any) => {
     try {
       await dispatch(addDoctor(data)).unwrap()
