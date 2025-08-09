@@ -12,7 +12,7 @@ import { decodeAndStoreUserFromToken } from "@/redux/decode"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { loginSchema, type LoginSchemaType } from "@/validation/auth-valid"
-
+import { taoBenhNhan } from "../../api/accountApi"
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
   const [showPassword, setShowPassword] = useState(false)
@@ -47,6 +47,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
             if (roles.includes("ROLE_QUANLY")) {
               navigate("/dashboard")
             } else if (roles.includes("ROLE_BENHNHAN")) {
+              try {
+                await taoBenhNhan()
+              } catch (error) {
+                console.log("Lỗi : ", error)
+              }
               navigate("/")
             }
           }
@@ -76,12 +81,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Email *</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="m@gmail.com"
-            {...register("email")}
-          />
+          <Input id="email" type="email" placeholder="m@gmail.com" {...register("email")} />
           {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
         </div>
         <div className="grid gap-3">
