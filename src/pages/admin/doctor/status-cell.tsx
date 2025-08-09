@@ -7,8 +7,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { Doctor } from "@/components/data-table/type-table"
-import { fetchDoctors, updateDoctor } from "@/api/apiDoctor"
+// import { fetchDoctors, updateDoctor } from "@/api/apiDoctor"
 import { useAppDispatch } from "@/helper" 
+import { updateDoctor } from "@/api/apiDoctor"
 
 type Props = {
   value: Doctor
@@ -26,7 +27,7 @@ export function DoctorStatusCell({ value }: Props) {
       await dispatch(
         updateDoctor(dataWithId)
       ).unwrap()
-      dispatch(fetchDoctors()) // reload lại danh sách
+      // dispatch(fetchDoctors()) // reload lại danh sách
     } catch (error) {
       console.error("Update thất bại:", error)
     }

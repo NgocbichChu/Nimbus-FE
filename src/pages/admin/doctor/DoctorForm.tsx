@@ -60,19 +60,13 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
       trangThaiHoatDong: doctor?.trangThaiHoatDong ?? true,
     },
   })
-  // const onSubmit = async (data: any) => {
-  //   try {
-  //     await dispatch(addDoctor(data)).unwrap()
-  //     dispatch(fetchDoctors())
-  //     onClose?.()
-  //   } catch (error) {
-  //     console.error("Thêm bác sĩ thất bại:", error)
-  //   }
-  // }
+  
   const handleAdd = async (data: any) => {
     try {
       await dispatch(addDoctor(data)).unwrap()
+      // console.log("")
       dispatch(fetchDoctors())
+      console.log("gọi lại danh sách form")
       onClose?.()
     } catch (error) {
       console.error("Thêm bác sĩ thất bại:", error)
@@ -92,14 +86,6 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
     } catch (error) {
       console.log("Update thất bại:", error)
     }
-    // try {
-    //   await dispatch(updateDoctor(data)).unwrap()
-    //   console.log("Lưu thông tin nè:", data)
-    //   dispatch(fetchDoctors())
-    //   onClose?.()
-    // } catch (error) {
-    //   console.log("Update thất bại:", error)
-    // }
   }
 
   useEffect(() => {
@@ -123,7 +109,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         (khoa) => khoa.tenKhoa === doctor.tenKhoa
       )
       if (selectedKhoa) {
-        setValue("tenKhoa", selectedKhoa.chuyenKhoaId.toString())
+        setValue("tenKhoa", selectedKhoa.tenKhoa)
       }
     }
   }, [mode, doctor, danhSachChuyenKhoa, setValue])
@@ -241,7 +227,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
               </SelectTrigger>
               <SelectContent className="w-full min-w-[300px]">
                 {danhSachChuyenKhoa?.map((khoa) => (
-                  <SelectItem key={khoa.chuyenKhoaId} value={khoa.chuyenKhoaId.toString()}>
+                  <SelectItem key={khoa.chuyenKhoaId} value={khoa.tenKhoa}>
                     {khoa.tenKhoa}
                   </SelectItem>
                 ))}
