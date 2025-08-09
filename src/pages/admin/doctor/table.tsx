@@ -89,8 +89,14 @@ export function DataTable<TData, TValue>({
             defaultValue=""
           >
             <option value="">Tất cả khoa</option>
-            {[...new Set(data.map((item: any) => item.tenKhoa))].map((khoa) => (
-              <option key={khoa} value={khoa}>
+            {[
+              ...new Set(
+                (data || [])
+                  .filter((item: any) => item && item.tenKhoa) // chỉ lấy item hợp lệ
+                  .map((item: any) => item.tenKhoa)
+              ),
+            ].map((khoa, index) => (
+              <option key={`${khoa}-${index}`} value={khoa}>
                 {khoa}
               </option>
             ))}
