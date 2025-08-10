@@ -115,7 +115,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
 
   return (
     <form
-      className="grid gap-4"
+      className="grid grid-cols-2 gap-4"
       key={mode}
       onSubmit={mode === "add" ? handleSubmit(handleAdd) : handleSubmit(handleEdit)}
     >
@@ -157,7 +157,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         {errors.soDienThoai && <p className="text-red-500 text-sm">{errors.soDienThoai.message}</p>}
       </div>
 
-      {mode === "add" && (
+      
         <div className="grid gap-2">
           <Label>Mật khẩu *</Label>
           <div className="relative">
@@ -165,6 +165,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
               {...register("matKhau")}
               type={showPassword ? "text" : "password"}
               placeholder="Nhập mật khẩu"
+              disabled={disInput}
             />
             <Button
               type="button"
@@ -178,7 +179,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
           </div>
           {errors.matKhau && <p className="text-red-500 text-sm">{errors.matKhau.message}</p>}
         </div>
-      )}
+      
 
       <div className="grid gap-2">
         <Label>Ngày tuyển *</Label>
@@ -214,7 +215,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         )}
       </div>
 
-      <div className="grid gap-2 w-full max-w-[500px]">
+      <div className="grid gap-2 w-full">
         <Label>Chuyên khoa *</Label>
         <Controller
           control={control}
@@ -255,7 +256,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         <Input {...register("kinhNghiem")} placeholder="Nhập số năm" type="number" />
       </div>
 
-      <div className="grid gap-2">
+    <div className="grid gap-2 h-fit">
         <Label>Trạng thái hoạt động</Label>
         <Controller
           control={control}
@@ -276,7 +277,6 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
       <div className="grid gap-2">
         <Label>Ghi chú</Label>
         <Textarea {...register("ghiChu")} placeholder="Thêm ghi chú..." />
-      </div>
 
       <div className="mt-4 flex justify-end gap-2">
         <Button variant="outline" type="button" onClick={() => onClose?.()}>
@@ -289,6 +289,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
           <Button type="submit">Lưu thông tin</Button>
         )}
       </div>
+        </div>
     </form>
   )
 }
