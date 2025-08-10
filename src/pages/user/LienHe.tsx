@@ -1,54 +1,52 @@
-import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
-import { Loader2 } from 'lucide-react';
-import { sendMail } from '@/api/gmail';
+import React, { useState } from "react"
+import { Mail, Phone, MapPin, Clock, Send } from "lucide-react"
+import { Loader2 } from "lucide-react"
+import { sendMail } from "@/api/gmail"
+import { toastError, toastSuccess } from "@/helper/toast"
 
 const LienHePage = () => {
-  const [submissionMessage, setSubmissionMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  // const [submissionMessage, setSubmissionMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: ''
-  });
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  })
 
   // Handle form input changes
   const handleChange = (e: any) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
+    const { name, value } = e.target
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
-    }));
-  };
+      [name]: value,
+    }))
+  }
 
   // Handle form submission
- const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
 
-  try {
-    await sendMail(formData); // Gửi qua server
-    setSubmissionMessage("Bạn đã gửi tin nhắn thành công.");
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: ''
-    });
-  } catch (e) {
-    setSubmissionMessage("Gửi thất bại. Vui lòng thử lại!");
-    console.log(e);
-  } finally {
-    setIsLoading(false);
-    setTimeout(() => setSubmissionMessage(''), 5000);
+    try {
+      await sendMail(formData) // Gửi qua server
+      toastSuccess("Gửi thành công!")
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      })
+    } catch (e) {
+      toastError("Gửi thất bại. Vui lòng thử lại!")
+      console.log(e)
+    } finally {
+      setIsLoading(false)
+    }
   }
-};
 
-
-  
   return (
     <div className="bg-gray-50 min-h-screen font-sans text-gray-800 p-4 sm:p-8">
       {/* Container with max width and padding for better layout */}
@@ -71,18 +69,16 @@ const LienHePage = () => {
               <MapPin className="text-blue-500" />
               Thông Tin Trực Tiếp
             </h2>
-            
+
             {/* Address */}
             <div className="flex items-start space-x-4">
               <MapPin className="text-blue-500 flex-shrink-0 mt-1" size={24} />
               <div>
                 <p className="font-semibold">Địa chỉ:</p>
-                <p className="text-gray-600">
-                  123 Đường ABC, Quận 1, TP. Hồ Chí Minh
-                </p>
+                <p className="text-gray-600">123 Đường ABC, Quận 1, TP. Hồ Chí Minh</p>
               </div>
             </div>
-            
+
             {/* Phone Number */}
             <div className="flex items-start space-x-4">
               <Phone className="text-blue-500 flex-shrink-0 mt-1" size={24} />
@@ -96,7 +92,7 @@ const LienHePage = () => {
                 </a>
               </div>
             </div>
-            
+
             {/* Email Address */}
             <div className="flex items-start space-x-4">
               <Mail className="text-blue-500 flex-shrink-0 mt-1" size={24} />
@@ -110,7 +106,7 @@ const LienHePage = () => {
                 </a>
               </div>
             </div>
-            
+
             {/* Working Hours */}
             <div className="flex items-start space-x-4">
               <Clock className="text-blue-500 flex-shrink-0 mt-1" size={24} />
@@ -139,9 +135,7 @@ const LienHePage = () => {
             onSubmit={handleSubmit}
             className="bg-white rounded-2xl shadow-xl p-8 space-y-6 animate-slideInRight relative"
           >
-            <h2 className="text-2xl font-bold text-gray-800">
-              Gửi Tin Nhắn Cho Chúng Tôi
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-800">Gửi Tin Nhắn Cho Chúng Tôi</h2>
 
             {/* Form inputs */}
             <input
@@ -192,7 +186,9 @@ const LienHePage = () => {
             <button
               type="submit"
               className={`w-full py-3 px-6 rounded-lg font-bold text-white transition-all duration-300 flex items-center justify-center gap-2
-                ${isLoading? 'bg-blue-400 cursor-not-allowed': 'bg-blue-500 hover:bg-blue-600 hover:shadow-lg'}`}disabled={isLoading}>
+                ${isLoading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 hover:shadow-lg"}`}
+              disabled={isLoading}
+            >
               {isLoading && <Loader2 className="animate-spin" size={20} />}
               {!isLoading ? (
                 <>
@@ -200,18 +196,9 @@ const LienHePage = () => {
                   Gửi tin nhắn
                 </>
               ) : (
-                'Đang gửi...'
+                "Đang gửi..."
               )}
             </button>
-            
-            {/* Custom success message modal */}
-            {submissionMessage && (
-              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10 transition-opacity duration-300 ease-in-out">
-                <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-6 rounded-lg shadow-2xl transform scale-100 opacity-100 transition-transform duration-300 text-center">
-                  <p className="text-xl font-bold">{submissionMessage}</p>
-                </div>
-              </div>
-            )}
           </form>
         </div>
       </div>
@@ -235,7 +222,7 @@ const LienHePage = () => {
         .animate-slideInRight { animation: slideInRight 0.8s ease-out; }
       `}</style>
     </div>
-  );
-};
+  )
+}
 
-export default LienHePage;
+export default LienHePage

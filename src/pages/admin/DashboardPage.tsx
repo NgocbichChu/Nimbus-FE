@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useMemo } from "react"
 import { ChartBarMultiple } from "@/components/chart/chart-dashboard"
 import { SectionCards } from "@/components/section-card/section-card"
