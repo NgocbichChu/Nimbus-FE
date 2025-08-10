@@ -79,10 +79,40 @@ const HomePage = () => {
   return (
     <div className="container mx-auto px-6 py-6">
       {/* Banner */}
-      <div className="bg-gradient-to-r from-sky-500 to-blue-700 text-white rounded-2xl p-8 shadow-md text-center mb-8">
-        <h1 className="text-4xl font-bold mb-2">Phòng Khám Đa Khoa Nimbus</h1>
-        <p className="text-lg font-light">Chăm sóc sức khỏe toàn diện - Nơi gửi trọn niềm tin</p>
+      <div className="relative rounded-2xl overflow-hidden shadow-md mb-8 h-64 sm:h-80 lg:h-96">
+        {/* Background Image + zoom animation */}
+        <div
+          className="absolute inset-0 bg-cover bg-center animate-zoomSlow"
+          style={{
+            backgroundImage:
+              "url('https://hinhdep.khangviet.net/wp-content/uploads/2020/02/Banner-website-ph%C3%B2ng-kh%C3%A1m-website-b%E1%BB%87nh-vi%E1%BB%87n-ng%C3%A0nh-y-t%E1%BA%BF-1-300x130.jpg')",
+          }}
+        ></div>
+
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-sky-600/80 to-blue-800/80"></div>
+
+        {/* Content */}
+        <div className="relative flex flex-col items-center justify-center h-full text-center text-white px-4 max-w-2xl mx-auto">
+          <h1 className="text-4xl lg:text-5xl font-bold mb-4 animate-fadeSlideUp">
+            Phòng Khám Đa Khoa Nimbus
+          </h1>
+          <p className="text-lg font-light mb-6 animate-fadeSlideUp delay-200">
+            Nơi hội tụ đội ngũ y bác sĩ giàu kinh nghiệm, trang thiết bị hiện đại
+            và dịch vụ chăm sóc tận tâm. Chúng tôi cam kết mang đến giải pháp sức
+            khỏe toàn diện cho bạn và gia đình.
+          </p>
+          <Link
+            to={"/dat-lich"}
+            className="bg-yellow-400 hover:bg-yellow-500 text-black px-6 py-2 rounded-full font-semibold shadow-md transition hover:shadow-lg hover:scale-105 animate-fadeSlideUp delay-500"
+          >
+            Đặt lịch ngay
+          </Link>
+        </div>
       </div>
+
+
+
 
       {/* Quick Links */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -194,6 +224,35 @@ const HomePage = () => {
           <li>Nhận email xác nhận và có thể kiểm tra lại trong mục “Lịch khám”</li>
         </ol>
       </section>
+
+      <style>{`
+        @keyframes zoomSlow {
+  0% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeSlideUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-zoomSlow {
+  animation: zoomSlow 8s ease-out forwards;
+}
+
+.animate-fadeSlideUp {
+  animation: fadeSlideUp 0.8s ease-out forwards;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.delay-500 {
+  animation-delay: 0.5s;
+}
+
+      `}</style>
     </div>
   )
 }
