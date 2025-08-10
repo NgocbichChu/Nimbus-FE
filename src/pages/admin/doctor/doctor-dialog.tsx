@@ -30,7 +30,7 @@ const DoctorDialog = ({ mode, doctor }: DoctorDialogProps) => {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="w-[800px] max-w-lg max-h-[90vh] p-6 overflow-auto">
+      <DialogContent className="min-w-[700px] max-w-lg max-h-[90vh] p-6 overflow-auto">
         <DialogHeader>
           <DialogTitle>{mode === "add" ? "Thêm bác sĩ" : "Chỉnh sửa bác sĩ"}</DialogTitle>
         </DialogHeader>

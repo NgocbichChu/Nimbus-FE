@@ -22,7 +22,7 @@ export type Admin = {
     ngaycapnhat: string
 }
 
-export const addAdmin    = createAsyncThunk(
+export const addAdmin  = createAsyncThunk(
     "admin/addAdmin",
     async (accountAdmin: CreateAccountAdmin, { rejectWithValue }) => {
         try {
