@@ -3,16 +3,17 @@ import { Button } from "@/components/ui/button"
 import { ArrowUpDown } from "lucide-react"
 import type { Doctor } from "../../../components/data-table/type-table"
 import DoctorDialog from "./doctor-dialog"
+import { Badge } from "@/components/ui/badge"
+import { format } from "date-fns"
 
 export const doctorColumns: ColumnDef<Doctor>[] = [
   {
     id: "index",
     header: "STT",
     cell: ({ row, table }) => {
-      const pageIndex = table.getState().pagination.pageIndex
-      const pageSize = table.getState().pagination.pageSize
-      const rowIndex = row.index + 1 + pageIndex * pageSize
-      return <div className="text-center">{rowIndex}</div>
+      const allRows = table.getSortedRowModel().rows
+      const indexInAllRows = allRows.findIndex((r) => r.id === row.id)
+      return <div className="text-center">{indexInAllRows + 1}</div>
     },
     enableSorting: false,
     enableHiding: false,
@@ -27,7 +28,7 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
     header: "Giới tính",
     cell: ({ row }) => {
       const value = row.getValue("gioiTinh")
-      const gender = value === "F" ? "Nữ" : value === "M" ? "Nam" : String(value)
+      const gender = value === "Nữ" ? "Nữ" : value === "Nam" ? "Nam" : String(value)
       return <span>{gender}</span>
     },
   },
@@ -70,17 +71,42 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
     accessorKey: "ngayTuyenDung",
     header: "Ngày tuyển dụng",
     cell: ({ row }) => {
-      const date = new Date(row.getValue("ngayTuyenDung"))
-      return <div className="text-right">{date.toLocaleDateString()}</div>
+      const rawDate = row.getValue("ngayTuyenDung") as string | number | Date | null
+
+      if (!rawDate) {
+        return <div className="text-right">-</div>
+      }
+
+      const dateObj = new Date(rawDate)
+      if (isNaN(dateObj.getTime())) {
+        return <div className="text-right">-</div>
+      }
+
+      const formattedDate = format(dateObj, "dd/MM/yyyy")
+      return <div className="text-right">{formattedDate}</div>
     },
   },
   {
     accessorKey: "trangThaiHoatDong",
-    header: "Trạng thái", 
+    header: "Trạng thái",
     cell: ({ row }) => {
-       return <div className="text-right">{row.getValue("trangThaiHoatDong") === true ? 'Hoạt động' : 'Nghỉ'}</div> 
+      const isActive = row.getValue("trangThaiHoatDong") === true
+      return (
+        <div className="text-right">
+          {isActive ? (
+            <Badge className="bg-green-500 text-white hover:bg-green-600">Hoạt động</Badge>
+          ) : (
+            <Badge className="bg-secondary text-black">Nghỉ</Badge>
+          )}
+        </div>
+      )
+    },
+    filterFn: (row, columnId, filterValue) => {
+      if (filterValue === "") return true
+      const value = row.getValue(columnId)
+      return String(value) === filterValue
+    },
   },
-},
   {
     id: "actions",
     header: "...",

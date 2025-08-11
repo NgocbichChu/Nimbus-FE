@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { getDanhSachChuyenKhoa } from "@/api/chuyenKhoaApi"
+import { getChuyenKhoaAdmin } from "@/api/chuyenKhoaApi"
 interface DoctorFormProps {
   doctor?: Doctor
   mode?: "add" | "edit"
@@ -47,11 +47,11 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
     resolver: yupResolver(schema),
     defaultValues: {
       hoTen: doctor?.hoTen ?? "",
-      gioiTinh: doctor?.gioiTinh ?? "M",
+      gioiTinh: doctor?.gioiTinh ?? "Nam",
       email: doctor?.email ?? "",
       soDienThoai: doctor?.soDienThoai ?? "",
       matKhau: "",
-      tenKhoa: doctor?.tenKhoa,
+      tenKhoa: "",
       chungChi: doctor?.chungChi ?? "",
       trinhDo: doctor?.trinhDo ?? "",
       kinhNghiem: doctor?.kinhNghiem ?? 0,
@@ -60,19 +60,13 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
       trangThaiHoatDong: doctor?.trangThaiHoatDong ?? true,
     },
   })
-  // const onSubmit = async (data: any) => {
-  //   try {
-  //     await dispatch(addDoctor(data)).unwrap()
-  //     dispatch(fetchDoctors())
-  //     onClose?.()
-  //   } catch (error) {
-  //     console.error("Thêm bác sĩ thất bại:", error)
-  //   }
-  // }
+  
   const handleAdd = async (data: any) => {
     try {
       await dispatch(addDoctor(data)).unwrap()
+      // console.log("")
       dispatch(fetchDoctors())
+      console.log("gọi lại danh sách form")
       onClose?.()
     } catch (error) {
       console.error("Thêm bác sĩ thất bại:", error)
@@ -92,21 +86,12 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
     } catch (error) {
       console.log("Update thất bại:", error)
     }
-    // try {
-    //   await dispatch(updateDoctor(data)).unwrap()
-    //   console.log("Lưu thông tin nè:", data)
-    //   dispatch(fetchDoctors())
-    //   onClose?.()
-    // } catch (error) {
-    //   console.log("Update thất bại:", error)
-    // }
   }
 
   useEffect(() => {
     const fetchChuyenKhoa = async () => {
       try {
-        const res = await getDanhSachChuyenKhoa()
-        console.log("chuyen khoa", res)
+        const res = await getChuyenKhoaAdmin()
         setDanhSachChuyenKhoa(res.data)
       } catch (error) {
         console.error("Lỗi khi lấy danh sách chuyên khoa:", error)
@@ -117,19 +102,20 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
   }, [])
 
   useEffect(() => {
-    if (mode === "edit" && doctor && danhSachChuyenKhoa.length > 0 && doctor.tenKhoa) {
+    if (mode === "edit" && doctor && danhSachChuyenKhoa.length > 0) {
+      // Find the specialty by name and set the ID
       const selectedKhoa = danhSachChuyenKhoa.find(
         (khoa) => khoa.tenKhoa === doctor.tenKhoa
       )
       if (selectedKhoa) {
-        setValue("tenKhoa", selectedKhoa.chuyenKhoaId.toString())
+        setValue("tenKhoa", selectedKhoa.tenKhoa)
       }
     }
   }, [mode, doctor, danhSachChuyenKhoa, setValue])
 
   return (
     <form
-      className="grid gap-4"
+      className="grid grid-cols-2 gap-4"
       key={mode}
       onSubmit={mode === "add" ? handleSubmit(handleAdd) : handleSubmit(handleEdit)}
     >
@@ -147,11 +133,11 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
           render={({ field }) => (
             <RadioGroup value={field.value} onValueChange={field.onChange} className="flex gap-4">
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="M" id="male" />
+                <RadioGroupItem value="Nam" id="male" />
                 <Label htmlFor="male">Nam</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="F" id="female" />
+                <RadioGroupItem value="Nữ" id="female" />
                 <Label htmlFor="female">Nữ</Label>
               </div>
             </RadioGroup>
@@ -171,7 +157,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         {errors.soDienThoai && <p className="text-red-500 text-sm">{errors.soDienThoai.message}</p>}
       </div>
 
-      {mode === "add" && (
+      
         <div className="grid gap-2">
           <Label>Mật khẩu *</Label>
           <div className="relative">
@@ -179,6 +165,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
               {...register("matKhau")}
               type={showPassword ? "text" : "password"}
               placeholder="Nhập mật khẩu"
+              disabled={disInput}
             />
             <Button
               type="button"
@@ -192,7 +179,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
           </div>
           {errors.matKhau && <p className="text-red-500 text-sm">{errors.matKhau.message}</p>}
         </div>
-      )}
+      
 
       <div className="grid gap-2">
         <Label>Ngày tuyển *</Label>
@@ -228,7 +215,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         )}
       </div>
 
-      <div className="grid gap-2 w-full max-w-[500px]">
+      <div className="grid gap-2 w-full">
         <Label>Chuyên khoa *</Label>
         <Controller
           control={control}
@@ -240,7 +227,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
               </SelectTrigger>
               <SelectContent className="w-full min-w-[300px]">
                 {danhSachChuyenKhoa?.map((khoa) => (
-                  <SelectItem key={khoa.chuyenKhoaId} value={khoa.chuyenKhoaId.toString()}>
+                  <SelectItem key={khoa.chuyenKhoaId} value={khoa.tenKhoa}>
                     {khoa.tenKhoa}
                   </SelectItem>
                 ))}
@@ -269,7 +256,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         <Input {...register("kinhNghiem")} placeholder="Nhập số năm" type="number" />
       </div>
 
-      <div className="grid gap-2">
+    <div className="grid gap-2 h-fit">
         <Label>Trạng thái hoạt động</Label>
         <Controller
           control={control}
@@ -290,7 +277,6 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
       <div className="grid gap-2">
         <Label>Ghi chú</Label>
         <Textarea {...register("ghiChu")} placeholder="Thêm ghi chú..." />
-      </div>
 
       <div className="mt-4 flex justify-end gap-2">
         <Button variant="outline" type="button" onClick={() => onClose?.()}>
@@ -303,6 +289,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
           <Button type="submit">Lưu thông tin</Button>
         )}
       </div>
+        </div>
     </form>
   )
 }

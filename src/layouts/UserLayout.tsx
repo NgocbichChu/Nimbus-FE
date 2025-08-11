@@ -1,5 +1,4 @@
 import { Link, Outlet, useNavigate } from "react-router-dom"
-import { Logo } from "../components/navbar/logo"
 import { NavMenu } from "../components/navbar/nav-menu"
 import { NavigationSheet } from "../components/navbar/navigation-sheet"
 import { ModeToggle } from "../components/theme/mode-toggle"
@@ -9,6 +8,7 @@ import { logoutUser } from "@/api/authApi"
 import { logout } from "@/redux"
 import { NavUser } from "@/components/sidebar/nav-user"
 import Footer from "../components/footer/footer"
+import Logo from "@/components/navbar/logo"
 
 const UserLayout = () => {
   const navigate = useNavigate()

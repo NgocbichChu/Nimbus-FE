@@ -2,7 +2,7 @@ import * as yup from "yup"
 
 export const DoctorSchema = yup.object({
   hoTen: yup.string().required("Họ tên không được để trống"),
-  gioiTinh: yup.string().oneOf(["M", "F"], "Giới tính không hợp lệ"),
+  gioiTinh: yup.string().oneOf(["Nam", "Nữ"], "Giới tính không hợp lệ"),
   email: yup.string().email("Email không hợp lệ").required("Email không được để trống"),
   soDienThoai: yup
     .string()

@@ -44,7 +44,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="border-b min-h-14">
         <div className="flex items-center gap-2 mt-1">
-          <img src="./src/assets/logoNimbus.svg" alt="logo" className="size-8" />
+          <img src="./public/logoNimbus.svg" alt="logo" className="size-8.5" />
           <span className="font-semibold group-data-[collapsible=icon]:hidden">Nimbus</span>
         </div>
       </SidebarHeader>

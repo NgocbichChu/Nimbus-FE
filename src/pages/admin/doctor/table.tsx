@@ -42,7 +42,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   filterColumn,
-  filterPlaceholder = "Filter...",
+  filterPlaceholder = "Tìm theo tên bác sĩ...",
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -70,7 +70,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full overflow-auto">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 ps-1">
         {filterColumn && (
           <Input
             placeholder={filterPlaceholder}
@@ -81,9 +81,43 @@ export function DataTable<TData, TValue>({
             className="max-w-sm"
           />
         )}
-       <div className="ps-4">
-         <DoctorDialog mode="add"/>
-       </div>
+        {/* Filter by Khoa */}
+        {table.getColumn("tenKhoa") && (
+          <select
+            onChange={(e) => table.getColumn("tenKhoa")?.setFilterValue(e.target.value)}
+            className="ml-4 h-9 px-3 rounded-md border text-sm"
+            defaultValue=""
+          >
+            <option value="">Tất cả khoa</option>
+            {[
+              ...new Set(
+                (data || [])
+                  .filter((item: any) => item && item.tenKhoa) // chỉ lấy item hợp lệ
+                  .map((item: any) => item.tenKhoa)
+              ),
+            ].map((khoa, index) => (
+              <option key={`${khoa}-${index}`} value={khoa}>
+                {khoa}
+              </option>
+            ))}
+          </select>
+        )}
+
+        {/* Filter by Trạng thái hoạt động */}
+        {table.getColumn("trangThaiHoatDong") && (
+          <select
+            onChange={(e) => table.getColumn("trangThaiHoatDong")?.setFilterValue(e.target.value)}
+            className="ml-4 h-9 px-3 rounded-md border text-sm"
+            defaultValue=""
+          >
+            <option value="">Tất cả trạng thái</option>
+            <option value="true">Hoạt động</option>
+            <option value="false">Nghỉ</option>
+          </select>
+        )}
+        <div className="ps-4">
+          <DoctorDialog mode="add" />
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

@@ -56,9 +56,9 @@ export const addDoctor = createAsyncThunk(
   "doctors/addDoctor",
   async (doctorData: CreateDoctorRequest, { rejectWithValue }) => {
     try {
-      const response = await post<Doctor>("/bac-si/TaoMoiBacSi", doctorData)
+      const response = await post<any>("/bac-si/TaoMoiBacSi", doctorData)
       toastSuccess("Thêm bác sĩ thành công!")
-      return response
+      return response.data
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "Lỗi khi thêm bác sĩ"
       toastError(errorMessage)
@@ -71,7 +71,6 @@ export const addDoctor = createAsyncThunk(
 export const updateDoctor = createAsyncThunk(
   "doctors/updateDoctor",
   async ({ id, ...updateData }: UpdateDoctorRequest, { rejectWithValue }) => {
-    console.log("id",id);
     try {
       const response = await put<Doctor>(`/bac-si/CapNhatBacSi/${id}`, updateData)
       toastSuccess("Cập nhật bác sĩ thành công!")
