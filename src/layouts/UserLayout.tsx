@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate } from "react-router-dom"
-import { Logo } from "../components/navbar/logo"
+import Logo  from "../components/navbar/logo"
 import { NavMenu } from "../components/navbar/nav-menu"
 import { NavigationSheet } from "../components/navbar/navigation-sheet"
 import { ModeToggle } from "../components/theme/mode-toggle"
