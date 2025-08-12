@@ -41,7 +41,7 @@ export function DataTableUser<TData, TValue>({
   columns,
   data,
   filterColumn,
-  filterPlaceholder = "Filter...",
+  filterPlaceholder = "Tìm kiếm theo tên bệnh nhân...",
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -70,7 +70,7 @@ export function DataTableUser<TData, TValue>({
 
   return (
     <div className="w-full overflow-auto">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 ps-1">
         {filterColumn && (
           <Input
             placeholder={filterPlaceholder}

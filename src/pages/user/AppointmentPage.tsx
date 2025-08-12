@@ -337,330 +337,430 @@ const AppointmentPage = () => {
   const selectDoctor = listChuyenGia.find((opt) => String(opt.bacSiId) === doctor)
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl ">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-20 items-start ">
-        <div className="flex flex-col gap-5 w-full">
-          <div className="font-bold text-center text-xl mb-5 mt-3">Đặt lịch khám</div>
-          <div className="flex flex-col gap-2 w-full max-w-md ">
-            <Label className="font-bold">1. Loại hình khám</Label>
-            <Select value={serviceType} onValueChange={setServiceType}>
-              <SelectTrigger className="w-full border rounded-md px-3 py-2 bg-white">
-                <div className="flex w-full justify-between items-center">
-                  {selectedService ? (
-                    <>
-                      <span>{selectedService.tenLoai}</span>
-                      <span className="text-sm text-gray-500">{selectedService.gia} VND</span>
-                    </>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </SelectTrigger>
+    <> <div className="w-full px-4 md:px-8 py-8 ">
+      <h1 className="text-2xl md:text-3xl font-bold text-center text-blue-600 animate-fade-in">
+        ĐĂNG KÝ KHÁM BỆNH
+      </h1>
+      <div className="h-1 bg-gray-400 mx-auto my-3 rounded animate-line-grow" style={{ width: "80px" }}></div>
+      <p className="text-center text-gray-700 mb-6 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+        Quý khách hàng có nhu cầu đặt hẹn khám tại{" "}
+        <span className="font-semibold">Hệ thống Bệnh viện Đa khoa Nimbus</span>,
+        xin vui lòng thực hiện theo hướng dẫn:
+      </p>
+      <ul className="space-y-3 max-w-3xl mx-auto">
+        <li className="flex items-start gap-2 text-gray-800 animate-slide-in" style={{ animationDelay: "0.4s" }}>
+          <span className="mt-1 text-blue-500">•</span>
+          <span> Đặt hẹn bằng cách gọi tổng đài Chăm sóc khách hàng tại số{" "}
+            <span className="font-semibold text-blue-600"> 091-234-5678 – 098-765-4321 </span>{" "}
+            (Bệnh viện Đa khoa Nimbus) hoặc{" "}
+            <span className="font-semibold text-blue-600">
+              098-765-4321 – 091-234-5678
+            </span>{" "}
+            (Bệnh viện Đa khoa Nimbus)
+          </span>
+        </li>
+        <li className="flex items-start gap-2 text-gray-800 animate-slide-in" style={{ animationDelay: "0.55s" }}>
+          <span className="mt-1 text-blue-500">•</span>
+          <span>
+            Đặt hẹn trực tuyến bằng cách điền thông tin vào mẫu bên dưới.
+          </span>
+        </li>
+        <li className="flex items-start gap-2 text-gray-800 animate-slide-in" style={{ animationDelay: "0.7s" }}>
+          <span className="mt-1 text-blue-500">•</span>
+          <span>
+            Xin lưu ý, trong các trường hợp khẩn cấp, quý khách vui lòng đến ngay
+            cơ sở y tế gần nhất hoặc đến trực tiếp Hệ thống bệnh viện Đa khoa Nimbus.
+          </span>
+        </li>
+      </ul>
+    </div>
+      <div className="container mx-auto px-4 py-8 max-w-4xl ">
+       
 
-              <SelectContent>
-                <SelectGroup>
-                  {listDichVu.map((option) => (
-                    <SelectItem key={option.tenLoai} value={option.tenLoai}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-20 items-start ">
+          <div className="flex flex-col gap-5 w-full">
+            <div className="font-bold text-center text-xl mb-5 mt-3">Đặt lịch khám</div>
+            <div className="flex flex-col gap-2 w-full max-w-md ">
+              <Label className="font-bold">1. Loại hình khám</Label>
+              <Select value={serviceType} onValueChange={setServiceType}>
+                <SelectTrigger className="w-full border rounded-md px-3 py-2 bg-white">
+                  <div className="flex w-full justify-between items-center">
+                    {selectedService ? (
                       <>
-                        <span className="flex-1">{option.tenLoai}</span>
-                        <span className="text-sm text-muted-foreground">{option.gia} VND</span>
+                        <span>{selectedService.tenLoai}</span>
+                        <span className="text-sm text-gray-500">{selectedService.gia} VND</span>
                       </>
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                </SelectTrigger>
 
-            {errors.serviceType && (
-              <span className="text-sm text-red-500">{errors.serviceType.message}</span>
-            )}
-          </div>
+                <SelectContent>
+                  <SelectGroup>
+                    {listDichVu.map((option) => (
+                      <SelectItem key={option.tenLoai} value={option.tenLoai}>
+                        <>
+                          <span className="flex-1">{option.tenLoai}</span>
+                          <span className="text-sm text-muted-foreground">{option.gia} VND</span>
+                        </>
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
 
-          <div className="flex flex-col gap-2 w-full max-w-md">
-            <Label className="font-bold">2. Chuyên khoa</Label>
-            <Popover open={openSpecialty} onOpenChange={setOpenSpecialty}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={openSpecialty}
-                  className="w-full flex justify-between items-center"
-                >
-                  <span className={cn("truncate", !specialty && "text-muted-foreground")}>
-                    {specialty
-                      ? listChuyenKhoa.find((item) => item.chuyenKhoaId === specialty)?.tenKhoa
-                      : ""}
-                  </span>
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
-                <Command>
-                  <CommandInput placeholder="Tìm chuyên khoa..." />
-                  <CommandList>
-                    <CommandEmpty>Không tìm thấy chuyên khoa.</CommandEmpty>
-                    <CommandGroup>
-                      {listChuyenKhoa.map((item) => (
-                        <CommandItem
-                          key={item.chuyenKhoaId}
-                          value={item.tenKhoa.toString()}
-                          onSelect={() => {
-                            setSpecialty(item.chuyenKhoaId)
-                            setOpenSpecialty(false)
-                          }}
-                        >
-                          {item.tenKhoa}
-                          <Check
-                            className={cn(
-                              "ml-auto h-4 w-4",
-                              specialty === item.tenKhoa ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-            {errors.specialty && (
-              <span className="text-sm text-red-500">{errors.specialty.message}</span>
-            )}
-          </div>
+              {errors.serviceType && (
+                <span className="text-sm text-red-500">{errors.serviceType.message}</span>
+              )}
+            </div>
 
-          <div className="flex flex-col gap-2 w-full max-w-md">
-            <Label className="font-bold">3. Bác sĩ khám</Label>
-            <Popover open={openDoctor} onOpenChange={setOpenDoctor}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={openDoctor}
-                  disabled={!specialty}
-                  className={cn(
-                    "w-full flex justify-between items-center",
-                    errors?.doctor && "border-red-500 focus:ring-red-500"
-                  )}
-                >
-                  <span className={cn("truncate", !doctor && "text-muted-foreground")}>
-                    {doctor
-                      ? `${listChuyenGia.find((item) => String(item.bacSiId) === doctor)?.trinhDo} - ${listChuyenGia.find((item) => String(item.bacSiId) === doctor)?.hoTen}`
-                      : ""}
-                  </span>
-
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[var(--radix-popover-trigger-width)] max-h-[200px] p-0">
-                <Command>
-                  <CommandInput placeholder="Tìm bác sĩ..." />
-                  <CommandList>
-                    <CommandEmpty>Không tìm thấy bác sĩ.</CommandEmpty>
-                    <CommandGroup>
-                      {listChuyenGia.map((item) => (
-                        <CommandItem
-                          key={item.bacSiId}
-                          value={String(item.bacSiId)}
-                          onSelect={() => {
-                            setDoctor(String(item.bacSiId))
-                            setOpenDoctor(false)
-                          }}
-                        >
-                          {item.trinhDo} - {item.hoTen}
-                          <Check
-                            className={cn(
-                              "ml-auto h-4 w-4",
-                              doctor === String(item.bacSiId) ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-            {errors?.doctor && (
-              <span className="text-sm text-red-500">{errors.doctor.message}</span>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-2 w-full max-w-md">
-            <Label className="font-bold">4. Ngày khám</Label>
-            <div className="relative flex gap-2">
-              <Input
-                id="date"
-                value={value}
-                className={`w-full bg-background pr-10 dark:border-white ${errors.selectedDate ? inputErrorClass : ""}`}
-                readOnly
-              />
-              <Popover open={open} onOpenChange={setOpen}>
+            <div className="flex flex-col gap-2 w-full max-w-md">
+              <Label className="font-bold">2. Chuyên khoa</Label>
+              <Popover open={openSpecialty} onOpenChange={setOpenSpecialty}>
                 <PopoverTrigger asChild>
                   <Button
-                    id="date-picker"
-                    variant="ghost"
-                    className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
-                    disabled={!doctor}
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={openSpecialty}
+                    className="w-full flex justify-between items-center"
                   >
-                    <CalendarIcon className="size-3.5" />
+                    <span className={cn("truncate", !specialty && "text-muted-foreground")}>
+                      {specialty
+                        ? listChuyenKhoa.find((item) => item.chuyenKhoaId === specialty)?.tenKhoa
+                        : ""}
+                    </span>
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto overflow-hidden p-0" align="end">
-                  <Calendar
-                    locale={vi}
-                    mode="single"
-                    selected={date}
-                    captionLayout="dropdown"
-                    month={month}
-                    fromYear={2025}
-                    toYear={2027}
-                    onMonthChange={setMonth}
-                    onSelect={(date: any) => {
-                      setDate(date)
-                      setValue(formatDate(date))
-                      setOpen(false)
-                    }}
-                    disabled={(date: Date) => {
-                      const today = dayjs().startOf("day")
-                      const selected = dayjs(date).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
-                      return dayjs(date).isBefore(today) || !ngayLamViec.includes(selected)
-                    }}
-                  />
+                <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+                  <Command>
+                    <CommandInput placeholder="Tìm chuyên khoa..." />
+                    <CommandList>
+                      <CommandEmpty>Không tìm thấy chuyên khoa.</CommandEmpty>
+                      <CommandGroup>
+                        {listChuyenKhoa.map((item) => (
+                          <CommandItem
+                            key={item.chuyenKhoaId}
+                            value={item.tenKhoa.toString()}
+                            onSelect={() => {
+                              setSpecialty(item.chuyenKhoaId)
+                              setOpenSpecialty(false)
+                            }}
+                          >
+                            {item.tenKhoa}
+                            <Check
+                              className={cn(
+                                "ml-auto h-4 w-4",
+                                specialty === item.tenKhoa ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
                 </PopoverContent>
               </Popover>
+              {errors.specialty && (
+                <span className="text-sm text-red-500">{errors.specialty.message}</span>
+              )}
             </div>
-            {errors.selectedDate && (
-              <span className="text-sm text-red-500">{errors.selectedDate.message}</span>
-            )}
-          </div>
 
-          <div className="flex flex-col gap-2 w-full max-w-md">
-            <Label className="font-bold">5. Thời gian khám</Label>
-            <div
-              className={`grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 border rounded-xl dark:bg-zinc-800 shadow-sm ${
-                errors.selectedTime ? "border-red-500 " : "border-gray-200"
-              } bg-white `}
-            >
-              {availableTimes.map((time) => (
-                <Button
-                  key={time.label}
-                  variant={selectedTime?.label === time.label ? "default" : "outline"}
-                  onClick={() => setSelectedTime(time)}
-                  className={`w-full p-2 rounded-lg text-sm transition-colors ${
-                    selectedTime?.label === time.label
+            <div className="flex flex-col gap-2 w-full max-w-md">
+              <Label className="font-bold">3. Bác sĩ khám</Label>
+              <Popover open={openDoctor} onOpenChange={setOpenDoctor}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={openDoctor}
+                    disabled={!specialty}
+                    className={cn(
+                      "w-full flex justify-between items-center",
+                      errors?.doctor && "border-red-500 focus:ring-red-500"
+                    )}
+                  >
+                    <span className={cn("truncate", !doctor && "text-muted-foreground")}>
+                      {doctor
+                        ? `${listChuyenGia.find((item) => String(item.bacSiId) === doctor)?.trinhDo} - ${listChuyenGia.find((item) => String(item.bacSiId) === doctor)?.hoTen}`
+                        : ""}
+                    </span>
+
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[var(--radix-popover-trigger-width)] max-h-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Tìm bác sĩ..." />
+                    <CommandList>
+                      <CommandEmpty>Không tìm thấy bác sĩ.</CommandEmpty>
+                      <CommandGroup>
+                        {listChuyenGia.map((item) => (
+                          <CommandItem
+                            key={item.bacSiId}
+                            value={String(item.bacSiId)}
+                            onSelect={() => {
+                              setDoctor(String(item.bacSiId))
+                              setOpenDoctor(false)
+                            }}
+                          >
+                            {item.trinhDo} - {item.hoTen}
+                            <Check
+                              className={cn(
+                                "ml-auto h-4 w-4",
+                                doctor === String(item.bacSiId) ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {errors?.doctor && (
+                <span className="text-sm text-red-500">{errors.doctor.message}</span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2 w-full max-w-md">
+              <Label className="font-bold">4. Ngày khám</Label>
+              <div className="relative flex gap-2">
+                <Input
+                  id="date"
+                  value={value}
+                  className={`w-full bg-background pr-10 dark:border-white ${errors.selectedDate ? inputErrorClass : ""}`}
+                  readOnly
+                />
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="date-picker"
+                      variant="ghost"
+                      className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
+                      disabled={!doctor}
+                    >
+                      <CalendarIcon className="size-3.5" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto overflow-hidden p-0" align="end">
+                    <Calendar
+                      locale={vi}
+                      mode="single"
+                      selected={date}
+                      captionLayout="dropdown"
+                      month={month}
+                      fromYear={2025}
+                      toYear={2027}
+                      onMonthChange={setMonth}
+                      onSelect={(date: any) => {
+                        setDate(date)
+                        setValue(formatDate(date))
+                        setOpen(false)
+                      }}
+                      disabled={(date: Date) => {
+                        const today = dayjs().startOf("day")
+                        const selected = dayjs(date).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
+                        return dayjs(date).isBefore(today) || !ngayLamViec.includes(selected)
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              {errors.selectedDate && (
+                <span className="text-sm text-red-500">{errors.selectedDate.message}</span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2 w-full max-w-md">
+              <Label className="font-bold">5. Thời gian khám</Label>
+              <div
+                className={`grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 border rounded-xl dark:bg-zinc-800 shadow-sm ${errors.selectedTime ? "border-red-500 " : "border-gray-200"
+                  } bg-white `}
+              >
+                {availableTimes.map((time) => (
+                  <Button
+                    key={time.label}
+                    variant={selectedTime?.label === time.label ? "default" : "outline"}
+                    onClick={() => setSelectedTime(time)}
+                    className={`w-full p-2 rounded-lg text-sm transition-colors ${selectedTime?.label === time.label
                       ? "bg-primary text-white"
                       : "bg-white hover:bg-gray-100"
-                  }`}
-                >
-                  {time.label}
-                </Button>
-              ))}
-            </div>
-            {errors.selectedTime && (
-              <span className="text-sm text-red-500">{errors.selectedTime.message}</span>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-2 w-full max-w-md ">
-            <Label className="font-bold">6. Ghi chú bệnh</Label>
-            <Textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              className="w-full dark:border-white bg-white"
-            />
-            {errors.note && <span className="text-sm text-red-500">{errors.note.message}</span>}
-          </div>
-
-          {showPaymentMethod && (
-            <div className="w-full max-w-md mb-5">
-              <Label className="block text-base font-medium mb-2 ml-1">
-                7. Phương thức thanh toán
-              </Label>
-              <div className="grid grid-cols-2 gap-4">
-                {paymentOptions.map((option) => (
-                  <Button
-                    key={option.value}
-                    variant={paymentMethod === option.value ? "default" : "outline"}
-                    onClick={() => setPaymentMethod(option.value)}
-                    className={`w-full dark:border-white py-2 rounded-lg text-sm transition-colors ${
-                      paymentMethod === option.value
-                        ? "bg-primary text-white"
-                        : "bg-white hover:bg-gray-100"
-                    }`}
+                      }`}
                   >
-                    {option.label}
+                    {time.label}
                   </Button>
                 ))}
               </div>
+              {errors.selectedTime && (
+                <span className="text-sm text-red-500">{errors.selectedTime.message}</span>
+              )}
             </div>
-          )}
-        </div>
 
-        <Card className="w-full max-w-md p-5 dark:border-white ">
-          <CardHeader>
-            <div className="font-bold text-center text-xl mt-3 dark:bg-zinc-800 ">
-              Thông tin lịch khám
+            <div className="flex flex-col gap-2 w-full max-w-md ">
+              <Label className="font-bold">6. Ghi chú bệnh</Label>
+              <Textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                className="w-full dark:border-white bg-white"
+              />
+              {errors.note && <span className="text-sm text-red-500">{errors.note.message}</span>}
             </div>
-          </CardHeader>
-          <div className="w-full h-[1px] bg-gray-300 dark:bg-white/30 " />
-          <CardTitle>
-            <p className=" text-center font-bold">Tên bệnh nhân : {user.name}</p>
-          </CardTitle>
-          <CardContent className="flex flex-col gap-1 px-0">
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between gap-4">
-                <span className="font-bold">Loại dịch vụ:</span>
-                <span>{selectedService?.tenLoai}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="font-bold">Chuyên khoa:</span>
-                <span>{selectedSpecialty?.tenKhoa}</span>
-              </div>
-              <div className="flex justify-between gap-4 items-start">
-                <span className="font-bold whitespace-nowrap">Bác sĩ khám:</span>
-                <span className="text-right break-words max-w-[60%]">
-                  {selectDoctor?.hoTen ? `${selectDoctor.trinhDo} - ${selectDoctor.hoTen}` : ""}
-                </span>
-              </div>
 
-              <div className="flex justify-between gap-4">
-                <span className="font-bold">Ngày khám:</span>
-                <span>{formatDate(date)}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="font-bold">Giờ khám:</span>
-                <span>{selectedTime?.label}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="font-bold">Ghi chú:</span>
-                <span className="max-w-[60%] text-right break-words">{note}</span>
-              </div>
-            </div>
-          </CardContent>
-          <div className="w-full h-[1px] bg-gray-300 dark:bg-white/30 " />
-          <CardFooter className="flex flex-col gap-4 items-start justify-start px-0">
             {showPaymentMethod && (
-              <div className="flex flex-col gap-2">
-                <p>
-                  <span className="font-bold">Tổng tiền : {selectedService?.gia} VNĐ</span> {}
-                </p>
-                <p>
-                  <span className="font-bold">Phương thức thanh toán :</span>{" "}
-                  {selectedPayment?.label}
-                </p>
+              <div className="w-full max-w-md mb-5">
+                <Label className="block text-base font-medium mb-2 ml-1">
+                  7. Phương thức thanh toán
+                </Label>
+                <div className="grid grid-cols-2 gap-4">
+                  {paymentOptions.map((option) => (
+                    <Button
+                      key={option.value}
+                      variant={paymentMethod === option.value ? "default" : "outline"}
+                      onClick={() => setPaymentMethod(option.value)}
+                      className={`w-full dark:border-white py-2 rounded-lg text-sm transition-colors ${paymentMethod === option.value
+                        ? "bg-primary text-white"
+                        : "bg-white hover:bg-gray-100"
+                        }`}
+                    >
+                      {option.label}
+                    </Button>
+                  ))}
+                </div>
               </div>
             )}
-            <Button
-              className="h-11 w-full max-w-md text-base"
-              onClick={onSubmit}
-              disabled={isSubmitting}
-            >
-              {showPaymentMethod ? "Xác nhận đặt lịch" : "Đặt lịch khám"}
-            </Button>
-          </CardFooter>
-        </Card>
+          </div>
+
+          <Card
+            className="w-full max-w-md p-6 rounded-2xl shadow-lg bg-white dark:bg-zinc-900 dark:border-white/20 animate-fadeIn"
+          >
+            <CardHeader>
+              <h2 className="font-bold text-center text-2xl  text-blue-600 dark:text-blue-400">
+                Thông tin lịch khám
+              </h2>
+              <p className="text-center text-gray-500 dark:text-gray-400 text-sm">
+                Vui lòng kiểm tra thông tin trước khi xác nhận
+              </p>
+            </CardHeader>
+
+            <div className="w-full h-[1px] bg-gray-300 dark:bg-white/20 " />
+
+            <CardTitle>
+              <p className="text-center font-bold text-lg text-gray-800 dark:text-gray-200">
+                Bệnh nhân: {user.name}
+              </p>
+            </CardTitle>
+
+            <CardContent className="flex flex-col gap-3 px-0 py-4">
+              {(
+                [
+                  { label: "Loại dịch vụ", value: selectedService?.tenLoai },
+                  { label: "Chuyên khoa", value: selectedSpecialty?.tenKhoa },
+                  {
+                    label: "Bác sĩ khám",
+                    value: selectDoctor?.hoTen
+                      ? `${selectDoctor.trinhDo} - ${selectDoctor.hoTen}`
+                      : undefined,
+                  },
+                  { label: "Ngày khám", value: formatDate(date) },
+                  { label: "Giờ khám", value: selectedTime?.label },
+                  { label: "Ghi chú", value: note },
+                ] as { label: string; value: any }[]
+              )
+                .filter(Boolean)
+                .map((item, idx) => (
+                  <div key={idx} className="flex gap-2">
+                    <span className="font-semibold">{item.label}:</span>
+                    <span>{item.value || "—"}</span>
+                  </div>
+                ))
+
+              }
+            </CardContent>
+
+            <div className="w-full h-[1px] bg-gray-300 dark:bg-white/20 my-2" />
+
+            <CardFooter className="flex flex-col gap-4 px-0">
+              {showPaymentMethod && (
+                <div className="flex flex-col gap-1 text-gray-800 dark:text-gray-200">
+                  <p className="font-bold text-lg">
+                    Tổng tiền:{" "}
+                    <span className="text-green-600 dark:text-green-400">
+                      {selectedService?.gia} VNĐ
+                    </span>
+                  </p>
+                  <p>
+                    <span className="font-bold">Phương thức thanh toán: </span>
+                    {selectedPayment?.label}
+                  </p>
+                </div>
+              )}
+              <Button
+                className="h-11 w-full text-base rounded-xl transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                onClick={onSubmit}
+                disabled={isSubmitting}
+              >
+                {showPaymentMethod ? "Xác nhận đặt lịch" : "Đặt lịch khám"}
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+        <style>
+          {`  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes lineGrow {
+    from {
+      width: 0;
+    }
+    to {
+      width: 80px;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease forwards;
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.5s ease forwards;
+  }
+
+  .animate-line-grow {
+    animation: lineGrow 0.5s ease forwards;
+  }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.5s ease-out;
+    }
+  `}
+        </style>
       </div>
-    </div>
+    </>
+    
   )
 }
 

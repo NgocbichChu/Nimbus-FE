@@ -2,8 +2,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Icon } from "@iconify/react"
 import { Link } from "react-router-dom"
 import CountUp from "react-countup"
+import { useEffect, useRef, useState } from "react"
 
 const HomePage = () => {
+  const [statsVisible, setStatsVisible] = useState(false)
+  const statsRef = useRef(null)
+
   const itemsBanner = [
     {
       title: "Chuyên gia",
@@ -31,17 +35,17 @@ const HomePage = () => {
     {
       title: "Chuyên gia",
       icon: <Icon icon="mdi:doctor" width="28" height="28" />,
-      quantity: 5,
+      quantity: 30,
     },
     {
       title: "Chuyên khoa",
       icon: <Icon icon="mdi:hospital-building" width="28" height="28" />,
-      quantity: 10,
+      quantity: 15,
     },
     {
       title: "Năm kinh nghiệm",
       icon: <Icon icon="uil:calender" width="28" height="28" />,
-      quantity: 15,
+      quantity: 10,
     },
     {
       title: "Khoa - phòng",
@@ -76,6 +80,23 @@ const HomePage = () => {
       icon: <Icon icon="mdi:microscope" width="28" height="28" />,
     },
   ]
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setStatsVisible(true)
+          observer.disconnect() // Chạy 1 lần rồi ngắt
+        }
+      },
+      { threshold: 0.3 }
+    )
+    if (statsRef.current) {
+      observer.observe(statsRef.current)
+    }
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <div className="container mx-auto px-6 py-6">
       {/* Banner */}
@@ -94,26 +115,27 @@ const HomePage = () => {
 
         {/* Content */}
         <div className="relative flex flex-col items-center justify-center h-full text-center text-white px-4 max-w-2xl mx-auto">
-          <h1 className="text-4xl lg:text-5xl font-bold mb-4 animate-fadeSlideUp">
+          <h1 className="text-3xl lg:text-4xl font-bold mb-4 animate-fadeSlideUp">
             Phòng Khám Đa Khoa Nimbus
           </h1>
-          <p className="text-lg font-light mb-6 animate-fadeSlideUp delay-200">
-            Nơi hội tụ đội ngũ y bác sĩ giàu kinh nghiệm, trang thiết bị hiện đại
-            và dịch vụ chăm sóc tận tâm. Chúng tôi cam kết mang đến giải pháp sức
-            khỏe toàn diện cho bạn và gia đình.
+          <p className="text-md font-light mb-6 animate-fadeSlideUp delay-200">
+            Nơi hội tụ đội ngũ y bác sĩ giàu kinh nghiệm, trang thiết bị hiện đại và dịch vụ chăm
+            sóc tận tâm. Chúng tôi cam kết mang đến giải pháp sức khỏe toàn diện cho bạn và gia
+            đình.
           </p>
           <Link
-            to={"/dat-lich"}
-            className="bg-yellow-400 hover:bg-yellow-500 text-black px-6 py-2 rounded-full font-semibold shadow-md transition hover:shadow-lg hover:scale-105 animate-fadeSlideUp delay-500"
+            to="/dat-lich"
+            className="relative overflow-hidden bg-yellow-400 hover:bg-yellow-500 text-black px-6 py-2 rounded-full font-semibold shadow-md transition hover:shadow-lg hover:scale-105 animate-fadeSlideUp delay-500"
           >
-            Đặt lịch ngay
+            <span className="relative z-10">Đặt lịch ngay</span>
+            {/* Lớp ánh sáng quét */}
+            <span
+              className="absolute top-0 left-[-75%] w-[50%] h-full bg-white/40 transform skew-x-[-20deg] 
+               animate-shine"
+            />
           </Link>
         </div>
       </div>
-
-
-
-
       {/* Quick Links */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         {itemsBanner.map((item, idx) => (
@@ -131,7 +153,7 @@ const HomePage = () => {
       </div>
 
       {/* Statistics */}
-      <div className="bg-blue-100 dark:bg-blue-900 rounded-xl py-10 px-6">
+      <div ref={statsRef} className="bg-blue-100 dark:bg-blue-900 rounded-xl py-10 px-6">
         <h2 className="text-2xl font-bold text-center text-blue-800 dark:text-white mb-6">
           Thông tin tổng quan
         </h2>
@@ -141,7 +163,7 @@ const HomePage = () => {
               <CardContent className="flex flex-col items-center py-6">
                 <div className="text-blue-600 dark:text-white mb-2">{item.icon}</div>
                 <div className="text-3xl font-bold text-black dark:text-white">
-                  <CountUp end={item.quantity} duration={2} suffix="+" />
+                  {statsVisible ? <CountUp end={item.quantity} duration={5} suffix="+" /> : "0+"}
                 </div>
                 <div className="text-md text-gray-600 dark:text-gray-200">{item.title}</div>
               </CardContent>
@@ -158,19 +180,19 @@ const HomePage = () => {
             className="w-full h-[400px] object-cover border"
           />
         </div>
-        <div className="bg-blue-100 dark:bg-blue-900">
+        <div className="bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
           <p className="m-5">
             Chúng tôi cung cấp dịch vụ chăm sóc chất lượng cao, phối hợp cho bệnh nhân và gia đình
             thông qua các ứng dụng đi động, video, email,...
           </p>
         </div>
-        <div className="col-span-2 bg-gray-100 dark:bg-gray-800">
+        <div className="col-span-2 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
           <p className="m-5">
             Chúng tôi cam kết cung cấp dịch vụ chất lượng cao nhất và chăm sóc an toàn nhất có thể
             cho mọi bệnh nhân.
           </p>
         </div>
-        <div className="col-span-2  bg-white dark:bg-black">
+        <div className="col-span-2  bg-white dark:bg-black flex items-center justify-center">
           <p className="m-5">
             Là bệnh viện giảng dạy ban đầu cho các trường y khoa tại TP Hồ Chí Minh, Đào tạo thế hệ
             lãnh đạo tiếp theo trong nghiên cứu khoa học và y học.
@@ -213,20 +235,86 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-10">
-        <h3 className="text-2xl font-bold text-center mb-6 dark:text-white">
-          Hướng dẫn đặt lịch khám
-        </h3>
-        <ol className="list-decimal list-inside space-y-4 text-gray-700 dark:text-gray-300">
-          <li>Chọn mục “Đặt lịch” từ trang chủ hoặc thanh điều hướng</li>
-          <li>Chọn loại dịch vụ, chuyên khoa, chuyên gia và thời gian khám phù hợp</li>
-          <li>Nhập thông tin bệnh nhân và xác nhận đặt lịch</li>
-          <li>Nhận email xác nhận và có thể kiểm tra lại trong mục “Lịch khám”</li>
-        </ol>
-      </section>
+     <section>
+  {/* Trên 1024px */}
+  <div className="hidden lg:block h-[350px] bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-10 select-none">
+    <h3 className="text-2xl font-bold text-center mb-12 dark:text-white">
+      Hướng dẫn đặt lịch khám
+    </h3>
 
-      <style>{`
-        @keyframes zoomSlow {
+    <div className="relative">
+      {/* SVG đường cong */}
+      <svg
+        className="w-full h-36"
+        viewBox="0 0 1000 200"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="none"
+      >
+        <path
+          d="M 100 15 C 200 75, 300 185, 450 80 S 700 -25, 900 70"
+          stroke="#60A5FA"
+          strokeWidth="4"
+          strokeDasharray="10 10"
+          fill="transparent"
+        />
+      </svg>
+
+      {/* Các bước */}
+      <div className="absolute top-0 left-0 w-full h-full flex justify-between items-start px-6 sm:px-12">
+        {[
+          "Chọn mục “Đặt lịch” từ trang chủ hoặc thanh điều hướng",
+          "Chọn loại dịch vụ, chuyên khoa, chuyên gia và thời gian khám phù hợp",
+          "Nhập thông tin bệnh nhân và xác nhận đặt lịch",
+          "Nhận email xác nhận và có thể kiểm tra lại trong mục “Lịch khám”",
+        ].map((text, i) => (
+          <div
+            key={i}
+            className="relative flex flex-col items-center text-center flex-1"
+            style={{
+              transform:
+                i === 0
+                  ? "translateY(15%)"
+                  : i === 1
+                  ? "translateY(45%)"
+                  : i === 2
+                  ? "translateY(-15%)"
+                  : "translateY(10%)",
+            }}
+          >
+            {/* Nút tròn */}
+            <div className="w-10 h-10 flex items-center justify-center bg-blue-500 dark:bg-blue-600 rounded-full ring-4 ring-white dark:ring-gray-800 shadow-md transition-transform duration-300 hover:scale-110">
+              <span className="text-white font-bold">{i + 1}</span>
+            </div>
+
+            {/* Nội dung */}
+            <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg max-w-[220px] transition-all duration-300 cursor-default">
+              <p className="text-sm text-gray-700 dark:text-gray-300">{text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  {/* Dưới 1024px */}
+  <div className="block lg:hidden bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-10">
+    <h3 className="text-2xl font-bold text-center mb-6 dark:text-white">
+      Hướng dẫn đặt lịch khám
+    </h3>
+    <ol className="list-decimal list-inside space-y-4 text-gray-700 dark:text-gray-300">
+      <li>Chọn mục “Đặt lịch” từ trang chủ hoặc thanh điều hướng</li>
+      <li>Chọn loại dịch vụ, chuyên khoa, chuyên gia và thời gian khám phù hợp</li>
+      <li>Nhập thông tin bệnh nhân và xác nhận đặt lịch</li>
+      <li>Nhận email xác nhận và có thể kiểm tra lại trong mục “Lịch khám”</li>
+    </ol>
+  </div>
+</section>
+
+
+      <style>
+        {`
+@keyframes zoomSlow {
   0% { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
@@ -252,7 +340,17 @@ const HomePage = () => {
   animation-delay: 0.5s;
 }
 
-      `}</style>
+@keyframes shine {
+  0% { left: -75%; }
+  100% { left: 125%; }
+}
+
+.animate-shine {
+  animation: shine 1.5s ease-in-out infinite;
+}
+
+`}
+      </style>
     </div>
   )
 }

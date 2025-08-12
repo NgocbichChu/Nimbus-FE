@@ -27,13 +27,12 @@ const UserLayout = () => {
     }
   }
   return (
-    <div className="min-h-screen bg-muted">
+    <div className="min-h-screen flex flex-col bg-muted">
+      {/* Navbar */}
       <nav className="h-16 bg-blue-200 dark:bg-black dark:text-white border-b z-50 w-full fixed">
         <div className="h-full flex items-center justify-between max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-8">
             <Logo />
-
-            {/* Desktop Menu */}
             <NavMenu className="hidden md:block" />
           </div>
 
@@ -59,8 +58,6 @@ const UserLayout = () => {
             )}
 
             <ModeToggle />
-
-            {/* Mobile Menu */}
             <div className="md:hidden">
               <NavigationSheet />
             </div>
@@ -69,11 +66,14 @@ const UserLayout = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 pt-16 mb-10">
+      <main className="flex-1 pt-16">
         <Outlet />
       </main>
+
+      {/* Footer */}
       <Footer />
     </div>
+
   )
 }
 

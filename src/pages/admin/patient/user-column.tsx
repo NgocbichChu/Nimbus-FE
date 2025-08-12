@@ -1,6 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
-import type { Patient } from "./type-table"
+import type { Patient } from "../../../components/data-table/type-table"
 import { Link } from "react-router-dom"
 
 export const patientColumns: ColumnDef<Patient>[] = [

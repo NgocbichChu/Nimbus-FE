@@ -60,7 +60,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
       trangThaiHoatDong: doctor?.trangThaiHoatDong ?? true,
     },
   })
-  
+
   const handleAdd = async (data: any) => {
     try {
       await dispatch(addDoctor(data)).unwrap()
@@ -104,9 +104,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
   useEffect(() => {
     if (mode === "edit" && doctor && danhSachChuyenKhoa.length > 0) {
       // Find the specialty by name and set the ID
-      const selectedKhoa = danhSachChuyenKhoa.find(
-        (khoa) => khoa.tenKhoa === doctor.tenKhoa
-      )
+      const selectedKhoa = danhSachChuyenKhoa.find((khoa) => khoa.tenKhoa === doctor.tenKhoa)
       if (selectedKhoa) {
         setValue("tenKhoa", selectedKhoa.tenKhoa)
       }
@@ -157,29 +155,27 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         {errors.soDienThoai && <p className="text-red-500 text-sm">{errors.soDienThoai.message}</p>}
       </div>
 
-      
-        <div className="grid gap-2">
-          <Label>Mật khẩu *</Label>
-          <div className="relative">
-            <Input
-              {...register("matKhau")}
-              type={showPassword ? "text" : "password"}
-              placeholder="Nhập mật khẩu"
-              disabled={disInput}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-1 top-1/2 -translate-y-1/2"
-            >
-              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </Button>
-          </div>
-          {errors.matKhau && <p className="text-red-500 text-sm">{errors.matKhau.message}</p>}
+      <div className="grid gap-2">
+        <Label>Mật khẩu *</Label>
+        <div className="relative">
+          <Input
+            {...register("matKhau")}
+            type={showPassword ? "text" : "password"}
+            placeholder="Nhập mật khẩu"
+            disabled={disInput}
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-1 top-1/2 -translate-y-1/2"
+          >
+            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          </Button>
         </div>
-      
+        {errors.matKhau && <p className="text-red-500 text-sm">{errors.matKhau.message}</p>}
+      </div>
 
       <div className="grid gap-2">
         <Label>Ngày tuyển *</Label>
@@ -251,12 +247,32 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         {errors.trinhDo && <p className="text-red-500 text-sm">{errors.trinhDo.message}</p>}
       </div>
 
+      {/* <div className="grid gap-2">
+        <Label>Kinh nghiệm (năm)</Label>
+        <Input {...register("kinhNghiem")} placeholder="Nhập số năm" min={0}  type="number" />
+      </div> */}
       <div className="grid gap-2">
         <Label>Kinh nghiệm (năm)</Label>
-        <Input {...register("kinhNghiem")} placeholder="Nhập số năm" type="number" />
+        <Controller
+          control={control}
+          name="kinhNghiem"
+          render={({ field }) => (
+            <Input
+              {...field}
+              type="number"
+              min={0}
+              placeholder="Nhập số năm"
+              onChange={(e) => {
+                const value = Number(e.target.value)
+                field.onChange(value < 0 ? 0 : value) // chặn số âm
+              }}
+            />
+          )}
+        />
+        {errors.kinhNghiem && <p className="text-red-500 text-sm">{errors.kinhNghiem.message}</p>}
       </div>
 
-    <div className="grid gap-2 h-fit">
+      <div className="grid gap-2 h-fit">
         <Label>Trạng thái hoạt động</Label>
         <Controller
           control={control}
@@ -278,18 +294,18 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         <Label>Ghi chú</Label>
         <Textarea {...register("ghiChu")} placeholder="Thêm ghi chú..." />
 
-      <div className="mt-4 flex justify-end gap-2">
-        <Button variant="outline" type="button" onClick={() => onClose?.()}>
-          Huỷ
-        </Button>
+        <div className="mt-4 flex justify-end gap-2">
+          <Button variant="outline" type="button" onClick={() => onClose?.()}>
+            Huỷ
+          </Button>
 
-        {mode === "add" ? (
-          <Button type="submit">Thêm Bác sĩ</Button>
-        ) : (
-          <Button type="submit">Lưu thông tin</Button>
-        )}
-      </div>
+          {mode === "add" ? (
+            <Button type="submit">Thêm Bác sĩ</Button>
+          ) : (
+            <Button type="submit">Lưu thông tin</Button>
+          )}
         </div>
+      </div>
     </form>
   )
 }
