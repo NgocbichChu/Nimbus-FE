@@ -1,4 +1,4 @@
-import { patientColumns } from "@/components/data-table/user-column"
+import { patientColumns } from "@/pages/admin/patient/user-column"
 import { DataTableUser } from "./patient/table-user"
 import { useEffect } from "react"
 import { useAppDispatch, useAppSelector } from "@/helper"
@@ -14,7 +14,7 @@ export default function PatientPage() {
 
   return (
     <div>
-      <DataTableUser columns={patientColumns} data={patients} filterColumn="cccd" />
+      <DataTableUser columns={patientColumns} data={patients} filterColumn="hoTen" />
     </div>
   )
 }

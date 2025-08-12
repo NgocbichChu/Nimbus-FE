@@ -8,11 +8,15 @@ export const DoctorSchema = yup.object({
     .string()
     .matches(/^[0-9]{10,11}$/, "Số điện thoại không hợp lệ")
     .required("Vui lòng nhập số điện thoại"),
-  matKhau: yup.string().notRequired(), 
+  matKhau: yup.string().notRequired(),
   tenKhoa: yup.string().required("Tên khoa là bắt buộc"),
   chungChi: yup.string().required("Chứng chỉ là bắt buộc"),
   trinhDo: yup.string().required("Trình độ là bắt buộc"),
-  kinhNghiem: yup.number().min(0, "Kinh nghiệm không được âm").required("Kinh nghiệm là bắt buộc"),
+  kinhNghiem: yup
+    .number()
+    .typeError("Vui lòng nhập số")
+    .min(0, "Kinh nghiệm không được âm")
+    .required("Bắt buộc nhập kinh nghiệm"),
   ngayTuyenDung: yup.string().required("Ngày tuyển dụng là bắt buộc"),
   ghiChu: yup.string().optional(),
   trangThaiHoatDong: yup.boolean(),
