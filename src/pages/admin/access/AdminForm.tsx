@@ -34,7 +34,6 @@ const AdminForm = () => {
   }
 
   const handleAdd = async (data: any) => {
-    console.log("ấbuavsubdasd")
     try {
       await dispatch(addAdmin(data)).unwrap()
      } catch (error) {
