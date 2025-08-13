@@ -5,41 +5,40 @@ import { Label } from "@/components/ui/label"
 import { useForm } from "react-hook-form"
 import { useState, useEffect } from "react"
 import { doiMatKhau, layThongTinTaiKhoan, capNhatThongTin } from "../../api/accountApi"
+import { yupResolver } from "@hookform/resolvers/yup"
+import { taiKhoanSchema, passwordChangeSchema } from "../../validation/user-valid"
+import type { TaiKhoan, PasswordChange } from "../../validation/user-valid"
 
 type User = {
   name: string
-  soDT: string
+  soDienThoai: string
   gioiTinh: string
   email: string
 }
 
 const AccountPage = () => {
   const [isEditing, setIsEditing] = useState(false)
-  const [oldPassword, setOldPassword] = useState("")
-  const [newPassword, setNewPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState("")
   const [updateMessage, setUpdateMessage] = useState("")
   const [user, setUser] = useState<User>({
     name: "",
-    soDT: "",
+    soDienThoai: "",
     gioiTinh: "",
     email: "",
   })
 
-  const handleDoiMatKhau = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleDoiMatKhau = async (data: PasswordChange) => {
     setMessage("")
     setLoading(true)
     try {
       const response = await doiMatKhau({
-        oldPassword: oldPassword,
-        newPassword: newPassword,
+        oldPassword: data.oldPassword,
+        newPassword: data.newPassword,
       })
       if (response?.success) {
         setMessage("Đổi mật khẩu thành công")
-        setOldPassword("")
-        setNewPassword("")
+        resetPwd()
       } else {
         setMessage(response?.message || "Đổi mật khẩu thất bại")
       }
@@ -51,8 +50,24 @@ const AccountPage = () => {
     }
   }
 
-  const { register, handleSubmit, reset } = useForm<User>({
-    defaultValues: user,
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<TaiKhoan>({
+    resolver: yupResolver(taiKhoanSchema),
+    defaultValues: { soDienThoai: "" },
+  })
+
+  const {
+    register: registerPwd,
+    handleSubmit: handleSubmitPwd,
+    reset: resetPwd,
+    formState: { errors: pwdErrors, isSubmitting: pwdSubmitting },
+  } = useForm<PasswordChange>({
+    resolver: yupResolver(passwordChangeSchema),
+    defaultValues: { oldPassword: "", newPassword: "" },
   })
 
   useEffect(() => {
@@ -61,12 +76,12 @@ const AccountPage = () => {
         const res = await layThongTinTaiKhoan()
         const user = {
           name: res.data.hoTen,
-          soDT: res.data.soDienThoai,
+          soDienThoai: res.data.soDienThoai,
           gioiTinh: res.data.gioiTinh === "M" ? "Nam" : "Nữ",
           email: res.data.email,
         }
         setUser(user)
-        reset(user)
+        reset({ email: res.data.email ?? "", soDienThoai: res.data.soDienThoai ?? "" })
       } catch (error) {
         console.log("Lỗi : ", error)
       }
@@ -74,21 +89,19 @@ const AccountPage = () => {
     fetchUser()
   }, [reset])
 
-  const onSubmit = async (data: User) => {
+  const onSubmit = async (data: TaiKhoan) => {
     setUpdateMessage("")
     try {
       await capNhatThongTin({
-        hoTen: data.name,
-        gioiTinh: data.gioiTinh === "M" ? "Nam" : "Nữ",
+        hoTen: user.name,
+        gioiTinh: user.gioiTinh === "M" ? "Nam" : "Nữ",
         email: data.email,
-        soDienThoai: data.soDT,
+        soDienThoai: data.soDienThoai,
       })
       setUser((prev) => ({
         ...prev,
-        hoTen: data.name,
-        gioiTinh: data.gioiTinh === "M" ? "Nam" : "Nữ",
         email: data.email,
-        soDT: data.soDT,
+        soDT: data.soDienThoai,
       }))
       setIsEditing(false)
       setUpdateMessage("Cập nhật thông tin thành công")
@@ -115,11 +128,20 @@ const AccountPage = () => {
                   </div>
                   <div className="grid grid-cols-2">
                     <Label className="text-base">Số điện thoại:</Label>
-                    {isEditing ? <Input {...register("soDT")} /> : <p>{user.soDT}</p>}
+                    {isEditing ? (
+                      <div>
+                        <Input {...register("soDienThoai")} />
+                        {errors.soDienThoai && (
+                          <p className="text-sm text-red-500 mt-1">{errors.soDienThoai.message}</p>
+                        )}
+                      </div>
+                    ) : (
+                      <p>{user.soDienThoai}</p>
+                    )}
                   </div>
                   <div className="grid grid-cols-2 gap-1">
                     <Label className="text-base">Giới tính:</Label>
-                    {isEditing ? <Input {...register("gioiTinh")} /> : <p>{user.gioiTinh}</p>}
+                    <p>{user.gioiTinh}</p>
                   </div>
                   <div className="grid grid-cols-2">
                     <Label className="text-base">Email:</Label>
@@ -142,7 +164,7 @@ const AccountPage = () => {
                       type="button"
                       variant="outline"
                       onClick={() => {
-                        reset(user)
+                        reset({ email: user.email, soDienThoai: user.soDienThoai })
                         setIsEditing(false)
                       }}
                       className="w-fit px-6"
@@ -160,7 +182,7 @@ const AccountPage = () => {
           </Card>
 
           <Card className="w-full max-w-2xl">
-            <form onSubmit={handleDoiMatKhau}>
+            <form onSubmit={handleSubmitPwd(handleDoiMatKhau)}>
               <CardContent>
                 <h3 className="font-semibold text-lg mb-4">Thay đổi mật khẩu</h3>
                 <div className="flex flex-col gap-4">
@@ -170,22 +192,28 @@ const AccountPage = () => {
                     </Label>
                     <Input
                       type="password"
-                      value={oldPassword}
-                      onChange={(e) => setOldPassword(e.target.value)}
                       placeholder="Nhập mật khẩu hiện tại"
+                      {...registerPwd("oldPassword")}
                     />
+                    {pwdErrors.oldPassword && (
+                      <p className="text-sm text-red-500 mt-1">{pwdErrors.oldPassword.message}</p>
+                    )}
                   </div>
+
                   <div className="flex flex-col gap-1">
                     <Label className="text-sm font-medium">
                       Mật khẩu mới <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="Nhập mật khẩu mới"
+                      {...registerPwd("newPassword")}
                     />
+                    {pwdErrors.newPassword && (
+                      <p className="text-sm text-red-500 mt-1">{pwdErrors.newPassword.message}</p>
+                    )}
                   </div>
+
                   {message && (
                     <p className="text-sm mt-2 text-center text-red-500 dark:text-red-400">
                       {message}
@@ -194,8 +222,8 @@ const AccountPage = () => {
                 </div>
               </CardContent>
               <CardFooter className="justify-end mt-4">
-                <Button type="submit" className="px-6" disabled={loading}>
-                  {loading ? "Đang xử lý..." : "Thay đổi mật khẩu"}
+                <Button type="submit" className="px-6" disabled={loading || pwdSubmitting}>
+                  {loading || pwdSubmitting ? "Đang xử lý..." : "Thay đổi mật khẩu"}
                 </Button>
               </CardFooter>
             </form>
