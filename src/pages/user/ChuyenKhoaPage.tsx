@@ -25,71 +25,85 @@ const ChuyenKhoaPage = () => {
   )
 
   const chuyenKhoaWithIcon = [
-    { chuyenKhoaId: 1, icon: "mdi:stethoscope" },
-    { chuyenKhoaId: 2, icon: "mdi:hospital-building" },
+    { chuyenKhoaId: 1, icon: "solar:stethoscope-line-duotone" },
+    { chuyenKhoaId: 2, icon: "lucide:baby" },
     { chuyenKhoaId: 3, icon: "mdi:heart-pulse" },
-    { chuyenKhoaId: 4, icon: "mdi:baby-face-outline" },
-    { chuyenKhoaId: 5, icon: "mdi:human-pregnant" },
-    { chuyenKhoaId: 6, icon: "mdi:face-woman-outline" },
-    { chuyenKhoaId: 7, icon: "mdi:ear-hearing" },
-    { chuyenKhoaId: 8, icon: "mdi:tooth-outline" },
-    { chuyenKhoaId: 9, icon: "mdi:eye-outline" },
-    { chuyenKhoaId: 10, icon: "mdi:brain" },
-    { chuyenKhoaId: 11, icon: "mdi:lungs" },
-    { chuyenKhoaId: 12, icon: "mdi:food-variant" },
-    { chuyenKhoaId: 13, icon: "mdi:alert-octagon-outline" },
-    { chuyenKhoaId: 14, icon: "mdi:bone" },
+    { chuyenKhoaId: 4, icon: "streamline-ultimate:pregnancy-pregnant" },
+    { chuyenKhoaId: 5, icon: "healthicons:ear-outline" },
+    { chuyenKhoaId: 6, icon: "mdi:tooth-outline" },
+    { chuyenKhoaId: 7, icon: "icon-park-outline:heart" },
+    { chuyenKhoaId: 8, icon: "healthicons:thyroid-outline-24px" },
+    { chuyenKhoaId: 9, icon: "flowbite:brain-outline" },
+    { chuyenKhoaId: 10, icon: "lucide:bone" },
+    { chuyenKhoaId: 11, icon: "solar:eye-outline" },
+    { chuyenKhoaId: 12, icon: "mdi:allergy" },
+    { chuyenKhoaId: 13, icon: "bi:lungs" },
+    { chuyenKhoaId: 14, icon: "healthicons:stomach-outline" },
     { chuyenKhoaId: 15, icon: "mdi:leaf" },
     { chuyenKhoaId: 16, icon: "mdi:dna" },
   ]
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <img src={banner} alt="" className="rounded-xl shadow-md" />
-      <p className="text-4xl text-center text-red-500 dark:text-blue-300 mt-6 font-bold">
-        Danh sách các chuyên khoa
-      </p>
 
-      <form className="flex gap-2 w-full sm:w-auto mt-6" onSubmit={(e) => e.preventDefault()}>
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Tìm kiếm chuyên khoa theo tên..."
-          className="w-full sm:w-64 dark:border-white dark:placeholder-white placeholder-black"
+    <div className="container mx-auto px-4 py-8">
+      {/* Banner */}
+      <div className="relative rounded-2xl overflow-hidden shadow-lg">
+        <img
+          src={banner}
+          alt="Banner"
+          className="w-full h-56 sm:h-72 object-cover"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        <h1 className="absolute bottom-4 left-6 text-white text-3xl sm:text-4xl font-bold drop-shadow-lg">
+          Danh sách các chuyên khoa
+        </h1>
+      </div>
+
+      {/* Search */}
+      <form
+        className="flex gap-2 w-full sm:w-auto mt-8"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        <div className="relative w-full sm:w-72">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            🔍
+          </span>
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Tìm kiếm chuyên khoa..."
+            className="w-full pl-10 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-400 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400"
+          />
+        </div>
       </form>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
+      {/* List */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
         {filteredChuyenKhoa.map((item, index) => {
-          const iconData = chuyenKhoaWithIcon.find((i) => i.chuyenKhoaId === item.chuyenKhoaId)
-          const iconName = iconData?.icon || "mdi:help-circle-outline"
+          const iconData = chuyenKhoaWithIcon.find(
+            (i) => i.chuyenKhoaId === item.chuyenKhoaId
+          );
+          const iconName = iconData?.icon || "mdi:help-circle-outline";
 
           return (
             <div
               key={item.chuyenKhoaId || index}
-              className="bg-white h-[80px] font-bold text-center rounded-xl shadow-sm 
-                         hover:bg-sky-50 transition-colors dark:bg-blue-900 
-                         dark:hover:bg-gray-800 dark:text-white"
+              className="group bg-white rounded-2xl shadow-md overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-900 animate-fadeUp"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="grid grid-cols-3 items-stretch h-full">
-                <div
-                  className="col-span-1 flex items-center justify-center bg-blue-400 h-full text-white 
-                                rounded-l-xl dark:bg-blue-900 text-3xl"
-                >
+              <div className="flex items-center p-4 gap-4">
+                <div className="flex items-center justify-center w-14 h-14 rounded-full bg-blue-500 text-white text-3xl group-hover:bg-blue-600 transition-colors dark:bg-blue-800 dark:group-hover:bg-blue-700">
                   <Icon
                     icon={iconName}
-                    className="transition-transform duration-300 hover:scale-110"
+                    className="transition-transform duration-300 group-hover:scale-110"
                   />
                 </div>
-                <div
-                  className="col-span-2 flex items-center text-left px-4 h-full 
-                                dark:bg-black dark:hover:bg-gray-600"
-                >
+                <span className="font-semibold text-lg text-gray-800 dark:text-gray-100">
                   {item.tenKhoa}
-                </div>
+                </span>
               </div>
             </div>
-          )
+          );
         })}
 
         {filteredChuyenKhoa.length === 0 && (
@@ -98,7 +112,26 @@ const ChuyenKhoaPage = () => {
           </div>
         )}
       </div>
+
+      <style>
+        {`
+    @keyframes fadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-fadeUp {
+      animation: fadeUp 0.6s ease forwards;
+    }
+  `}
+      </style>
     </div>
+
   )
 }
 

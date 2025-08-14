@@ -22,7 +22,36 @@ export type Admin = {
     ngaycapnhat: string
 }
 
-export const addAdmin  = createAsyncThunk(
+
+export type Reception = {
+    hoTen: string
+    gioiTinh: string
+    email: string
+    matkhau: string
+    soDienThoai: string
+    chucVu: string
+    ngayTuyenDung: string
+    ghiChu: string
+    trangThaiHoatDong: boolean
+}
+
+export const addReception = createAsyncThunk(
+    "admin/addReception",
+    async (accountReception: Reception, { rejectWithValue }) => {
+        try {
+            console.log("lễ tân", accountReception)
+            const response = await post("/quanly/dangki/letan", accountReception)
+            toastSuccess("Đăng kí lễ tân thành công!")
+            return response
+        } catch (error: any) {
+            const errorMessage = error.response?.data?.message || "Lỗi khi đăng kí lễ tân"
+            toastError(errorMessage)
+            return rejectWithValue(errorMessage)
+        }
+    }
+) 
+
+export const addAdmin = createAsyncThunk(
     "admin/addAdmin",
     async (accountAdmin: CreateAccountAdmin, { rejectWithValue }) => {
         try {
