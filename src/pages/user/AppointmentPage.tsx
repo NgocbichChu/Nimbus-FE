@@ -42,6 +42,7 @@ import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 import timezone from "dayjs/plugin/timezone"
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type AppointmentFormType = yup.InferType<typeof appointmentSchema>
 
@@ -76,6 +77,21 @@ const AppointmentPage = () => {
   const [availableTimes, setAvailableTimes] = useState<
     { label: string; start: string; end: string }[]
   >([])
+
+  const [open2, setOpen2] = useState(false)
+  const [value2, setValue2] = useState("")
+  const [date2, setDate2] = useState<Date | undefined>(parseDate(value2) || undefined)
+  const [month2, setMonth2] = useState<Date | undefined>(date2)
+  const [availableTimes2, setAvailableTimes2] = useState<
+    { label: string; start: string; end: string }[]
+  >([])
+  const [selectedTime2, setSelectedTime2] = useState<{
+    label: string
+    start: string
+    end: string
+  } | null>(null)
+
+  const [activeTab, setActiveTab] = useState<"tab1" | "tab2">("tab1")
 
   const [user, setUser] = useState<User>({
     name: "",
@@ -186,7 +202,7 @@ const AppointmentPage = () => {
         const today = dayjs().startOf("day")
 
         const ngayCoTruc = list
-          .filter((item) => item.caTruc && dayjs(item.ngay).isSameOrAfter(today)) // chỉ lọc từ hôm nay trở đi, không lọc lyDoNghi
+          .filter((item) => item.caTruc && dayjs(item.ngay).isSameOrAfter(today))
           .map((item) => dayjs.utc(item.ngay).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD"))
 
         setNgayLamViec(ngayCoTruc)
@@ -271,26 +287,22 @@ const AppointmentPage = () => {
       return
     }
 
-    console.log("Dữ liệu đặt lịch:", {
-      serviceType,
-      specialty,
-      doctor,
-      selectedDate: value,
-      selectedTime,
-      note,
-      // paymentMethod,
-    })
-
-    const ngayKham = dayjs(date).format("YYYY-MM-DD")
-    const gioHen = selectedTime?.start.slice(0, 5)
-    const gioDen = selectedTime?.end.slice(0, 5)
-    const resNgay = await getNgayKhamByChuyenGia(Number(doctor))
+    const ngayKham =
+      activeTab === "tab1" ? dayjs(date).format("YYYY-MM-DD") : dayjs(date2).format("YYYY-MM-DD")
+    const gioHen =
+      activeTab === "tab1" ? selectedTime?.start.slice(0, 5) : selectedTime2?.start.slice(0, 5)
+    const gioDen =
+      activeTab === "tab1" ? selectedTime?.end.slice(0, 5) : selectedTime2?.end.slice(0, 5)
+    const resNgay =
+      activeTab === "tab1"
+        ? await getNgayKhamByChuyenGia(Number(doctor))
+        : { data: [] as NgayLamViecItem[] }
     const list: NgayLamViecItem[] = resNgay.data || []
     const info = list.find((item) => item.ngay === ngayKham)
     const caKham = info?.caTruc || ""
 
     const payload = {
-      bacSiId: Number(doctor),
+      bacSiId: activeTab === "tab1" ? Number(doctor) : undefined,
       benhNhanId: Number(user.maBN),
       thoiGianTu: gioHen || "",
       thoiGianDen: gioDen || "",
@@ -307,10 +319,6 @@ const AppointmentPage = () => {
       console.error("Lỗi : ", error)
       alert("Đặt lịch thất bại")
     }
-    console.log("Ca trực thực tế:", caKham)
-    console.log("Giờ hẹn:", gioHen)
-    console.log("Giờ đến:", gioDen)
-    console.log("Ngày khám : ", ngayKham)
   }
 
   const paymentOptions = [
@@ -336,50 +344,90 @@ const AppointmentPage = () => {
 
   const selectDoctor = listChuyenGia.find((opt) => String(opt.bacSiId) === doctor)
 
-  return (
-    <> <div className="w-full px-4 md:px-8 py-8 ">
-      <h1 className="text-2xl md:text-3xl font-bold text-center text-blue-600 animate-fade-in">
-        ĐĂNG KÝ KHÁM BỆNH
-      </h1>
-      <div className="h-1 bg-gray-400 mx-auto my-3 rounded animate-line-grow" style={{ width: "80px" }}></div>
-      <p className="text-center text-gray-700 mb-6 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-        Quý khách hàng có nhu cầu đặt hẹn khám tại{" "}
-        <span className="font-semibold">Hệ thống Bệnh viện Đa khoa Nimbus</span>,
-        xin vui lòng thực hiện theo hướng dẫn:
-      </p>
-      <ul className="space-y-3 max-w-3xl mx-auto">
-        <li className="flex items-start gap-2 text-gray-800 animate-slide-in" style={{ animationDelay: "0.4s" }}>
-          <span className="mt-1 text-blue-500">•</span>
-          <span> Đặt hẹn bằng cách gọi tổng đài Chăm sóc khách hàng tại số{" "}
-            <span className="font-semibold text-blue-600"> 091-234-5678 – 098-765-4321 </span>{" "}
-            (Bệnh viện Đa khoa Nimbus) hoặc{" "}
-            <span className="font-semibold text-blue-600">
-              098-765-4321 – 091-234-5678
-            </span>{" "}
-            (Bệnh viện Đa khoa Nimbus)
-          </span>
-        </li>
-        <li className="flex items-start gap-2 text-gray-800 animate-slide-in" style={{ animationDelay: "0.55s" }}>
-          <span className="mt-1 text-blue-500">•</span>
-          <span>
-            Đặt hẹn trực tuyến bằng cách điền thông tin vào mẫu bên dưới.
-          </span>
-        </li>
-        <li className="flex items-start gap-2 text-gray-800 animate-slide-in" style={{ animationDelay: "0.7s" }}>
-          <span className="mt-1 text-blue-500">•</span>
-          <span>
-            Xin lưu ý, trong các trường hợp khẩn cấp, quý khách vui lòng đến ngay
-            cơ sở y tế gần nhất hoặc đến trực tiếp Hệ thống bệnh viện Đa khoa Nimbus.
-          </span>
-        </li>
-      </ul>
-    </div>
-      <div className="container mx-auto px-4 py-8 max-w-4xl ">
-       
+  const summaryItems =
+    activeTab === "tab1"
+      ? ([
+          { label: "Loại dịch vụ", value: selectedService?.tenLoai },
+          { label: "Chuyên khoa", value: selectedSpecialty?.tenKhoa },
+          {
+            label: "Bác sĩ khám",
+            value: selectDoctor?.hoTen
+              ? `${selectDoctor.trinhDo} - ${selectDoctor.hoTen}`
+              : undefined,
+          },
+          { label: "Ngày khám", value: formatDate(date) },
+          { label: "Giờ khám", value: selectedTime?.label },
+          { label: "Ghi chú", value: note },
+        ] as { label: string; value: any }[])
+      : ([
+          { label: "Loại dịch vụ", value: selectedService?.tenLoai },
+          { label: "Chuyên khoa", value: selectedSpecialty?.tenKhoa },
+          { label: "Ngày khám", value: formatDate(date2) },
+          { label: "Giờ khám", value: selectedTime2?.label },
+          { label: "Ghi chú", value: note },
+        ] as { label: string; value: any }[])
 
+  return (
+    <>
+      <div className="w-full px-4 md:px-8 py-8 ">
+        <h1 className="text-2xl md:text-3xl font-bold text-center text-blue-600 animate-fade-in">
+          ĐĂNG KÝ KHÁM BỆNH
+        </h1>
+        <div
+          className="h-1 bg-gray-400 mx-auto my-3 rounded animate-line-grow"
+          style={{ width: "80px" }}
+        ></div>
+        <p
+          className="text-center text-gray-700 mb-6 animate-fade-in"
+          style={{ animationDelay: "0.3s" }}
+        >
+          Quý khách hàng có nhu cầu đặt hẹn khám tại{" "}
+          <span className="font-semibold">Hệ thống Bệnh viện Đa khoa Nimbus</span>, xin vui lòng
+          thực hiện theo hướng dẫn:
+        </p>
+        <ul className="space-y-3 max-w-3xl mx-auto">
+          <li
+            className="flex items-start gap-2 text-gray-800 animate-slide-in"
+            style={{ animationDelay: "0.4s" }}
+          >
+            <span className="mt-1 text-blue-500">•</span>
+            <span>
+              {" "}
+              Đặt hẹn bằng cách gọi tổng đài Chăm sóc khách hàng tại số{" "}
+              <span className="font-semibold text-blue-600">
+                {" "}
+                091-234-5678 – 098-765-4321{" "}
+              </span>{" "}
+              (Bệnh viện Đa khoa Nimbus) hoặc{" "}
+              <span className="font-semibold text-blue-600">098-765-4321 – 091-234-5678</span> (Bệnh
+              viện Đa khoa Nimbus)
+            </span>
+          </li>
+          <li
+            className="flex items-start gap-2 text-gray-800 animate-slide-in"
+            style={{ animationDelay: "0.55s" }}
+          >
+            <span className="mt-1 text-blue-500">•</span>
+            <span>Đặt hẹn trực tuyến bằng cách điền thông tin vào mẫu bên dưới.</span>
+          </li>
+          <li
+            className="flex items-start gap-2 text-gray-800 animate-slide-in"
+            style={{ animationDelay: "0.7s" }}
+          >
+            <span className="mt-1 text-blue-500">•</span>
+            <span>
+              Xin lưu ý, trong các trường hợp khẩn cấp, quý khách vui lòng đến ngay cơ sở y tế gần
+              nhất hoặc đến trực tiếp Hệ thống bệnh viện Đa khoa Nimbus.
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div className="container mx-auto px-4 py-8 max-w-4xl ">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-20 items-start ">
           <div className="flex flex-col gap-5 w-full">
             <div className="font-bold text-center text-xl mb-5 mt-3">Đặt lịch khám</div>
+
             <div className="flex flex-col gap-2 w-full max-w-md ">
               <Label className="font-bold">1. Loại hình khám</Label>
               <Select value={serviceType} onValueChange={setServiceType}>
@@ -395,7 +443,6 @@ const AppointmentPage = () => {
                     )}
                   </div>
                 </SelectTrigger>
-
                 <SelectContent>
                   <SelectGroup>
                     {listDichVu.map((option) => (
@@ -409,7 +456,6 @@ const AppointmentPage = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-
               {errors.serviceType && (
                 <span className="text-sm text-red-500">{errors.serviceType.message}</span>
               )}
@@ -467,139 +513,228 @@ const AppointmentPage = () => {
               )}
             </div>
 
-            <div className="flex flex-col gap-2 w-full max-w-md">
-              <Label className="font-bold">3. Bác sĩ khám</Label>
-              <Popover open={openDoctor} onOpenChange={setOpenDoctor}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={openDoctor}
-                    disabled={!specialty}
-                    className={cn(
-                      "w-full flex justify-between items-center",
-                      errors?.doctor && "border-red-500 focus:ring-red-500"
-                    )}
-                  >
-                    <span className={cn("truncate", !doctor && "text-muted-foreground")}>
-                      {doctor
-                        ? `${listChuyenGia.find((item) => String(item.bacSiId) === doctor)?.trinhDo} - ${listChuyenGia.find((item) => String(item.bacSiId) === doctor)?.hoTen}`
-                        : ""}
-                    </span>
+            <Tabs
+              value={activeTab}
+              onValueChange={(v) => setActiveTab(v as "tab1" | "tab2")}
+              className="w-full max-w-md"
+            >
+              <TabsList className="w-full bg-blue-400 rounded-lg overflow-hidden">
+                <TabsTrigger
+                  value="tab1"
+                  className="w-1/2 text-white data-[state=active]:bg-blue-600"
+                >
+                  Chọn bác sĩ
+                </TabsTrigger>
+                <TabsTrigger
+                  value="tab2"
+                  className="w-1/2 text-white data-[state=active]:bg-blue-600"
+                >
+                  Chọn ngày/giờ
+                </TabsTrigger>
+              </TabsList>
 
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[var(--radix-popover-trigger-width)] max-h-[200px] p-0">
-                  <Command>
-                    <CommandInput placeholder="Tìm bác sĩ..." />
-                    <CommandList>
-                      <CommandEmpty>Không tìm thấy bác sĩ.</CommandEmpty>
-                      <CommandGroup>
-                        {listChuyenGia.map((item) => (
-                          <CommandItem
-                            key={item.bacSiId}
-                            value={String(item.bacSiId)}
-                            onSelect={() => {
-                              setDoctor(String(item.bacSiId))
-                              setOpenDoctor(false)
-                            }}
-                          >
-                            {item.trinhDo} - {item.hoTen}
-                            <Check
-                              className={cn(
-                                "ml-auto h-4 w-4",
-                                doctor === String(item.bacSiId) ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              {errors?.doctor && (
-                <span className="text-sm text-red-500">{errors.doctor.message}</span>
-              )}
-            </div>
+              <TabsContent value="tab1" className="mt-4 space-y-5">
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="font-bold">3. Bác sĩ khám</Label>
+                  <Popover open={openDoctor} onOpenChange={setOpenDoctor}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={openDoctor}
+                        disabled={!specialty}
+                        className={cn(
+                          "w-full flex justify-between items-center",
+                          errors?.doctor && "border-red-500 focus:ring-red-500"
+                        )}
+                      >
+                        <span className={cn("truncate", !doctor && "text-muted-foreground")}>
+                          {doctor
+                            ? `${listChuyenGia.find((item) => String(item.bacSiId) === doctor)?.trinhDo} - ${listChuyenGia.find((item) => String(item.bacSiId) === doctor)?.hoTen}`
+                            : ""}
+                        </span>
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[var(--radix-popover-trigger-width)] max-h-[200px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Tìm bác sĩ..." />
+                        <CommandList>
+                          <CommandEmpty>Không tìm thấy bác sĩ.</CommandEmpty>
+                          <CommandGroup>
+                            {listChuyenGia.map((item) => (
+                              <CommandItem
+                                key={item.bacSiId}
+                                value={String(item.bacSiId)}
+                                onSelect={() => {
+                                  setDoctor(String(item.bacSiId))
+                                  setOpenDoctor(false)
+                                }}
+                              >
+                                {item.trinhDo} - {item.hoTen}
+                                <Check
+                                  className={cn(
+                                    "ml-auto h-4 w-4",
+                                    doctor === String(item.bacSiId) ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  {errors?.doctor && (
+                    <span className="text-sm text-red-500">{errors.doctor.message}</span>
+                  )}
+                </div>
 
-            <div className="flex flex-col gap-2 w-full max-w-md">
-              <Label className="font-bold">4. Ngày khám</Label>
-              <div className="relative flex gap-2">
-                <Input
-                  id="date"
-                  value={value}
-                  className={`w-full bg-background pr-10 dark:border-white ${errors.selectedDate ? inputErrorClass : ""}`}
-                  readOnly
-                />
-                <Popover open={open} onOpenChange={setOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      id="date-picker"
-                      variant="ghost"
-                      className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
-                      disabled={!doctor}
-                    >
-                      <CalendarIcon className="size-3.5" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto overflow-hidden p-0" align="end">
-                    <Calendar
-                      locale={vi}
-                      mode="single"
-                      selected={date}
-                      captionLayout="dropdown"
-                      month={month}
-                      fromYear={2025}
-                      toYear={2027}
-                      onMonthChange={setMonth}
-                      onSelect={(date: any) => {
-                        setDate(date)
-                        setValue(formatDate(date))
-                        setOpen(false)
-                      }}
-                      disabled={(date: Date) => {
-                        const today = dayjs().startOf("day")
-                        const selected = dayjs(date).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
-                        return dayjs(date).isBefore(today) || !ngayLamViec.includes(selected)
-                      }}
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="font-bold">4. Ngày khám</Label>
+                  <div className="relative flex gap-2">
+                    <Input
+                      id="date"
+                      value={value}
+                      className={`w-full bg-background pr-10 dark:border-white ${errors.selectedDate ? inputErrorClass : ""}`}
+                      readOnly
                     />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              {errors.selectedDate && (
-                <span className="text-sm text-red-500">{errors.selectedDate.message}</span>
-              )}
-            </div>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          id="date-picker"
+                          variant="ghost"
+                          className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
+                          disabled={!doctor}
+                        >
+                          <CalendarIcon className="size-3.5" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto overflow-hidden p-0" align="end">
+                        <Calendar
+                          locale={vi}
+                          mode="single"
+                          selected={date}
+                          captionLayout="dropdown"
+                          month={month}
+                          fromYear={2025}
+                          toYear={2027}
+                          onMonthChange={setMonth}
+                          onSelect={(date: any) => {
+                            setDate(date)
+                            setValue(formatDate(date))
+                            setOpen(false)
+                          }}
+                          disabled={(date: Date) => {
+                            const today = dayjs().startOf("day")
+                            const selected = dayjs(date).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
+                            return dayjs(date).isBefore(today) || !ngayLamViec.includes(selected)
+                          }}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  {errors.selectedDate && (
+                    <span className="text-sm text-red-500">{errors.selectedDate.message}</span>
+                  )}
+                </div>
 
-            <div className="flex flex-col gap-2 w-full max-w-md">
-              <Label className="font-bold">5. Thời gian khám</Label>
-              <div
-                className={`grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 border rounded-xl dark:bg-zinc-800 shadow-sm ${errors.selectedTime ? "border-red-500 " : "border-gray-200"
-                  } bg-white `}
-              >
-                {availableTimes.map((time) => (
-                  <Button
-                    key={time.label}
-                    variant={selectedTime?.label === time.label ? "default" : "outline"}
-                    onClick={() => setSelectedTime(time)}
-                    className={`w-full p-2 rounded-lg text-sm transition-colors ${selectedTime?.label === time.label
-                      ? "bg-primary text-white"
-                      : "bg-white hover:bg-gray-100"
-                      }`}
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="font-bold">5. Thời gian khám</Label>
+                  <div
+                    className={`grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 border rounded-xl dark:bg-zinc-800 shadow-sm ${errors.selectedTime ? "border-red-500 " : "border-gray-200"} bg-white `}
                   >
-                    {time.label}
-                  </Button>
-                ))}
-              </div>
-              {errors.selectedTime && (
-                <span className="text-sm text-red-500">{errors.selectedTime.message}</span>
-              )}
-            </div>
+                    {availableTimes.map((time) => (
+                      <Button
+                        key={time.label}
+                        variant={selectedTime?.label === time.label ? "default" : "outline"}
+                        onClick={() => setSelectedTime(time)}
+                        className={`w-full p-2 rounded-lg text-sm transition-colors ${
+                          selectedTime?.label === time.label
+                            ? "bg-primary text-white"
+                            : "bg-white hover:bg-gray-100"
+                        }`}
+                      >
+                        {time.label}
+                      </Button>
+                    ))}
+                  </div>
+                  {errors.selectedTime && (
+                    <span className="text-sm text-red-500">{errors.selectedTime.message}</span>
+                  )}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="tab2" className="mt-4 space-y-5">
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="font-bold">3. Ngày khám</Label>
+                  <div className="relative flex gap-2">
+                    <Input
+                      id="date-2"
+                      value={value2}
+                      className={`w-full bg-background pr-10 dark:border-white ${errors.selectedDate ? inputErrorClass : ""}`}
+                      readOnly
+                    />
+                    <Popover open={open2} onOpenChange={setOpen2}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          id="date-picker-2"
+                          variant="ghost"
+                          className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
+                        >
+                          <CalendarIcon className="size-3.5" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto overflow-hidden p-0" align="end">
+                        <Calendar
+                          locale={vi}
+                          mode="single"
+                          selected={date2}
+                          captionLayout="dropdown"
+                          month={month2}
+                          fromYear={2025}
+                          toYear={2027}
+                          onMonthChange={setMonth2}
+                          onSelect={(d: any) => {
+                            setDate2(d)
+                            setValue2(formatDate(d))
+                            setOpen2(false)
+                          }}
+                          disabled={(d: Date) => dayjs(d).isBefore(dayjs().startOf("day"))}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  {errors.selectedDate && (
+                    <span className="text-sm text-red-500">{errors.selectedDate.message}</span>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="font-bold">4. Thời gian khám</Label>
+                  <div
+                    className={`grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 border rounded-xl dark:bg-zinc-800 shadow-sm ${errors.selectedTime ? "border-red-500 " : "border-gray-200"} bg-white `}
+                  >
+                    {availableTimes2.map((time) => (
+                      <Button
+                        key={time.label}
+                        variant={selectedTime2?.label === time.label ? "default" : "outline"}
+                        onClick={() => setSelectedTime2(time)}
+                        className={`w-full p-2 rounded-lg text-sm transition-colors ${selectedTime2?.label === time.label ? "bg-primary text-white" : "bg-white hover:bg-gray-100"}`}
+                      >
+                        {time.label}
+                      </Button>
+                    ))}
+                  </div>
+                  {errors.selectedTime && (
+                    <span className="text-sm text-red-500">{errors.selectedTime.message}</span>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
 
             <div className="flex flex-col gap-2 w-full max-w-md ">
-              <Label className="font-bold">6. Ghi chú bệnh</Label>
+              <Label className="font-bold">Ghi chú bệnh</Label>
               <Textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
@@ -611,7 +746,7 @@ const AppointmentPage = () => {
             {showPaymentMethod && (
               <div className="w-full max-w-md mb-5">
                 <Label className="block text-base font-medium mb-2 ml-1">
-                  7. Phương thức thanh toán
+                  Phương thức thanh toán
                 </Label>
                 <div className="grid grid-cols-2 gap-4">
                   {paymentOptions.map((option) => (
@@ -619,10 +754,11 @@ const AppointmentPage = () => {
                       key={option.value}
                       variant={paymentMethod === option.value ? "default" : "outline"}
                       onClick={() => setPaymentMethod(option.value)}
-                      className={`w-full dark:border-white py-2 rounded-lg text-sm transition-colors ${paymentMethod === option.value
-                        ? "bg-primary text-white"
-                        : "bg-white hover:bg-gray-100"
-                        }`}
+                      className={`w-full dark:border-white py-2 rounded-lg text-sm transition-colors ${
+                        paymentMethod === option.value
+                          ? "bg-primary text-white"
+                          : "bg-white hover:bg-gray-100"
+                      }`}
                     >
                       {option.label}
                     </Button>
@@ -632,9 +768,7 @@ const AppointmentPage = () => {
             )}
           </div>
 
-          <Card
-            className="w-full max-w-md p-6 rounded-2xl shadow-lg bg-white dark:bg-zinc-900 dark:border-white/20 animate-fadeIn"
-          >
+          <Card className="w-full max-w-md p-6 rounded-2xl shadow-lg bg-white dark:bg-zinc-900 dark:border-white/20 animate-fadeIn">
             <CardHeader>
               <h2 className="font-bold text-center text-2xl  text-blue-600 dark:text-blue-400">
                 Thông tin lịch khám
@@ -653,30 +787,12 @@ const AppointmentPage = () => {
             </CardTitle>
 
             <CardContent className="flex flex-col gap-3 px-0 py-4">
-              {(
-                [
-                  { label: "Loại dịch vụ", value: selectedService?.tenLoai },
-                  { label: "Chuyên khoa", value: selectedSpecialty?.tenKhoa },
-                  {
-                    label: "Bác sĩ khám",
-                    value: selectDoctor?.hoTen
-                      ? `${selectDoctor.trinhDo} - ${selectDoctor.hoTen}`
-                      : undefined,
-                  },
-                  { label: "Ngày khám", value: formatDate(date) },
-                  { label: "Giờ khám", value: selectedTime?.label },
-                  { label: "Ghi chú", value: note },
-                ] as { label: string; value: any }[]
-              )
-                .filter(Boolean)
-                .map((item, idx) => (
-                  <div key={idx} className="flex gap-2">
-                    <span className="font-semibold">{item.label}:</span>
-                    <span>{item.value || "—"}</span>
-                  </div>
-                ))
-
-              }
+              {summaryItems.filter(Boolean).map((item, idx) => (
+                <div key={idx} className="flex gap-2">
+                  <span className="font-semibold">{item.label}:</span>
+                  <span>{item.value || "—"}</span>
+                </div>
+              ))}
             </CardContent>
 
             <div className="w-full h-[1px] bg-gray-300 dark:bg-white/20 my-2" />
@@ -760,7 +876,6 @@ const AppointmentPage = () => {
         </style>
       </div>
     </>
-    
   )
 }
 
