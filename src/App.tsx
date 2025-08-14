@@ -4,7 +4,6 @@ import { SidebarProvider } from "./components/ui/sidebar"
 import UserLayout from "./layouts/UserLayout"
 import AdminLayout from "./layouts/AdminLayout"
 import HomePage from "./pages/user/HomePage"
-import AboutPage from "./pages/user/AboutPage"
 import DashboardPage from "./pages/admin/DashboardPage"
 import UsersPage from "./pages/admin/UsersPage"
 import LoginPage from "./pages/auth/LoginPage"
@@ -48,7 +47,6 @@ function App() {
           {/* User Routes - With Navbar */}
           <Route path="/" element={<UserLayout />}>
             <Route index element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
             <Route path="/chuyen-khoa" element={<ChuyenKhoaPage />} />
             <Route path="/chuyen-gia" element={<ChuyenGiaPage />} />
             <Route path="/dat-lich" element={<AppointmentPage />} />

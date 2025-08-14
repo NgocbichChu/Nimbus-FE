@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { getDanhSachChuyenKhoa } from "../../api/chuyenKhoaApi"
 import { Input } from "@/components/ui/input"
 import { Icon } from "@iconify/react"
+import BackToTopButton from "@/components/back-to-top/back-to-top"
 
 const ChuyenKhoaPage = () => {
   const [listChuyenKhoa, setListChuyenKhoa] = useState<any[]>([])
@@ -44,15 +45,10 @@ const ChuyenKhoaPage = () => {
   ]
 
   return (
-
     <div className="container mx-auto px-4 py-8">
       {/* Banner */}
       <div className="relative rounded-2xl overflow-hidden shadow-lg">
-        <img
-          src={banner}
-          alt="Banner"
-          className="w-full h-56 sm:h-72 object-cover"
-        />
+        <img src={banner} alt="Banner" className="w-full h-56 sm:h-72 object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         <h1 className="absolute bottom-4 left-6 text-white text-3xl sm:text-4xl font-bold drop-shadow-lg">
           Danh sách các chuyên khoa
@@ -60,14 +56,9 @@ const ChuyenKhoaPage = () => {
       </div>
 
       {/* Search */}
-      <form
-        className="flex gap-2 w-full sm:w-auto mt-8"
-        onSubmit={(e) => e.preventDefault()}
-      >
+      <form className="flex gap-2 w-full sm:w-auto mt-8" onSubmit={(e) => e.preventDefault()}>
         <div className="relative w-full sm:w-72">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            🔍
-          </span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -80,10 +71,8 @@ const ChuyenKhoaPage = () => {
       {/* List */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
         {filteredChuyenKhoa.map((item, index) => {
-          const iconData = chuyenKhoaWithIcon.find(
-            (i) => i.chuyenKhoaId === item.chuyenKhoaId
-          );
-          const iconName = iconData?.icon || "mdi:help-circle-outline";
+          const iconData = chuyenKhoaWithIcon.find((i) => i.chuyenKhoaId === item.chuyenKhoaId)
+          const iconName = iconData?.icon || "mdi:help-circle-outline"
 
           return (
             <div
@@ -103,7 +92,7 @@ const ChuyenKhoaPage = () => {
                 </span>
               </div>
             </div>
-          );
+          )
         })}
 
         {filteredChuyenKhoa.length === 0 && (
@@ -112,7 +101,7 @@ const ChuyenKhoaPage = () => {
           </div>
         )}
       </div>
-
+      <BackToTopButton />
       <style>
         {`
     @keyframes fadeUp {
@@ -131,7 +120,6 @@ const ChuyenKhoaPage = () => {
   `}
       </style>
     </div>
-
   )
 }
 

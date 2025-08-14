@@ -3,6 +3,7 @@ import { Mail, Phone, MapPin, Clock, Send } from "lucide-react"
 import { Loader2 } from "lucide-react"
 import { sendMail } from "@/api/gmail"
 import { toastError, toastSuccess } from "@/helper/toast"
+import BackToTopButton from "@/components/back-to-top/back-to-top"
 
 const LienHePage = () => {
   // const [submissionMessage, setSubmissionMessage] = useState('');
@@ -202,6 +203,7 @@ const LienHePage = () => {
           </form>
         </div>
       </div>
+      <BackToTopButton/>
 
       {/* CSS Animations (retained from original code) */}
       <style>{`

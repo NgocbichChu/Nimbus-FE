@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import BackToTopButton from '@/components/back-to-top/back-to-top';
 
 interface WorkSchedule {
   lichlvId: number;
@@ -259,6 +260,7 @@ const AppointmentAdmin = () => {
           </Table>
         </CardContent>
       </Card>
+      <BackToTopButton/>
     </div>
   );
 };
