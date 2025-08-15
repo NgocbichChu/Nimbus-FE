@@ -143,7 +143,7 @@ export function DataTableUser<TData, TValue>({
 
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="text-sm text-muted-foreground flex-1">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredSelectedRowModel().rows.length} of{""}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="space-x-2">
@@ -155,12 +155,7 @@ export function DataTableUser<TData, TValue>({
           >
             Previous
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
+          <Button variant="outline" size="sm"  onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} >
             Next
           </Button>
         </div>

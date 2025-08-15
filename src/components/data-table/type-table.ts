@@ -35,6 +35,20 @@ export type Certification = {
 export type Specialty = {
   chuyenKhoaId: string
   tenKhoa: string
-  moTa: string 
+  moTa: string
+}
+
+export type Receptionist = {
+  leTanId: number,
+  hoTen: string,
+  gioiTinh: string,
+  email: string,
+  soDienThoai: string,
+  ngayTuyenDung: string,
+  chucVu: string,
+  ghiChu: string,
+  ngayTao: string,
+  ngayCapNhat: string,
+  trangThaiHoatDong: boolean
 }
 
