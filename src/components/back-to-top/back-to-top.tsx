@@ -7,7 +7,7 @@ interface BackToTopButtonProps {
   scrollThreshold?: number; // bao nhiêu px thì hiện nút (default 300)
 }
 
-export default function BackToTopButton({ scrollThreshold = 300 }: BackToTopButtonProps) {
+export default function BackToTopButton({ scrollThreshold = 250 }: BackToTopButtonProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {

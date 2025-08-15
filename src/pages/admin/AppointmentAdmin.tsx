@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { format } from 'date-fns';
+import { format, isSameDay } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import BackToTopButton from '@/components/back-to-top/back-to-top';
 
@@ -75,6 +75,13 @@ const AppointmentAdmin = () => {
   const [reason, setReason] = useState<string>('');
   const [schedules, setSchedules] = useState<WorkSchedule[]>(mockSchedules);
 
+  // Bộ lọc khoa & ngày xem lịch
+  const [selectedSpecialty, setSelectedSpecialty] = useState<string>(''); // lọc cho hôm nay
+  const [historySpecialty, setHistorySpecialty] = useState<string>(''); // lọc cho lịch sử
+  const [historyDate, setHistoryDate] = useState<Date | undefined>(undefined);
+
+  const specialties = Array.from(new Set(mockDoctors.map(doc => doc.specialty)));
+
   const handleAssignSchedule = () => {
     if (!selectedDate || !selectedDoctor) return;
 
@@ -109,12 +116,11 @@ const AppointmentAdmin = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
+        {/* Form phân ca */}
         <Card>
           <CardHeader>
             <CardTitle>Phân ca làm việc</CardTitle>
-            <CardDescription>
-              Chọn ngày, bác sĩ và ca trực để phân lịch
-            </CardDescription>
+            <CardDescription>Chọn ngày, bác sĩ và ca trực để phân lịch</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -187,43 +193,85 @@ const AppointmentAdmin = () => {
           </CardContent>
         </Card>
 
+        {/* Lịch làm việc hôm nay */}
         <Card>
           <CardHeader>
             <CardTitle>Lịch làm việc hôm nay</CardTitle>
-            <CardDescription>
-              {format(new Date(), 'EEEE, dd/MM/yyyy', { locale: vi })}
-            </CardDescription>
+            <CardDescription>{format(new Date(), 'EEEE, dd/MM/yyyy', { locale: vi })}</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            {/* Bộ lọc khoa */}
+            <Select value={selectedSpecialty} onValueChange={setSelectedSpecialty}>
+              <SelectTrigger>
+                <SelectValue placeholder="Lọc theo khoa" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tất cả</SelectItem>
+                {specialties.map((spec) => (
+                  <SelectItem key={spec} value={spec}>{spec}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             <div className="space-y-3">
               {schedules
                 .filter(schedule => schedule.ngay === format(new Date(), 'yyyy-MM-dd'))
-                .map((schedule) => (
-                  <div key={schedule.lichlvId} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <p className="font-medium">{schedule.tenBacSi}</p>
-                      <Badge className={getShiftColor(schedule.caTruc)}>
-                        Ca {schedule.caTruc.toLowerCase()}
+                .filter(schedule => {
+                  if (!selectedSpecialty || selectedSpecialty === "all") return true;
+                  const doctor = mockDoctors.find(d => d.id === schedule.idBacSi);
+                  return doctor?.specialty === selectedSpecialty;
+                })
+                .map((schedule) => {
+                  const specialty = mockDoctors.find(d => d.id === schedule.idBacSi)?.specialty;
+                  return (
+                    <div key={schedule.lichlvId} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">{schedule.tenBacSi} - {specialty}</p>
+                        <Badge className={getShiftColor(schedule.caTruc)}>
+                          Ca {schedule.caTruc.toLowerCase()}
+                        </Badge>
+                      </div>
+                      <Badge variant={schedule.lyDoNghi ? "destructive" : "default"}>
+                        {schedule.lyDoNghi ? 'Nghỉ' : 'Làm việc'}
                       </Badge>
                     </div>
-                    <Badge variant={schedule.lyDoNghi ? "destructive" : "default"}>
-                      {schedule.lyDoNghi ? 'Nghỉ' : 'Làm việc'}
-                    </Badge>
-                  </div>
-                ))}
+                  );
+                })}
             </div>
           </CardContent>
         </Card>
       </div>
 
+      {/* Lịch sử ca trực */}
       <Card>
         <CardHeader>
           <CardTitle>Lịch sử ca trực</CardTitle>
-          <CardDescription>
-            Tất cả các ca làm việc đã được phân chia
-          </CardDescription>
+          <CardDescription>Tất cả các ca làm việc đã được phân chia</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          {/* Bộ lọc khoa + ngày */}
+          <div className="flex flex-wrap gap-4">
+            <Select value={historySpecialty} onValueChange={setHistorySpecialty}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Lọc theo khoa" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tất cả</SelectItem>
+                {specialties.map((spec) => (
+                  <SelectItem key={spec} value={spec}>{spec}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Calendar
+              mode="single"
+              selected={historyDate}
+              onSelect={setHistoryDate}
+              className="rounded-md border"
+              locale={vi}
+            />
+          </div>
+
           <Table>
             <TableHeader>
               <TableRow>
@@ -235,27 +283,38 @@ const AppointmentAdmin = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {schedules.map((schedule) => (
-                <TableRow key={schedule.lichlvId}>
-                  <TableCell>
-                    {format(new Date(schedule.ngay), 'dd/MM/yyyy', { locale: vi })}
-                  </TableCell>
-                  <TableCell className="font-medium">{schedule.tenBacSi}</TableCell>
-                  <TableCell>
-                    <Badge className={getShiftColor(schedule.caTruc)}>
-                      {schedule.caTruc}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={getStatusColor(schedule.lyDoNghi)}>
-                      {schedule.lyDoNghi ? 'Nghỉ' : 'Làm việc'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {schedule.lyDoNghi || '-'}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {schedules
+                .filter(schedule => {
+                  if (historyDate) {
+                    return isSameDay(new Date(schedule.ngay), historyDate);
+                  }
+                  return true;
+                })
+                .filter(schedule => {
+                  if (!historySpecialty || historySpecialty === "all") return true;
+                  const doctor = mockDoctors.find(d => d.id === schedule.idBacSi);
+                  return doctor?.specialty === historySpecialty;
+                })
+                .map((schedule) => {
+                  const specialty = mockDoctors.find(d => d.id === schedule.idBacSi)?.specialty;
+                  return (
+                    <TableRow key={schedule.lichlvId}>
+                      <TableCell>{format(new Date(schedule.ngay), 'dd/MM/yyyy', { locale: vi })}</TableCell>
+                      <TableCell className="font-medium">{schedule.tenBacSi} - {specialty}</TableCell>
+                      <TableCell>
+                        <Badge className={getShiftColor(schedule.caTruc)}>{schedule.caTruc}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(schedule.lyDoNghi)}>
+                          {schedule.lyDoNghi ? 'Nghỉ' : 'Làm việc'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {schedule.lyDoNghi || '-'}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
             </TableBody>
           </Table>
         </CardContent>
