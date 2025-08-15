@@ -9,6 +9,7 @@ import { ReceptionColumns } from "./reception/reception-column"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { useAppDispatch, useAppSelector } from "@/helper"
 import { fetchReceptions } from "@/api/letanApi" 
+import { ManagerTable } from "./manager/manager-table"
 
 export default function AccessPage() {
   const [activeTab, setActiveTab] = useState("quanly")
@@ -124,13 +125,8 @@ const [isExpanded, setIsExpanded] = useState(false)
           <CardContent>
             {activeTab === "quanly" && <AdminForm />}
             {activeTab === "letan" && <ReceptionForm />}
-            {activeTab === "danhsachletan" && (
-              <ReceptionTable
-                columns={ReceptionColumns}
-                data={receptions}
-                filterColumn="hoTen"
-              />
-            )}
+            {activeTab === "danhsachletan" && (<ReceptionTable columns={ReceptionColumns} data={receptions} filterColumn="hoTen" />  )}
+            {activeTab === "danhsachquanly" && (<ManagerTable columns={ReceptionColumns} data={receptions} filterColumn="hoTen" />  )}
           </CardContent>
         </Card>
       </div>

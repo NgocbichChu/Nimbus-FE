@@ -50,3 +50,17 @@ export type Receptionist = {
   trangThaiHoatDong: boolean
 }
 
+export type Manager = {
+  quanLiId: number,
+  hoTen: string,
+  gioiTinh: string,
+  email: string,
+  soDienThoai: string,
+  ngayTuyenDung: string,
+  chucVu: string,
+  ghiChu: string,
+  ngayTao: string,
+  ngayCapNhat: string,
+  trangThaiHoatDong: boolean
+}
+
