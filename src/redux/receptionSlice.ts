@@ -1,6 +1,7 @@
 // receptionSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { Receptionist } from "@/components/data-table/type-table"
+import { fetchReceptions } from "@/api/letanApi"
 
 export interface ReceptionState {
   Receptionist: Receptionist[]
@@ -32,6 +33,22 @@ const receptionSlice = createSlice({
     setCurrentPatient(state, action: PayloadAction<Receptionist | null>) {
       state.currentPatient = action.payload
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchReceptions.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(fetchReceptions.fulfilled, (state, action) => {
+        state.loading = false
+        state.Receptionist = action.payload
+        state.error = null
+      })
+      .addCase(fetchReceptions.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.error.message || 'Failed to fetch receptions'
+      })
   },
 })
 

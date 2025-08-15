@@ -8,7 +8,7 @@ import { ReceptionTable } from "./reception/reception-table"
 import { ReceptionColumns } from "./reception/reception-column"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { useAppDispatch, useAppSelector } from "@/helper"
-import { fetchReceptions } from "@/api/letanApi" 
+import { fetchReceptions } from "@/api/letanApi"
 
 export default function AccessPage() {
   const [activeTab, setActiveTab] = useState("quanly")
@@ -40,15 +40,14 @@ export default function AccessPage() {
     },
   ]
 
-const dispatch = useAppDispatch()
-const receptions = useAppSelector((state) => state.reception.Receptionist)
+  const dispatch = useAppDispatch()
+  const receptions = useAppSelector((state) => state.reception.Receptionist)
 
-useEffect(() => {
-  dispatch(fetchReceptions()) // Gọi API khi mount
-}, [dispatch])
+  useEffect(() => {
+    dispatch(fetchReceptions()) // Gọi API khi mount
+  }, [dispatch])
 
- 
-const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   return (
     <div className="min-h-screen pt-4">
@@ -114,27 +113,18 @@ const [isExpanded, setIsExpanded] = useState(false)
         {/* Content Area */}
         <Card className="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-xl">
-              {tabs.find((t) => t.id === activeTab)?.label}
-            </CardTitle>
-            <CardDescription>
-              {tabs.find((t) => t.id === activeTab)?.description}
-            </CardDescription>
+            <CardTitle className="text-xl">{tabs.find((t) => t.id === activeTab)?.label}</CardTitle>
+            <CardDescription>{tabs.find((t) => t.id === activeTab)?.description}</CardDescription>
           </CardHeader>
           <CardContent>
             {activeTab === "quanly" && <AdminForm />}
             {activeTab === "letan" && <ReceptionForm />}
             {activeTab === "danhsachletan" && (
-              <ReceptionTable
-                columns={ReceptionColumns}
-                data={receptions}
-                filterColumn="hoTen"
-              />
+              <ReceptionTable columns={ReceptionColumns} data={receptions} filterColumn="hoTen" />
             )}
           </CardContent>
         </Card>
       </div>
     </div>
-
   )
 }

@@ -1,7 +1,7 @@
 import axios, { type AxiosRequestConfig, type AxiosResponse } from "axios"
 
 const axiosInstance = axios.create({
- baseURL: "http://localhost:8080/",
+ baseURL: "http://localhost:9999/",
   // baseURL: "https://api.nimbusfpl.online/",
   timeout: 10000,
   headers: {
