@@ -4,6 +4,7 @@ import { getDanhSachChuyenKhoa } from "../../api/chuyenKhoaApi"
 import { Input } from "@/components/ui/input"
 import { Icon } from "@iconify/react"
 import BackToTopButton from "@/components/back-to-top/back-to-top"
+import { Link } from "react-router-dom"
 
 const ChuyenKhoaPage = () => {
   const [listChuyenKhoa, setListChuyenKhoa] = useState<any[]>([])
@@ -80,7 +81,10 @@ const ChuyenKhoaPage = () => {
               className="group bg-white rounded-2xl shadow-md overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl dark:bg-gray-900 animate-fadeUp"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="flex items-center p-4 gap-4">
+              <Link
+                to={`/chuyen-khoa/${item.chuyenKhoaId}`} // thay id thật thay vì :chuyenKhoaId
+                className="flex items-center p-4 gap-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors group"
+              >
                 <div className="flex items-center justify-center w-14 h-14 rounded-full bg-blue-500 text-white text-3xl group-hover:bg-blue-600 transition-colors dark:bg-blue-800 dark:group-hover:bg-blue-700">
                   <Icon
                     icon={iconName}
@@ -90,7 +94,7 @@ const ChuyenKhoaPage = () => {
                 <span className="font-semibold text-lg text-gray-800 dark:text-gray-100">
                   {item.tenKhoa}
                 </span>
-              </div>
+              </Link>
             </div>
           )
         })}

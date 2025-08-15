@@ -26,6 +26,7 @@ import AccessPage from "./pages/admin/AccessPage"
 import UnsupportedScreen from "./pages/un-support-screen"
 import LichKhamPage from "./pages/user/LichKhamPage"
 import PatientDetail from "./pages/admin/patient/patient-detail"
+import ChuyenKhoaDetail from "./pages/user/chuyenKhoa-detail"
 
 function App() {
   const dispatch = useAppDispatch()
@@ -54,6 +55,7 @@ function App() {
             <Route path="/tai-khoan" element={<AccountPage />} />
             <Route path="/ho-so" element={<HoSoPage />} />
             <Route path="/lich-kham" element={<LichKhamPage />} />
+            <Route path="/chuyen-khoa/:chuyenKhoaId" element={<ChuyenKhoaDetail/>}/>
           </Route>
 
           {/* Admin Routes - With Sidebar */}
