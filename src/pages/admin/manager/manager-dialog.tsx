@@ -19,7 +19,7 @@ export function ManagerActionsCell({ manager }: ManagerActionsCellProps) {
                 </Button>      
             </DialogTrigger>
 
-            <DialogContent >
+            <DialogContent  className="!max-w-[50vw]">
                 <DialogHeader>
                     <DialogTitle>Chỉnh sửa tiếp tân</DialogTitle>
                 </DialogHeader>

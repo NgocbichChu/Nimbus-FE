@@ -2,9 +2,20 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
-import type { ColumnDef, SortingState, ColumnFiltersState, VisibilityState } from "@tanstack/react-table"
-import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, flexRender } from "@tanstack/react-table"
-
+import type {
+  ColumnDef,
+  SortingState,
+  ColumnFiltersState,
+  VisibilityState,
+} from "@tanstack/react-table"
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  flexRender,
+} from "@tanstack/react-table"
 
 // Props
 interface DataTableProps<TData> {
@@ -65,19 +76,14 @@ export function ReceptionTable<TData extends Record<string, any>>({
           <TableHeader>
             <TableRow>
               {columns.map((col) => (
-                <TableCell key={String(col.header)}>
-                  {col.header as string}
-                </TableCell>
+                <TableCell key={String(col.header)}>{col.header as string}</TableCell>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
@@ -91,17 +97,12 @@ export function ReceptionTable<TData extends Record<string, any>>({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center">
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
-
-
-
         </Table>
       </div>
 

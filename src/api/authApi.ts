@@ -97,7 +97,6 @@ export const logoutUser = async (): Promise<any> => {
       localStorage.removeItem("token")
       toastSuccess("Đăng xuất thành công")
     }
-
     return response
   } catch (error) {
     toastError("Đăng xuất thất bại")

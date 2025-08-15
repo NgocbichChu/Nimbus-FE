@@ -42,6 +42,7 @@ import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 import timezone from "dayjs/plugin/timezone"
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter"
+import BackToTopButton from "@/components/back-to-top/back-to-top"
 
 type AppointmentFormType = yup.InferType<typeof appointmentSchema>
 
@@ -706,6 +707,7 @@ const AppointmentPage = () => {
             </CardFooter>
           </Card>
         </div>
+        <BackToTopButton/>
         <style>
           {`  @keyframes fadeIn {
     from {

@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
+import { Link } from "react-router-dom"
 
 export function NavAdmin({
   user,
@@ -61,8 +62,10 @@ export function NavAdmin({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <User />
-              Thông tin cá nhân
+              <Link to="/tai-khoan"  className="flex items-center gap-2 w-full">
+                <User className="w-4 h-4"/>
+                Thông tin tài khoản
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="hover:!bg-destructive/10 !text-destructive cursor-pointer"

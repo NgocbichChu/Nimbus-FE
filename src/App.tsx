@@ -4,7 +4,6 @@ import { SidebarProvider } from "./components/ui/sidebar"
 import UserLayout from "./layouts/UserLayout"
 import AdminLayout from "./layouts/AdminLayout"
 import HomePage from "./pages/user/HomePage"
-import AboutPage from "./pages/user/AboutPage"
 import DashboardPage from "./pages/admin/DashboardPage"
 import UsersPage from "./pages/admin/UsersPage"
 import LoginPage from "./pages/auth/LoginPage"
@@ -27,6 +26,7 @@ import AccessPage from "./pages/admin/AccessPage"
 import UnsupportedScreen from "./pages/un-support-screen"
 import LichKhamPage from "./pages/user/LichKhamPage"
 import PatientDetail from "./pages/admin/patient/patient-detail"
+import ChuyenKhoaDetail from "./pages/user/chuyenKhoa-detail"
 
 function App() {
   const dispatch = useAppDispatch()
@@ -48,7 +48,6 @@ function App() {
           {/* User Routes - With Navbar */}
           <Route path="/" element={<UserLayout />}>
             <Route index element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
             <Route path="/chuyen-khoa" element={<ChuyenKhoaPage />} />
             <Route path="/chuyen-gia" element={<ChuyenGiaPage />} />
             <Route path="/dat-lich" element={<AppointmentPage />} />
@@ -56,6 +55,7 @@ function App() {
             <Route path="/tai-khoan" element={<AccountPage />} />
             <Route path="/ho-so" element={<HoSoPage />} />
             <Route path="/lich-kham" element={<LichKhamPage />} />
+            <Route path="/chuyen-khoa/:chuyenKhoaId" element={<ChuyenKhoaDetail/>}/>
           </Route>
 
           {/* Admin Routes - With Sidebar */}

@@ -129,19 +129,24 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
           control={control}
           name="gioiTinh"
           render={({ field }) => (
-            <RadioGroup value={field.value} onValueChange={field.onChange} className="flex gap-4">
+            <RadioGroup
+              value={field.value}
+              onValueChange={field.onChange}
+              className="flex gap-4"
+            >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Nam" id="male" />
-                <Label htmlFor="male">Nam</Label>
+                <RadioGroupItem value="Nam" id="Nam" />
+                <Label htmlFor="Nam">Nam</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Nữ" id="female" />
-                <Label htmlFor="female">Nữ</Label>
+                <RadioGroupItem value="Nữ" id="Nu" />
+                <Label htmlFor="Nu">Nữ</Label>
               </div>
             </RadioGroup>
           )}
         />
       </div>
+
 
       <div className="grid gap-2">
         <Label>Email *</Label>

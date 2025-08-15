@@ -6,27 +6,17 @@ import AdminForm from "./access/AdminForm"
 import ReceptionForm from "./access/ReceptionForm"
 import { ReceptionTable } from "./reception/reception-table"
 import { ReceptionColumns } from "./reception/reception-column"
-import { ChevronDown, ChevronUp } from "lucide-react"
 import { useAppDispatch, useAppSelector } from "@/helper"
-import { fetchReceptions } from "@/api/letanApi" 
+import { fetchReceptions } from "@/api/letanApi"
 import { ManagerTable } from "./manager/manager-table"
+import { fetchManager } from "@/api/manager"
+import { ManagerColumns } from "./manager/manager-column"
 
 export default function AccessPage() {
   const [activeTab, setActiveTab] = useState("quanly")
 
   const tabs = [
-    {
-      id: "danhsachquanly",
-      label: "Danh Sách Quản lý",
-      icon: Users,
-      description: "Dang sách quản lý hệ thống",
-    },
-    {
-      id: "danhsachletan",
-      label: "Danh Sách Lễ Tân",
-      icon: Users,
-      description: "Danh Sách lễ tân hệ thống",
-    },
+
     {
       id: "quanly",
       label: "Tạo Tài Khoản Quản lý",
@@ -38,77 +28,61 @@ export default function AccessPage() {
       label: "Tạo Tài Khoản Lễ tân",
       icon: UserCheck,
       description: "Thêm lễ tân mới vào hệ thống",
+    }, {
+      id: "danhsachquanly",
+      label: "Danh Sách Quản lý",
+      icon: Users,
+      description: "Dang sách quản lý hệ thống",
+    },
+    {
+      id: "danhsachletan",
+      label: "Danh Sách Lễ Tân",
+      icon: Users,
+      description: "Danh Sách lễ tân hệ thống",
     },
   ]
 
-const dispatch = useAppDispatch()
-const receptions = useAppSelector((state) => state.reception.Receptionist)
+  const dispatch = useAppDispatch()
+  const receptions = useAppSelector((state) => state.reception.Receptionist)
+  const manager = useAppSelector((state) => state.manager.manager)
 
-useEffect(() => {
-  dispatch(fetchReceptions()) // Gọi API khi mount
-}, [dispatch])
 
- 
-const [isExpanded, setIsExpanded] = useState(false)
+  useEffect(() => {
+    dispatch(fetchReceptions()) // Gọi API khi mount
+  }, [dispatch])
+
+  useEffect(() => {
+    dispatch(fetchManager()) // Gọi API khi mount
+  }, [dispatch])
+
 
   return (
-    <div className="min-h-screen pt-4">
-      <div className="  space-y-6">
-        <Card className="border-0 shadow-sm">
-          <CardContent className="p-2">
-            <nav className="flex flex-col space-y-1">
-              {isExpanded ? (
-                <>
-                  {tabs.map((tab) => {
-                    const Icon = tab.icon
-                    return (
-                      <button
-                        key={tab.id}
-                        onClick={() => {
-                          setActiveTab(tab.id)
-                          setIsExpanded(false)
-                        }}
-                        className={cn(
-                          "flex items-center space-x-3 rounded-lg px-4 py-3 text-sm font-medium transition-all",
-                          activeTab === tab.id
-                            ? "bg-sky-100 text-sky-900 shadow-sm"
-                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                        )}
-                      >
-                        <Icon className="h-5 w-5" />
-                        <span>{tab.label}</span>
-                      </button>
-                    )
-                  })}
-                  {/* Collapse button */}
-                  <button
-                    onClick={() => setIsExpanded(false)}
-                    className="flex items-center space-x-3 rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-all border-t mt-2 pt-3"
-                  >
-                    <ChevronUp className="h-4 w-4" />
-                    <span>Thu gọn</span>
-                  </button>
-                </>
-              ) : (
-                // Collapsed view - show only active tab
-                <>
-                  {(() => {
-                    const activeTabData = tabs.find((t) => t.id === activeTab)
-                    const Icon = activeTabData?.icon
-                    return (
-                      <button
-                        onClick={() => setIsExpanded(true)}
-                        className="flex items-center space-x-3 rounded-lg px-4 py-3 text-sm font-medium transition-all bg-sky-100 text-sky-900 shadow-sm hover:bg-sky-200"
-                      >
-                        {Icon && <Icon className="h-5 w-5" />}
-                        <span>{activeTabData?.label}</span>
-                        <ChevronDown className="h-4 w-4 ml-auto" />
-                      </button>
-                    )
-                  })()}
-                </>
-              )}
-            </nav>
+    <div className="min-h-screen pt-4 ">
+      <div className="  mx-auto space-y-6">
+
+        {/* Tabs Menu */}
+        <Card className="border-0 shadow-sm" style={{ width: "850px" }}>
+          <CardContent className="p-2 flex flex-wrap gap-2">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all",
+                    isActive
+                      ? "bg-sky-100 text-sky-900 shadow-sm"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  )}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
           </CardContent>
         </Card>
 
@@ -125,10 +99,15 @@ const [isExpanded, setIsExpanded] = useState(false)
           <CardContent>
             {activeTab === "quanly" && <AdminForm />}
             {activeTab === "letan" && <ReceptionForm />}
-            {activeTab === "danhsachletan" && (<ReceptionTable columns={ReceptionColumns} data={receptions} filterColumn="hoTen" />  )}
-            {activeTab === "danhsachquanly" && (<ManagerTable columns={ReceptionColumns} data={receptions} filterColumn="hoTen" />  )}
+            {activeTab === "danhsachletan" && (
+              <ReceptionTable columns={ReceptionColumns} data={receptions} filterColumn="hoTen" />
+            )}
+            {activeTab === "danhsachquanly" && (
+              <ManagerTable columns={ManagerColumns} data={manager} filterColumn="hoTen" />
+            )}
           </CardContent>
         </Card>
+
       </div>
     </div>
 

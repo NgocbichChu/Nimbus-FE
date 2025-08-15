@@ -3,6 +3,7 @@ import { Icon } from "@iconify/react"
 import { Link } from "react-router-dom"
 import CountUp from "react-countup"
 import { useEffect, useRef, useState } from "react"
+import BackToTopButton from "@/components/back-to-top/back-to-top"
 
 const HomePage = () => {
   const [statsVisible, setStatsVisible] = useState(false)
@@ -310,6 +311,7 @@ const HomePage = () => {
     </ol>
   </div>
 </section>
+<BackToTopButton/>
 
 
       <style>

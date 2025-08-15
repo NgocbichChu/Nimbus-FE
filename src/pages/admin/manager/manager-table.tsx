@@ -15,8 +15,7 @@ interface DataTableProps<TData> {
   pageSize?: number
 }
 
-// Component AdminTable
-export function ManagerTable<TData extends Record<string, any>>({
+ export function ManagerTable<TData extends Record<string, any>>({
   columns,
   data,
   filterColumn,
@@ -74,16 +73,9 @@ export function ManagerTable<TData extends Record<string, any>>({
           <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="max-w-[150px] truncate"
-                      title={String(cell.getValue() ?? "")}
-                    >
+                    <TableCell key={cell.id} className="max-w-[150px] truncate" title={String(cell.getValue() ?? "")}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -91,37 +83,22 @@ export function ManagerTable<TData extends Record<string, any>>({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center">
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
-
-
-
         </Table>
       </div>
 
       {/* Pagination */}
       <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={pageIndex === 0}
-          onClick={() => setPageIndex((prev) => Math.max(prev - 1, 0))}
-        >
+        <Button variant="outline" size="sm" disabled={pageIndex === 0} onClick={() => setPageIndex((prev) => Math.max(prev - 1, 0))} >
           Previous
         </Button>
 
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={pageIndex + 1 >= pageCount}
-          onClick={() => setPageIndex((prev) => Math.min(prev + 1, pageCount - 1))}
-        >
+        <Button variant="outline" size="sm" disabled={pageIndex + 1 >= pageCount} onClick={() => setPageIndex((prev) => Math.min(prev + 1, pageCount - 1))}>
           Next
         </Button>
       </div>
