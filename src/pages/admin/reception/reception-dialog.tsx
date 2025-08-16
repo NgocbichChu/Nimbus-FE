@@ -26,7 +26,7 @@ export function ReceptionActionsCell({ reception }: ReceptionActionsCellProps) {
       </DialogTrigger>
       <DialogContent className="!max-w-[50vw]">
         <DialogHeader>
-          <DialogTitle>Chỉnh sửa tiếp tân</DialogTitle>
+          <DialogTitle>Chỉnh sửa Lễ tân</DialogTitle>
         </DialogHeader>
         <ReceptionForm reception={reception} onClose={() => setOpen(false)} />
       </DialogContent>

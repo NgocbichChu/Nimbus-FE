@@ -31,7 +31,7 @@ export const ReceptionColumns: ColumnDef<Receptionist>[] = [
   {
     accessorKey: "email",
     header: "Email",
-    cell: ({ row }) => <span className="capitalize">{row.getValue("email")}</span>,
+    cell: ({ row }) => <span className="lowercase">{row.getValue("email")}</span>,
   },
   {
     accessorKey: "soDienThoai",

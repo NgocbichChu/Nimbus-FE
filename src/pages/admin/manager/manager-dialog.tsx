@@ -19,9 +19,9 @@ export function ManagerActionsCell({ manager }: ManagerActionsCellProps) {
                 </Button>      
             </DialogTrigger>
 
-            <DialogContent  className="!max-w-[50vw]">
+            <DialogContent  className="max-w-[35vw]">
                 <DialogHeader>
-                    <DialogTitle>Chỉnh sửa tiếp tân</DialogTitle>
+                    <DialogTitle>Chỉnh sửa Quản lý</DialogTitle>
                 </DialogHeader>
                 <ManagerForm manager={manager} onClose={() => setOpen(false)} />
             </DialogContent>

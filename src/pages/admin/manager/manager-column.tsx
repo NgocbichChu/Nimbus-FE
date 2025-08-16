@@ -2,7 +2,7 @@ import type { Manager } from "@/components/data-table/type-table";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { ManagerActionsCell } from "./manager-dialog";
-  
+
 
 export const ManagerColumns: ColumnDef<Manager>[] = [
     {
@@ -33,19 +33,13 @@ export const ManagerColumns: ColumnDef<Manager>[] = [
     {
         accessorKey: "email",
         header: "Email",
-        cell: ({ row }) => <span className="capitalize">{row.getValue("email")}</span>
+        cell: ({ row }) => <span className="lowercase">{row.getValue("email")}</span>
 
     },
     {
         accessorKey: "soDienThoai",
         header: "Số Điện Thoại",
         cell: ({ row }) => <span className="capitalize">{row.getValue("soDienThoai")}</span>
-
-    },
-    {
-        accessorKey: "ngayTuyenDung",
-        header: "Ngày Tuyển Dụng",
-        cell: ({ row }) => <span className="capitalize">{row.getValue("ngayTuyenDung")}</span>
 
     },
     {
@@ -58,18 +52,6 @@ export const ManagerColumns: ColumnDef<Manager>[] = [
         accessorKey: "ghiChu",
         header: "Ghi Chú",
         cell: ({ row }) => <span className="capitalize">{row.getValue("ghiChu")}</span>
-
-    },
-    {
-        accessorKey: "ngayTao",
-        header: "Ngày Tạo",
-        cell: ({ row }) => <span className="capitalize">{row.getValue("ngayTao")}</span>
-
-    },
-    {
-        accessorKey: "ngayCapNhat",
-        header: "Ngày Cập Nhật",
-        cell: ({ row }) => <span className="capitalize">{row.getValue("ngayCapNhat")}</span>
 
     },
     {

@@ -129,11 +129,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
           control={control}
           name="gioiTinh"
           render={({ field }) => (
-            <RadioGroup
-              value={field.value}
-              onValueChange={field.onChange}
-              className="flex gap-4"
-            >
+            <RadioGroup value={field.value} onValueChange={field.onChange} className="flex gap-4">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Nam" id="Nam" />
                 <Label htmlFor="Nam">Nam</Label>
@@ -146,7 +142,6 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
           )}
         />
       </div>
-
 
       <div className="grid gap-2">
         <Label>Email *</Label>
@@ -252,10 +247,6 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         {errors.trinhDo && <p className="text-red-500 text-sm">{errors.trinhDo.message}</p>}
       </div>
 
-      {/* <div className="grid gap-2">
-        <Label>Kinh nghiệm (năm)</Label>
-        <Input {...register("kinhNghiem")} placeholder="Nhập số năm" min={0}  type="number" />
-      </div> */}
       <div className="grid gap-2">
         <Label>Kinh nghiệm (năm)</Label>
         <Controller
