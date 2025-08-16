@@ -84,7 +84,7 @@ export const hoSoSchema = yup.object({
     .nullable()
     .test(
       "cmnd-cccd",
-      "Số CMND/CCCD phải gồm 9 hoặc 12 số",
+      "Số CMND/CCCD phải gồm 9 hoặc 12 số và số 0 ở đầu",
       (val) => !val || /^0(?:\d{8}|\d{11})$/.test(val)
     ),
 

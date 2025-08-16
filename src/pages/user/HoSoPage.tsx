@@ -218,7 +218,7 @@ const HoSoPage = () => {
                 )}
               </div>
               <div className="grid grid-cols-2">
-                <Label className="text-base">Số CMND/canCuocCongDan:</Label>
+                <Label className="text-base">Số CMND/CCCD:</Label>
                 {isEditing ? (
                   <div>
                     <Input {...register("canCuocCongDan")} />

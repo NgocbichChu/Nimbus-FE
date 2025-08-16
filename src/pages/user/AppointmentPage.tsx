@@ -37,6 +37,7 @@ import {
   getGioTheoNgay,
   postTaoLichKham,
   getLichTrongChuyenKhoa,
+  getGioTrongChuyenKhoa,
 } from "@/api/appointmentApi"
 import { getDanhSachChuyenKhoa } from "@/api/chuyenKhoaApi"
 import { getThongTinBenhNhan } from "@/api/accountApi"
@@ -271,6 +272,7 @@ const AppointmentPage = () => {
     Record<string, { label: string; start: string; end: string }[]>
   >({})
 
+  // FLOW 2 chuyên khoa -> ngày -> giờ
   useEffect(() => {
     const fetchLichTrong = async () => {
       setNgayTrongChuyenKhoa([])
@@ -356,6 +358,87 @@ const AppointmentPage = () => {
     setAvailableTimes2(ranges)
     if (ranges.length === 0) setSelectedTime2(null)
   }, [date2, lichTrongMap])
+
+  useEffect(() => {
+    const fetchGioTrongTheoNgayChuyenKhoa = async () => {
+      if (!specialty || !date2) {
+        setAvailableTimes2([])
+        setSelectedTime2(null)
+        return
+      }
+
+      const sel = listChuyenKhoa.find((i) => i.chuyenKhoaId === specialty)
+      if (!sel?.tenKhoa) {
+        setAvailableTimes2([])
+        setSelectedTime2(null)
+        return
+      }
+
+      const ngay = dayjs(date2).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
+
+      try {
+        const resNgay = await getLichTrongChuyenKhoa(sel.tenKhoa)
+        const arrNgay = Array.isArray(resNgay?.data) ? resNgay.data : []
+        const caList: string[] = arrNgay
+          .filter((it: any) => String(it?.ngay || it?.date || "").slice(0, 10) === ngay)
+          .map((it: any) => it?.caTruc)
+          .filter((x: any) => typeof x === "string" && x.trim().length > 0)
+
+        if (caList.length === 0) {
+          setAvailableTimes2([])
+          setSelectedTime2(null)
+          return
+        }
+
+        const results = await Promise.allSettled(
+          caList.map((caTruc) => getGioTrongChuyenKhoa(sel.tenKhoa, ngay, caTruc))
+        )
+
+        const rawTimes: string[] = []
+        for (const r of results) {
+          if (r.status !== "fulfilled") continue
+          const arr = Array.isArray(r.value?.data) ? r.value.data : []
+          for (const x of arr) {
+            const isFree = typeof x === "object" && x !== null ? (x.trangThai ?? true) : true
+            if (!isFree) continue
+            const t =
+              typeof x === "string"
+                ? x
+                : x?.thoiGian
+                  ? String(x.thoiGian)
+                  : x?.time
+                    ? String(x.time)
+                    : null
+            if (t) rawTimes.push(t.slice(0, 5))
+          }
+        }
+
+        const uniq = Array.from(new Set(rawTimes)).sort((a, b) => a.localeCompare(b))
+
+        const ranges: { label: string; start: string; end: string }[] = []
+        for (let i = 0; i < uniq.length - 1; i++) {
+          const s = uniq[i]
+          const e = uniq[i + 1]
+          ranges.push({ label: `${s} - ${e}`, start: `${s}:00`, end: `${e}:00` })
+        }
+
+        const todayKey = dayjs().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
+        let finalRanges = ranges
+        if (ngay === todayKey) {
+          const nowHHmm = dayjs().tz("Asia/Ho_Chi_Minh").format("HH:mm")
+          finalRanges = ranges.filter((r) => r.start.slice(0, 5) > nowHHmm)
+        }
+
+        setAvailableTimes2(finalRanges)
+        if (finalRanges.length === 0) setSelectedTime2(null)
+      } catch {
+        setAvailableTimes2([])
+        setSelectedTime2(null)
+      }
+    }
+
+    fetchGioTrongTheoNgayChuyenKhoa()
+  }, [specialty, listChuyenKhoa, date2])
 
   useEffect(() => {
     setFormValue("serviceType", serviceType)
@@ -546,7 +629,13 @@ const AppointmentPage = () => {
             <div className="flex flex-col gap-2 w-full max-w-md ">
               <Label className="font-bold">1. Loại hình khám</Label>
               <Select value={serviceType} onValueChange={setServiceType}>
-                <SelectTrigger className="w-full border rounded-md px-3 py-2 bg-white">
+                <SelectTrigger
+                  className={cn(
+                    "w-full border rounded-md px-3 py-2 bg-white",
+                    errors.serviceType &&
+                      "border-red-500 focus:ring-red-500 focus-visible:ring-red-500" 
+                  )}
+                >
                   <div className="flex w-full justify-between items-center">
                     {selectedService ? (
                       <>
@@ -584,9 +673,12 @@ const AppointmentPage = () => {
                     variant="outline"
                     role="combobox"
                     aria-expanded={openSpecialty}
-                    className="w-full flex justify-between items-center"
+                    className={cn(
+                      "w-full flex justify-between items-center",
+                      errors.specialty && "border-red-500"
+                    )}
                   >
-                    <span className={cn("truncate", !specialty && "text-muted-foreground")}>
+                    <span className={cn("truncate", !specialty && "text-muted-foreground ")}>
                       {specialty
                         ? listChuyenKhoa.find((item) => item.chuyenKhoaId === specialty)?.tenKhoa
                         : ""}
