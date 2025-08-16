@@ -6,7 +6,7 @@ import {
   SelectTrigger,
 } from "@/components/ui/select"
 import { parseDate } from "chrono-node"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
@@ -29,15 +29,17 @@ import {
   CommandList,
 } from "../../components/ui/command"
 import { cn } from "@/lib/utils"
-import { Check, ChevronsUpDown } from "lucide-react"
 import { getDanhSachChuyenGia } from "@/api/chuyenGiaApi"
-import { getLoaiDichVu } from "@/api/appointmentApi"
-import { getDanhSachChuyenKhoa } from "../../api/chuyenKhoaApi"
-import { getThongTinBenhNhan } from "../../api/accountApi"
-import { getBacSiByChuyenKhoa } from "../../api/appointmentApi"
-import { getNgayKhamByChuyenGia } from "../../api/appointmentApi"
-import { getGioTheoNgay } from "../../api/appointmentApi"
-import { postTaoLichKham } from "../../api/appointmentApi"
+import {
+  getLoaiDichVu,
+  getBacSiByChuyenKhoa,
+  getNgayKhamByChuyenGia,
+  getGioTheoNgay,
+  postTaoLichKham,
+  getLichTrongChuyenKhoa,
+} from "@/api/appointmentApi"
+import { getDanhSachChuyenKhoa } from "@/api/chuyenKhoaApi"
+import { getThongTinBenhNhan } from "@/api/accountApi"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 import timezone from "dayjs/plugin/timezone"
@@ -186,7 +188,7 @@ const AppointmentPage = () => {
         const res = await getDanhSachChuyenKhoa()
         setListChuyenKhoa(res.data || [])
       } catch (error) {
-        console.error("Lỗi : ", error)
+        console.log("Lỗi : ", error)
       }
     }
     fetchChuyenKhoa()
@@ -264,17 +266,125 @@ const AppointmentPage = () => {
     fetchGioTheoNgay()
   }, [date, doctor])
 
+  const [ngayTrongChuyenKhoa, setNgayTrongChuyenKhoa] = useState<string[]>([])
+  const [lichTrongMap, setLichTrongMap] = useState<
+    Record<string, { label: string; start: string; end: string }[]>
+  >({})
+
+  useEffect(() => {
+    const fetchLichTrong = async () => {
+      setNgayTrongChuyenKhoa([])
+      setLichTrongMap({})
+      setAvailableTimes2([])
+      setSelectedTime2(null)
+      if (!specialty) return
+      const selected = listChuyenKhoa.find((i) => i.chuyenKhoaId === specialty)
+      if (!selected?.tenKhoa) return
+      try {
+        const res = await getLichTrongChuyenKhoa(selected.tenKhoa)
+        const data = Array.isArray(res?.data) ? res.data : []
+        const pairConsecutive = (times: string[]) => {
+          const t = [...times]
+            .filter(Boolean)
+            .map((s) => s.slice(0, 5))
+            .sort()
+          const out: { label: string; start: string; end: string }[] = []
+          for (let i = 0; i < t.length - 1; i++)
+            out.push({ label: `${t[i]} - ${t[i + 1]}`, start: `${t[i]}:00`, end: `${t[i + 1]}:00` })
+          return out
+        }
+        const map: Record<string, { label: string; start: string; end: string }[]> = {}
+        const days: string[] = []
+        for (const item of data) {
+          const ngay = String(item?.ngay || item?.date || "").slice(0, 10)
+          const slots: string[] =
+            (Array.isArray(item?.gioTrong) && item.gioTrong) ||
+            (Array.isArray(item?.khungGio) && item.khungGio) ||
+            (Array.isArray(item?.slots) && item.slots) ||
+            []
+          if (slots.length) {
+            const ranges = pairConsecutive(slots)
+            if (ranges.length) {
+              if (!map[ngay]) map[ngay] = []
+              map[ngay].push(...ranges)
+            }
+          } else {
+            const so = Number(item?.soGioTrong ?? 0)
+            if (ngay && so > 0) days.push(ngay)
+          }
+        }
+        Object.keys(map).forEach((k) => {
+          const seen = new Set<string>()
+          map[k] = map[k]
+            .filter((r) => (seen.has(r.label) ? false : (seen.add(r.label), true)))
+            .sort((a, b) => a.start.localeCompare(b.start))
+        })
+        const todayKey = dayjs().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
+        if (map[todayKey]) {
+          const hhmm = dayjs().tz("Asia/Ho_Chi_Minh").format("HH:mm")
+          map[todayKey] = map[todayKey].filter((r) => r.start.slice(0, 5) > hhmm)
+          if (map[todayKey].length === 0) delete map[todayKey]
+        }
+        if (Object.keys(map).length > 0) {
+          setLichTrongMap(map)
+          setNgayTrongChuyenKhoa(Object.keys(map).sort((a, b) => a.localeCompare(b)))
+        } else {
+          const uniqueSortedDays = Array.from(new Set(days)).sort((a, b) => a.localeCompare(b))
+          setNgayTrongChuyenKhoa(uniqueSortedDays)
+          setLichTrongMap({})
+        }
+      } catch {
+        setNgayTrongChuyenKhoa([])
+        setLichTrongMap({})
+      }
+    }
+    fetchLichTrong()
+  }, [specialty, listChuyenKhoa])
+
+  useEffect(() => {
+    if (!date2) {
+      setAvailableTimes2([])
+      return
+    }
+    const key = dayjs(date2).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
+    let ranges = [...(lichTrongMap[key] || [])]
+    const now = dayjs().tz("Asia/Ho_Chi_Minh")
+    if (now.format("YYYY-MM-DD") === key) {
+      const hhmm = now.format("HH:mm")
+      ranges = ranges.filter((r) => r.start.slice(0, 5) > hhmm)
+    }
+    setAvailableTimes2(ranges)
+    if (ranges.length === 0) setSelectedTime2(null)
+  }, [date2, lichTrongMap])
+
   useEffect(() => {
     setFormValue("serviceType", serviceType)
     setFormValue("specialty", specialty)
     setFormValue("doctor", doctor)
     setFormValue("selectedDate", value)
     setFormValue("selectedTime", selectedTime?.label || "")
+    setFormValue("selectedDate2", value2)
+    setFormValue("selectedTime2", selectedTime2?.label || "")
     setFormValue("note", note)
-  }, [serviceType, specialty, doctor, value, selectedTime, note, setFormValue])
+  }, [
+    serviceType,
+    specialty,
+    doctor,
+    value,
+    selectedTime,
+    value2,
+    selectedTime2,
+    note,
+    setFormValue,
+  ])
 
   const onSubmit = async () => {
-    const isValid = await trigger()
+    const fieldsToValidate =
+      activeTab === "tab1"
+        ? (["serviceType", "specialty", "doctor", "selectedDate", "selectedTime", "note"] as const)
+        : (["serviceType", "specialty", "selectedDate2", "selectedTime2", "note"] as const)
+
+    const isValid = await trigger(fieldsToValidate as any, { shouldFocus: true })
     if (!isValid) return
 
     if (!showPaymentMethod) {
@@ -289,17 +399,22 @@ const AppointmentPage = () => {
 
     const ngayKham =
       activeTab === "tab1" ? dayjs(date).format("YYYY-MM-DD") : dayjs(date2).format("YYYY-MM-DD")
+
     const gioHen =
       activeTab === "tab1" ? selectedTime?.start.slice(0, 5) : selectedTime2?.start.slice(0, 5)
+
     const gioDen =
       activeTab === "tab1" ? selectedTime?.end.slice(0, 5) : selectedTime2?.end.slice(0, 5)
-    const resNgay =
-      activeTab === "tab1"
-        ? await getNgayKhamByChuyenGia(Number(doctor))
-        : { data: [] as NgayLamViecItem[] }
-    const list: NgayLamViecItem[] = resNgay.data || []
-    const info = list.find((item) => item.ngay === ngayKham)
-    const caKham = info?.caTruc || ""
+
+    let caKham = ""
+    if (activeTab === "tab1") {
+      const resNgay = await getNgayKhamByChuyenGia(Number(doctor))
+      const list: { ngay: string; caTruc: string | null }[] = resNgay.data || []
+      caKham = list.find((i) => i.ngay === ngayKham)?.caTruc || ""
+    } else if (gioHen) {
+      const h = parseInt(gioHen.slice(0, 2), 10)
+      caKham = h < 12 ? "SANG" : h < 18 ? "CHIEU" : "TOI"
+    }
 
     const payload = {
       bacSiId: activeTab === "tab1" ? Number(doctor) : undefined,
@@ -325,8 +440,9 @@ const AppointmentPage = () => {
     { value: "cash", label: "Trực tiếp tại quầy" },
     { value: "momo", label: "Momo" },
   ]
-  function formatDate(date: Date | undefined): string {
-    if (!date) return ""
+
+  function formatDate(d?: Date): string {
+    if (!d) return ""
     const options = {
       weekday: "long",
       year: "numeric",
@@ -335,18 +451,17 @@ const AppointmentPage = () => {
       timeZone: "Asia/Ho_Chi_Minh",
     } as const
 
-    return new Intl.DateTimeFormat("vi-VN", options).format(date)
+    return new Intl.DateTimeFormat("vi-VN", options).format(d)
   }
 
   const selectedService = listDichVu.find((opt) => opt.tenLoai === serviceType)
   const selectedSpecialty = listChuyenKhoa.find((opt) => opt.chuyenKhoaId === specialty)
   const selectedPayment = paymentOptions.find((opt) => opt.value === paymentMethod)
-
   const selectDoctor = listChuyenGia.find((opt) => String(opt.bacSiId) === doctor)
 
   const summaryItems =
     activeTab === "tab1"
-      ? ([
+      ? [
           { label: "Loại dịch vụ", value: selectedService?.tenLoai },
           { label: "Chuyên khoa", value: selectedSpecialty?.tenKhoa },
           {
@@ -358,14 +473,14 @@ const AppointmentPage = () => {
           { label: "Ngày khám", value: formatDate(date) },
           { label: "Giờ khám", value: selectedTime?.label },
           { label: "Ghi chú", value: note },
-        ] as { label: string; value: any }[])
-      : ([
+        ]
+      : [
           { label: "Loại dịch vụ", value: selectedService?.tenLoai },
           { label: "Chuyên khoa", value: selectedSpecialty?.tenKhoa },
           { label: "Ngày khám", value: formatDate(date2) },
           { label: "Giờ khám", value: selectedTime2?.label },
           { label: "Ghi chú", value: note },
-        ] as { label: string; value: any }[])
+        ]
 
   return (
     <>
@@ -649,11 +764,7 @@ const AppointmentPage = () => {
                         key={time.label}
                         variant={selectedTime?.label === time.label ? "default" : "outline"}
                         onClick={() => setSelectedTime(time)}
-                        className={`w-full p-2 rounded-lg text-sm transition-colors ${
-                          selectedTime?.label === time.label
-                            ? "bg-primary text-white"
-                            : "bg-white hover:bg-gray-100"
-                        }`}
+                        className={`w-full p-2 rounded-lg text-sm transition-colors ${selectedTime?.label === time.label ? "bg-primary text-white" : "bg-white hover:bg-gray-100"}`}
                       >
                         {time.label}
                       </Button>
@@ -672,7 +783,7 @@ const AppointmentPage = () => {
                     <Input
                       id="date-2"
                       value={value2}
-                      className={`w-full bg-background pr-10 dark:border-white ${errors.selectedDate ? inputErrorClass : ""}`}
+                      className={`w-full bg-background pr-10 dark:border-white ${errors.selectedDate2 ? inputErrorClass : ""}`}
                       readOnly
                     />
                     <Popover open={open2} onOpenChange={setOpen2}>
@@ -700,20 +811,24 @@ const AppointmentPage = () => {
                             setValue2(formatDate(d))
                             setOpen2(false)
                           }}
-                          disabled={(d: Date) => dayjs(d).isBefore(dayjs().startOf("day"))}
+                          disabled={(d: Date) => {
+                            const today = dayjs().startOf("day")
+                            const key = dayjs(d).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
+                            return dayjs(d).isBefore(today) || !ngayTrongChuyenKhoa.includes(key)
+                          }}
                         />
                       </PopoverContent>
                     </Popover>
                   </div>
-                  {errors.selectedDate && (
-                    <span className="text-sm text-red-500">{errors.selectedDate.message}</span>
+                  {errors.selectedDate2 && (
+                    <span className="text-sm text-red-500">{errors.selectedDate2.message}</span>
                   )}
                 </div>
 
                 <div className="flex flex-col gap-2 w-full">
                   <Label className="font-bold">4. Thời gian khám</Label>
                   <div
-                    className={`grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 border rounded-xl dark:bg-zinc-800 shadow-sm ${errors.selectedTime ? "border-red-500 " : "border-gray-200"} bg-white `}
+                    className={`grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 border rounded-xl dark:bg-zinc-800 shadow-sm ${errors.selectedTime2 ? "border-red-500 " : "border-gray-200"} bg-white `}
                   >
                     {availableTimes2.map((time) => (
                       <Button
@@ -726,8 +841,8 @@ const AppointmentPage = () => {
                       </Button>
                     ))}
                   </div>
-                  {errors.selectedTime && (
-                    <span className="text-sm text-red-500">{errors.selectedTime.message}</span>
+                  {errors.selectedTime2 && (
+                    <span className="text-sm text-red-500">{errors.selectedTime2.message}</span>
                   )}
                 </div>
               </TabsContent>

@@ -77,7 +77,7 @@ const AccountPage = () => {
         const user = {
           name: res.data.hoTen,
           soDienThoai: res.data.soDienThoai,
-          gioiTinh: res.data.gioiTinh === "M" ? "Nam" : "Nữ",
+          gioiTinh: res.data.gioiTinh,
           email: res.data.email,
         }
         setUser(user)
@@ -94,7 +94,7 @@ const AccountPage = () => {
     try {
       await capNhatThongTin({
         hoTen: user.name,
-        gioiTinh: user.gioiTinh === "M" ? "Nam" : "Nữ",
+        gioiTinh: user.gioiTinh,
         email: user.email,
         soDienThoai: data.soDienThoai,
       })

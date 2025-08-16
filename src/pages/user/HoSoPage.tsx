@@ -72,7 +72,7 @@ const HoSoPage = () => {
       await capNhatBenhNhan({
         benhNhanId: user.maBN,
         hoTen: user.name,
-        gioiTinh: user.gioiTinh === "M" ? "Nam" : "Nữ",
+        gioiTinh: user.gioiTinh,
         email: user.email,
         soDienThoai: data.soDienThoai,
         diaChi: data.diaChi,
@@ -119,7 +119,7 @@ const HoSoPage = () => {
         const user = {
           name: res.data.hoTen || "",
           soDienThoai: res.data.soDienThoai || "",
-          gioiTinh: res.data.gioiTinh === "M" ? "Nam" : "Nữ",
+          gioiTinh: res.data.gioiTinh || "",
           email: res.data.email || "",
           diaChi: res.data.diaChi || "",
           maBN: res.data.benhNhanId || "",

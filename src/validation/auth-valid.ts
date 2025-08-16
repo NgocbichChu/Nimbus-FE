@@ -13,10 +13,7 @@ export type LoginSchemaType = yup.InferType<typeof loginSchema>
 export const signUpSchema = yup.object({
   hoTen: yup.string().required("Họ tên không được để trống"),
   gioiTinh: yup.string().oneOf(["Nam", "Nữ"]).required("Giới tính là bắt buộc"),
-  email: yup
-    .string()
-    .email("Email không hợp lệ")
-    .required("Email không được để trống"),
+  email: yup.string().email("Email không hợp lệ").required("Email không được để trống"),
   soDienThoai: yup
     .string()
     .matches(/^[0-9]{10,11}$/, "Số điện thoại không hợp lệ")
@@ -29,9 +26,9 @@ export const signUpSchema = yup.object({
     .string()
     .oneOf([yup.ref("matKhau")], "Xác nhận mật khẩu không khớp")
     .required("Vui lòng xác nhận mật khẩu"),
-});
+})
 
-export type SignUpSchemaType = yup.InferType<typeof signUpSchema>;
+export type SignUpSchemaType = yup.InferType<typeof signUpSchema>
 
 export const appointmentSchema = yup.object().shape({
   serviceType: yup.string().required("Vui lòng chọn loại hình khám"),
@@ -42,7 +39,11 @@ export const appointmentSchema = yup.object().shape({
 
   selectedDate: yup.string().required("Vui lòng chọn ngày khám"),
 
+  selectedDate2: yup.string().required("Vui lòng chọn ngày khám"),
+
   selectedTime: yup.string().required("Vui lòng chọn giờ khám"),
+
+  selectedTime2: yup.string().required("Vui lòng chọn giờ khám"),
 
   note: yup.string().max(500, "Vấn đề không được vượt quá 500 ký tự"),
 })

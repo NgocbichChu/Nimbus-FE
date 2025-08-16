@@ -49,3 +49,13 @@ export const postTaoLichKham = async (data: any) => {
     throw error
   }
 }
+
+export const getLichTrongChuyenKhoa = async (tenKhoa: string) => {
+  try {
+    const response = await get<any>(`/guest/chuyen-khoa/${encodeURIComponent(tenKhoa)}/lich-trong`)
+    return response
+  } catch (error) {
+    console.error("Lỗi : ", error)
+    throw error
+  }
+}
