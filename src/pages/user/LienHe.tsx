@@ -76,7 +76,7 @@ const LienHePage = () => {
               <MapPin className="text-blue-500 flex-shrink-0 mt-1" size={24} />
               <div>
                 <p className="font-semibold">Địa chỉ:</p>
-                <p className="text-gray-600">123 Đường ABC, Quận 1, TP. Hồ Chí Minh</p>
+                <p className="text-gray-600">Công Viên Phần Mềm Quang Trung, Quận 12, TPHCM</p>
               </div>
             </div>
 
@@ -89,7 +89,7 @@ const LienHePage = () => {
                   href="tel:0123456789"
                   className="text-blue-500 hover:text-blue-700 transition-colors"
                 >
-                  0123 456 789
+                  0388 245 296 - 0325 300 118
                 </a>
               </div>
             </div>
@@ -100,10 +100,10 @@ const LienHePage = () => {
               <div>
                 <p className="font-semibold">Email:</p>
                 <a
-                  href="mailto:contact@example.com"
+                  href="mailto: Nimbus@gmail.com"
                   className="text-blue-500 hover:text-blue-700 transition-colors"
                 >
-                  contact@example.com
+                  Nimbus@gmail.com
                 </a>
               </div>
             </div>

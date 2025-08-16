@@ -162,7 +162,7 @@ export default function InternalMedicinePage() {
                   <MapPin className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm font-medium">Địa chỉ</p>
-                    <p className="text-sm text-muted-foreground">Tầng 3, Bệnh viện Đa khoa</p>
+                    <p className="text-sm text-muted-foreground">Công Viên Phần Mềm Quang Trung, Quận 12, TPHCM</p>
                   </div>
                 </div>
                 <Separator />
@@ -170,7 +170,7 @@ export default function InternalMedicinePage() {
                   <Phone className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm font-medium">Điện thoại</p>
-                    <p className="text-sm text-muted-foreground">(024) 3825 4068</p>
+                    <p className="text-sm text-muted-foreground">0388 245 296</p>
                   </div>
                 </div>
                 <Separator />
@@ -178,7 +178,7 @@ export default function InternalMedicinePage() {
                   <Mail className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm font-medium">Email</p>
-                    <p className="text-sm text-muted-foreground">noi.tongquat@hospital.vn</p>
+                    <p className="text-sm text-muted-foreground">Nimbus@gmail.com</p>
                   </div>
                 </div>
               </CardContent>
