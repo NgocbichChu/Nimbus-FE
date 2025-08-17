@@ -86,12 +86,22 @@ const AppointmentPage = () => {
   const [date2, setDate2] = useState<Date | undefined>(parseDate(value2) || undefined)
   const [month2, setMonth2] = useState<Date | undefined>(date2)
   const [availableTimes2, setAvailableTimes2] = useState<
-    { label: string; start: string; end: string }[]
+    {
+      label: string
+      start: string
+      end: string
+      doctorId?: number
+      doctorName?: string
+      caTruc?: string
+    }[]
   >([])
   const [selectedTime2, setSelectedTime2] = useState<{
     label: string
     start: string
     end: string
+    doctorId?: number
+    doctorName?: string
+    caTruc?: string
   } | null>(null)
 
   const [activeTab, setActiveTab] = useState<"tab1" | "tab2">("tab1")
@@ -112,12 +122,6 @@ const AppointmentPage = () => {
     ngay: string
   }
 
-  type GioTrongItem = {
-    gioKhamId: number
-    lichLamViecId: number
-    thoiGian: string
-    trangThai: boolean
-  }
   const {
     setValue: setFormValue,
     trigger,
@@ -125,6 +129,39 @@ const AppointmentPage = () => {
   } = useForm<AppointmentFormType>({
     resolver: yupResolver(appointmentSchema) as any,
   })
+
+  function toHHMM(t: string) {
+    const s = String(t || "").trim()
+    if (!s) return ""
+    if (/^\d{1,2}$/.test(s)) return s.padStart(2, "0") + ":00"
+    const hOnly = s.match(/^(\d{1,2})\s*[hH]$/)
+    if (hOnly) return hOnly[1].padStart(2, "0") + ":00"
+    const hm = s.match(/^(\d{1,2}):(\d{1,2})$/)
+    if (hm) return hm[1].padStart(2, "0") + ":" + hm[2].padStart(2, "0")
+    const hms = s.match(/^(\d{1,2}):(\d{2}):(\d{2})$/)
+    if (hms) return hms[1].padStart(2, "0") + ":" + hms[2]
+    const any = s.match(/(\d{1,2}):(\d{1,2})/)
+    if (any) return any[1].padStart(2, "0") + ":" + any[2].padStart(2, "0")
+    return s
+  }
+
+  function extractSlots(resp: any): { thoiGian: string; trangThai: boolean }[] {
+    const raw = Array.isArray(resp?.data)
+      ? resp.data
+      : Array.isArray(resp?.data?.gioTrong)
+        ? resp.data.gioTrong
+        : Array.isArray(resp?.gioTrong)
+          ? resp.gioTrong
+          : Array.isArray(resp)
+            ? resp
+            : []
+    return raw
+      .map((x: any) => ({
+        thoiGian: toHHMM(typeof x === "string" ? x : String(x?.thoiGian || x?.time || "")),
+        trangThai: typeof x === "object" && x !== null ? (x.trangThai ?? true) : true,
+      }))
+      .filter((s: any) => s.thoiGian)
+  }
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -155,23 +192,6 @@ const AppointmentPage = () => {
   }, [])
 
   useEffect(() => {
-    const fetchChuyenGiaByChuyenKhoa = async () => {
-      setDoctor("")
-      try {
-        if (!specialty) return
-        const selected = listChuyenKhoa.find((item) => item.chuyenKhoaId === specialty)
-        if (!selected?.tenKhoa) return
-
-        const res = await getBacSiByChuyenKhoa(selected.tenKhoa)
-        setListChuyenGia(res.data || [])
-      } catch (error) {
-        console.log("Lỗi : ", error)
-      }
-    }
-    fetchChuyenGiaByChuyenKhoa()
-  }, [specialty, listChuyenKhoa])
-
-  useEffect(() => {
     const fetchLoaiDichVu = async () => {
       try {
         const res = await getLoaiDichVu()
@@ -194,6 +214,20 @@ const AppointmentPage = () => {
     }
     fetchChuyenKhoa()
   }, [])
+
+  useEffect(() => {
+    const fetchChuyenGiaByChuyenKhoa = async () => {
+      setDoctor("")
+      try {
+        if (!specialty) return
+        const selected = listChuyenKhoa.find((item) => String(item.chuyenKhoaId) === specialty)
+        if (!selected?.tenKhoa) return
+        const res = await getBacSiByChuyenKhoa(selected.tenKhoa)
+        setListChuyenGia(res.data || [])
+      } catch (error) {}
+    }
+    fetchChuyenGiaByChuyenKhoa()
+  }, [specialty, listChuyenKhoa])
 
   useEffect(() => {
     const fetchNgayLamViec = async () => {
@@ -235,26 +269,21 @@ const AppointmentPage = () => {
           setAvailableTimes([])
           return
         }
-
+        
         const resGio = await getGioTheoNgay(Number(doctor), ngayStr, caTruc)
-        const data: GioTrongItem[] = resGio.data || []
-
-        const sorted = [...data].sort((a, b) => a.thoiGian.localeCompare(b.thoiGian))
-
+        const slots = extractSlots(resGio)
+        const sorted = [...slots].sort((a, b) => a.thoiGian.localeCompare(b.thoiGian))
         const formatted: { label: string; start: string; end: string }[] = []
-
         for (let i = 0; i < sorted.length - 1; i++) {
-          const current = sorted[i]
-          const next = sorted[i + 1]
+          if (!sorted[i].trangThai || !sorted[i + 1].trangThai) continue
+          const s = toHHMM(sorted[i].thoiGian)
+          const e = toHHMM(sorted[i + 1].thoiGian)
+          formatted.push({ 
+            label: `${s} - ${e}`, 
+            start: `${s}:00`, 
+            end: `${e}:00` 
+          })
 
-          if (current.trangThai && next.trangThai) {
-            const label = `${current.thoiGian.slice(0, 5)} - ${next.thoiGian.slice(0, 5)}`
-            formatted.push({
-              label,
-              start: current.thoiGian,
-              end: next.thoiGian,
-            })
-          }
         }
 
         setAvailableTimes(formatted)
@@ -263,7 +292,6 @@ const AppointmentPage = () => {
         setAvailableTimes([])
       }
     }
-
     fetchGioTheoNgay()
   }, [date, doctor])
 
@@ -272,7 +300,7 @@ const AppointmentPage = () => {
     Record<string, { label: string; start: string; end: string }[]>
   >({})
 
-  // FLOW 2 chuyên khoa -> ngày -> giờ
+ // FLOW 2 chuyên khoa -> ngày -> giờ
   useEffect(() => {
     const fetchLichTrong = async () => {
       setNgayTrongChuyenKhoa([])
@@ -280,21 +308,11 @@ const AppointmentPage = () => {
       setAvailableTimes2([])
       setSelectedTime2(null)
       if (!specialty) return
-      const selected = listChuyenKhoa.find((i) => i.chuyenKhoaId === specialty)
+      const selected = listChuyenKhoa.find((i) => String(i.chuyenKhoaId) === specialty)
       if (!selected?.tenKhoa) return
       try {
         const res = await getLichTrongChuyenKhoa(selected.tenKhoa)
         const data = Array.isArray(res?.data) ? res.data : []
-        const pairConsecutive = (times: string[]) => {
-          const t = [...times]
-            .filter(Boolean)
-            .map((s) => s.slice(0, 5))
-            .sort()
-          const out: { label: string; start: string; end: string }[] = []
-          for (let i = 0; i < t.length - 1; i++)
-            out.push({ label: `${t[i]} - ${t[i + 1]}`, start: `${t[i]}:00`, end: `${t[i + 1]}:00` })
-          return out
-        }
         const map: Record<string, { label: string; start: string; end: string }[]> = {}
         const days: string[] = []
         for (const item of data) {
@@ -305,28 +323,38 @@ const AppointmentPage = () => {
             (Array.isArray(item?.slots) && item.slots) ||
             []
           if (slots.length) {
-            const ranges = pairConsecutive(slots)
+            const t = [...slots]
+              .filter(Boolean)
+              .map((s) => toHHMM(s))
+              .sort((a, b) => a.localeCompare(b))
+            const ranges: { label: string; start: string; end: string }[] = []
+            for (let i = 0; i < t.length - 1; i++) {
+              const s = t[i]
+              const e = t[i + 1]
+              ranges.push({ label: `${s} - ${e}`, start: `${s}:00`, end: `${e}:00` })
+            }
             if (ranges.length) {
               if (!map[ngay]) map[ngay] = []
-              map[ngay].push(...ranges)
+              const seen = new Set(map[ngay].map((r) => r.label))
+              for (const r of ranges) if (!seen.has(r.label)) map[ngay].push(r)
             }
           } else {
             const so = Number(item?.soGioTrong ?? 0)
             if (ngay && so > 0) days.push(ngay)
           }
         }
+
         Object.keys(map).forEach((k) => {
-          const seen = new Set<string>()
-          map[k] = map[k]
-            .filter((r) => (seen.has(r.label) ? false : (seen.add(r.label), true)))
-            .sort((a, b) => a.start.localeCompare(b.start))
+          map[k] = map[k].sort((a, b) => a.start.localeCompare(b.start))
         })
+
         const todayKey = dayjs().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
         if (map[todayKey]) {
           const hhmm = dayjs().tz("Asia/Ho_Chi_Minh").format("HH:mm")
           map[todayKey] = map[todayKey].filter((r) => r.start.slice(0, 5) > hhmm)
           if (map[todayKey].length === 0) delete map[todayKey]
         }
+
         if (Object.keys(map).length > 0) {
           setLichTrongMap(map)
           setNgayTrongChuyenKhoa(Object.keys(map).sort((a, b) => a.localeCompare(b)))
@@ -355,7 +383,7 @@ const AppointmentPage = () => {
       const hhmm = now.format("HH:mm")
       ranges = ranges.filter((r) => r.start.slice(0, 5) > hhmm)
     }
-    setAvailableTimes2(ranges)
+    setAvailableTimes2(ranges.map((r) => ({ ...r })))
     if (ranges.length === 0) setSelectedTime2(null)
   }, [date2, lichTrongMap])
 
@@ -366,16 +394,13 @@ const AppointmentPage = () => {
         setSelectedTime2(null)
         return
       }
-
-      const sel = listChuyenKhoa.find((i) => i.chuyenKhoaId === specialty)
+      const sel = listChuyenKhoa.find((i) => String(i.chuyenKhoaId) === specialty)
       if (!sel?.tenKhoa) {
         setAvailableTimes2([])
         setSelectedTime2(null)
         return
       }
-
       const ngay = dayjs(date2).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
-
       try {
         const resNgay = await getLichTrongChuyenKhoa(sel.tenKhoa)
         const arrNgay = Array.isArray(resNgay?.data) ? resNgay.data : []
@@ -383,7 +408,6 @@ const AppointmentPage = () => {
           .filter((it: any) => String(it?.ngay || it?.date || "").slice(0, 10) === ngay)
           .map((it: any) => it?.caTruc)
           .filter((x: any) => typeof x === "string" && x.trim().length > 0)
-
         if (caList.length === 0) {
           setAvailableTimes2([])
           setSelectedTime2(null)
@@ -391,42 +415,64 @@ const AppointmentPage = () => {
         }
 
         const results = await Promise.allSettled(
-          caList.map((caTruc) => getGioTrongChuyenKhoa(sel.tenKhoa, ngay, caTruc))
+          caList.map(async (caTruc) => ({
+            caTruc,
+            resp: await getGioTrongChuyenKhoa(sel.tenKhoa, ngay, caTruc),
+          }))
         )
 
-        const rawTimes: string[] = []
+        const rangesAll: {
+          label: string
+          start: string
+          end: string
+          doctorId?: number
+          doctorName?: string
+          caTruc?: string
+        }[] = []
         for (const r of results) {
           if (r.status !== "fulfilled") continue
-          const arr = Array.isArray(r.value?.data) ? r.value.data : []
-          for (const x of arr) {
-            const isFree = typeof x === "object" && x !== null ? (x.trangThai ?? true) : true
-            if (!isFree) continue
-            const t =
-              typeof x === "string"
-                ? x
-                : x?.thoiGian
-                  ? String(x.thoiGian)
-                  : x?.time
-                    ? String(x.time)
-                    : null
-            if (t) rawTimes.push(t.slice(0, 5))
+          const { caTruc, resp } = r.value
+          const doctorId =
+            typeof resp?.data?.bacSiId === "number"
+              ? resp.data.bacSiId
+              : typeof resp?.bacSiId === "number"
+                ? resp.bacSiId
+                : undefined
+          const doctorName =
+            typeof resp?.data?.bacSiName === "string"
+              ? resp.data.bacSiName
+              : typeof resp?.bacSiName === "string"
+                ? resp.bacSiName
+                : undefined
+
+          const slots = extractSlots(resp)
+          const sorted = [...slots].sort((a, b) => a.thoiGian.localeCompare(b.thoiGian))
+          for (let i = 0; i < sorted.length - 1; i++) {
+            if (!sorted[i].trangThai || !sorted[i + 1].trangThai) continue
+            const s = toHHMM(sorted[i].thoiGian)
+            const e = toHHMM(sorted[i + 1].thoiGian)
+            rangesAll.push({
+              label: `${s} - ${e}`,
+              start: `${s}:00`,
+              end: `${e}:00`,
+              doctorId,
+              doctorName,
+              caTruc,
+            })
           }
         }
 
-        const uniq = Array.from(new Set(rawTimes)).sort((a, b) => a.localeCompare(b))
-
-        const ranges: { label: string; start: string; end: string }[] = []
-        for (let i = 0; i < uniq.length - 1; i++) {
-          const s = uniq[i]
-          const e = uniq[i + 1]
-          ranges.push({ label: `${s} - ${e}`, start: `${s}:00`, end: `${e}:00` })
+        const dedup = new Map<string, (typeof rangesAll)[number]>()
+        for (const r of rangesAll) {
+          const key = `${r.label}|${r.doctorId ?? "x"}`
+          if (!dedup.has(key)) dedup.set(key, r)
         }
+        let finalRanges = Array.from(dedup.values()).sort((a, b) => a.start.localeCompare(b.start))
 
         const todayKey = dayjs().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
-        let finalRanges = ranges
         if (ngay === todayKey) {
           const nowHHmm = dayjs().tz("Asia/Ho_Chi_Minh").format("HH:mm")
-          finalRanges = ranges.filter((r) => r.start.slice(0, 5) > nowHHmm)
+          finalRanges = finalRanges.filter((r) => r.start.slice(0, 5) > nowHHmm)
         }
 
         setAvailableTimes2(finalRanges)
@@ -494,13 +540,13 @@ const AppointmentPage = () => {
       const resNgay = await getNgayKhamByChuyenGia(Number(doctor))
       const list: { ngay: string; caTruc: string | null }[] = resNgay.data || []
       caKham = list.find((i) => i.ngay === ngayKham)?.caTruc || ""
-    } else if (gioHen) {
-      const h = parseInt(gioHen.slice(0, 2), 10)
-      caKham = h < 12 ? "SANG" : h < 18 ? "CHIEU" : "TOI"
+    } else {
+      caKham = selectedTime2?.caTruc || ""
     }
 
     const payload = {
-      bacSiId: activeTab === "tab1" ? Number(doctor) : undefined,
+      bacSiId:
+        activeTab === "tab1" ? Number(doctor) : (selectedTime2?.doctorId as number | undefined),
       benhNhanId: Number(user.maBN),
       thoiGianTu: gioHen || "",
       thoiGianDen: gioDen || "",
@@ -533,12 +579,12 @@ const AppointmentPage = () => {
       day: "2-digit",
       timeZone: "Asia/Ho_Chi_Minh",
     } as const
-
+    
     return new Intl.DateTimeFormat("vi-VN", options).format(d)
   }
 
   const selectedService = listDichVu.find((opt) => opt.tenLoai === serviceType)
-  const selectedSpecialty = listChuyenKhoa.find((opt) => opt.chuyenKhoaId === specialty)
+  const selectedSpecialty = listChuyenKhoa.find((opt) => String(opt.chuyenKhoaId) === specialty)
   const selectedPayment = paymentOptions.find((opt) => opt.value === paymentMethod)
   const selectDoctor = listChuyenGia.find((opt) => String(opt.bacSiId) === doctor)
 
@@ -633,7 +679,7 @@ const AppointmentPage = () => {
                   className={cn(
                     "w-full border rounded-md px-3 py-2 bg-white",
                     errors.serviceType &&
-                      "border-red-500 focus:ring-red-500 focus-visible:ring-red-500" 
+                      "border-red-500 focus:ring-red-500 focus-visible:ring-red-500"
                   )}
                 >
                   <div className="flex w-full justify-between items-center">
@@ -680,7 +726,8 @@ const AppointmentPage = () => {
                   >
                     <span className={cn("truncate", !specialty && "text-muted-foreground ")}>
                       {specialty
-                        ? listChuyenKhoa.find((item) => item.chuyenKhoaId === specialty)?.tenKhoa
+                        ? listChuyenKhoa.find((item) => String(item.chuyenKhoaId) === specialty)
+                            ?.tenKhoa
                         : ""}
                     </span>
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -697,7 +744,7 @@ const AppointmentPage = () => {
                             key={item.chuyenKhoaId}
                             value={item.tenKhoa.toString()}
                             onSelect={() => {
-                              setSpecialty(item.chuyenKhoaId)
+                              setSpecialty(String(item.chuyenKhoaId))
                               setOpenSpecialty(false)
                             }}
                           >
@@ -705,7 +752,9 @@ const AppointmentPage = () => {
                             <Check
                               className={cn(
                                 "ml-auto h-4 w-4",
-                                specialty === item.tenKhoa ? "opacity-100" : "opacity-0"
+                                specialty === String(item.chuyenKhoaId)
+                                  ? "opacity-100"
+                                  : "opacity-0"
                               )}
                             />
                           </CommandItem>
@@ -922,12 +971,17 @@ const AppointmentPage = () => {
                   <div
                     className={`grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 border rounded-xl dark:bg-zinc-800 shadow-sm ${errors.selectedTime2 ? "border-red-500 " : "border-gray-200"} bg-white `}
                   >
-                    {availableTimes2.map((time) => (
+                    {availableTimes2.map((time, idx) => (
                       <Button
-                        key={time.label}
-                        variant={selectedTime2?.label === time.label ? "default" : "outline"}
+                        key={`${time.label}-${time.start}-${time.doctorId ?? "x"}-${idx}`}
+                        variant={
+                          selectedTime2?.label === time.label &&
+                          selectedTime2?.doctorId === time.doctorId
+                            ? "default"
+                            : "outline"
+                        }
                         onClick={() => setSelectedTime2(time)}
-                        className={`w-full p-2 rounded-lg text-sm transition-colors ${selectedTime2?.label === time.label ? "bg-primary text-white" : "bg-white hover:bg-gray-100"}`}
+                        className={`w-full p-2 rounded-lg text-sm transition-colors ${selectedTime2?.label === time.label && selectedTime2?.doctorId === time.doctorId ? "bg-primary text-white" : "bg-white hover:bg-gray-100"}`}
                       >
                         {time.label}
                       </Button>
@@ -956,7 +1010,10 @@ const AppointmentPage = () => {
                   Phương thức thanh toán
                 </Label>
                 <div className="grid grid-cols-2 gap-4">
-                  {paymentOptions.map((option) => (
+                  {[
+                    { value: "cash", label: "Trực tiếp tại quầy" },
+                    { value: "momo", label: "Momo" },
+                  ].map((option) => (
                     <Button
                       key={option.value}
                       variant={paymentMethod === option.value ? "default" : "outline"}
