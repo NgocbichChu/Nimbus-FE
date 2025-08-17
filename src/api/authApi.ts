@@ -26,11 +26,12 @@ export const loginUser = async (loginData: LoginRequest): Promise<any> => {
     }
 
     return response
-  } catch (error) {
-    toastError("Đăng nhập thất bại")
-    console.error("Login failed:", error)
-    throw error
-  }
+  } catch (error: any) {
+  const message = error.response?.data?.message || "Có lỗi xảy ra!";
+  toastError(`Đăng nhập thất bại: ${message}`);
+  throw error;
+}
+
 }
 export const registerUser = async (registerData: RegisterRequest): Promise<any> => {
   try {

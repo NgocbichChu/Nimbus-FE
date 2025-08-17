@@ -39,7 +39,6 @@ export const addReception = createAsyncThunk(
     "admin/addReception",
     async (accountReception: Reception, { rejectWithValue }) => {
         try {
-            console.log("lễ tân", accountReception)
             const response = await post("/quanly/dangki/letan", accountReception)
             toastSuccess("Đăng kí lễ tân thành công!")
             return response
@@ -55,7 +54,9 @@ export const addAdmin = createAsyncThunk(
     "admin/addAdmin",
     async (accountAdmin: CreateAccountAdmin, { rejectWithValue }) => {
         try {
-            const response = await post<Admin>("/quanly/dangki/quanly", accountAdmin)
+            const response = await post("/quanly/dangki/quanly", accountAdmin)
+                        console.log("quản lý", accountAdmin)
+
             toastSuccess("Đăng kí quản lý thành công!")
             return response
         } catch (error: any) {
