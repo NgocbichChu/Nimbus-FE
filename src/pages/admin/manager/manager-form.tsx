@@ -24,6 +24,7 @@ export const ManagerForm = ({ manager, onClose }: ManagerFormProps) => {
     control,
     register,
     handleSubmit,
+
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -50,6 +51,7 @@ export const ManagerForm = ({ manager, onClose }: ManagerFormProps) => {
     try {
       await dispatch(updateManager(dataWithId)).unwrap()
       dispatch(fetchManager())
+
       onClose?.()
     } catch (error) {
       console.log("Update thất bại:", error)
@@ -57,9 +59,10 @@ export const ManagerForm = ({ manager, onClose }: ManagerFormProps) => {
   }
 
   return (
-    <form className="w-[465px] flex flex-col gap-6" onSubmit={handleSubmit(handleEdit)}>
+    <form className="w-full" onSubmit={handleSubmit(handleEdit)} >
       {/* Grid form */}
-      <div className="">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
         {/* Họ tên */}
         <div className="flex flex-col gap-2">
           <Label>Họ tên *</Label>
@@ -67,13 +70,17 @@ export const ManagerForm = ({ manager, onClose }: ManagerFormProps) => {
         </div>
 
         {/* Giới tính */}
-        <div className="flex flex-col mt-4 gap-2">
+        <div className="flex flex-col gap-2">
           <Label>Giới tính *</Label>
           <Controller
             control={control}
             name="gioiTinh"
             render={({ field }) => (
-              <RadioGroup value={field.value} onValueChange={field.onChange} className="flex gap-4">
+              <RadioGroup
+                value={field.value}
+                onValueChange={field.onChange}
+                className="flex gap-6"
+              >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Nam" id="male" />
                   <Label htmlFor="male">Nam</Label>
@@ -88,19 +95,19 @@ export const ManagerForm = ({ manager, onClose }: ManagerFormProps) => {
         </div>
 
         {/* Email */}
-        <div className="flex flex-col mt-4 gap-2">
+        <div className="flex flex-col gap-2">
           <Label>Email *</Label>
           <Input {...register("email")} placeholder="Nhập email" className="w-full" />
         </div>
 
         {/* Số điện thoại */}
-        <div className="flex flex-col mt-4 gap-2">
+        <div className="flex flex-col gap-2">
           <Label>Số điện thoại *</Label>
           <Input {...register("soDienThoai")} placeholder="Nhập số điện thoại" className="w-full" />
         </div>
 
         {/* Mật khẩu */}
-        <div className="flex flex-col mt-4 gap-2">
+        <div className="flex flex-col gap-2">
           <Label>Mật khẩu *</Label>
           <div className="relative">
             <Input
@@ -119,11 +126,24 @@ export const ManagerForm = ({ manager, onClose }: ManagerFormProps) => {
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </Button>
           </div>
-          {errors.matKhau && <p className="text-red-500 text-sm">{errors.matKhau.message}</p>}
+          {errors.matKhau && (
+            <p className="text-red-500 text-sm">{errors.matKhau.message}</p>
+          )}
+        </div>
+
+        {/* Ngày tuyển */}
+        <div className="flex flex-col gap-2">
+          <Label>Ngày tuyển *</Label>
+          <Input
+            {...register("ngayTuyenDung")}
+            type="date"
+            placeholder="Chọn ngày tuyển"
+            className="w-full"
+          />
         </div>
 
         {/* Trạng thái hoạt động */}
-        <div className="flex flex-col mt-4 h-fit">
+        <div className="flex flex-col gap-2">
           <Label>Trạng thái hoạt động</Label>
           <Controller
             control={control}
@@ -141,12 +161,17 @@ export const ManagerForm = ({ manager, onClose }: ManagerFormProps) => {
           />
         </div>
         {/* Chức vụ  */}
-        <div className="flex flex-col mt-4 gap-2">
+        <div className="flex flex-col gap-2">
           <Label>Chức vụ *</Label>
-          <Input {...register("chucVu")} type="text" placeholder="chức vụ " className="w-full" />
+          <Input
+            {...register("chucVu")}
+            type="text"
+            placeholder="chức vụ "
+            className="w-full"
+          />
         </div>
         {/* Ghi chú */}
-        <div className="lg:col-span-3 flex flex-col mt-4 gap-2">
+        <div className="lg:col-span-3 flex flex-col gap-2">
           <Label>Ghi chú</Label>
           <Textarea
             {...register("ghiChu")}
@@ -158,12 +183,13 @@ export const ManagerForm = ({ manager, onClose }: ManagerFormProps) => {
       </div>
 
       {/* Actions */}
-      <div className=" flex justify-end gap-4 ">
+      <div className="mt-8 flex justify-end gap-4 border-t pt-4">
         <Button variant="outline" type="button" onClick={() => onClose?.()}>
           Huỷ
         </Button>
         <Button type="submit">Lưu thông tin</Button>
       </div>
     </form>
+
   )
 }

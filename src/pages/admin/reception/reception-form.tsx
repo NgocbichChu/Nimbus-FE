@@ -24,7 +24,6 @@ export const ReceptionForm = ({ reception, onClose }: ReceptionFormProps) => {
     control,
     register,
     handleSubmit,
-
     formState: { errors },
   } = useForm({
     defaultValues: {

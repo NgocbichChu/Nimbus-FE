@@ -32,7 +32,7 @@ export default function AccessPage() {
       id: "danhsachquanly",
       label: "Danh Sách Quản lý",
       icon: Users,
-      description: "Dang sách quản lý hệ thống",
+      description: "Danh Sách Quản lý hệ thống",
     },
     {
       id: "danhsachletan",

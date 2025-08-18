@@ -9,6 +9,7 @@ import { Eye, EyeOff } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 import { addReception } from "@/api/quanlyApi"
 import { useAppDispatch } from "@/helper"
+import { fetchReceptions } from "@/api/letanApi"
 
 const ReceptionForm = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -50,7 +51,9 @@ const ReceptionForm = () => {
         ngayTuyenDung: '',
         chucVu: 'Lễ Tân',
         ghiChu: '',
+        trangThaiHoatDong: true
       });
+      dispatch(fetchReceptions());
     } catch (error) {
       console.error("Thêm bác sĩ thất bại:", error)
     }

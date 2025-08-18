@@ -42,6 +42,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -67,6 +68,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
       // console.log("")
       dispatch(fetchDoctors())
       console.log("gọi lại danh sách form")
+      reset();
       onClose?.()
     } catch (error) {
       console.error("Thêm bác sĩ thất bại:", error)
