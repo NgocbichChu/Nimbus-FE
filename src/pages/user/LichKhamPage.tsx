@@ -5,6 +5,7 @@ import dayjs from "dayjs"
 import "dayjs/locale/vi"
 import { useEffect, useState } from "react"
 import { lichSuKham } from "@/api/lichKhamApi"
+import { Button } from "@/components/ui/button"
 
 type LichKhamItem = {
   lichKhamId: number
@@ -96,7 +97,7 @@ const LichKhamPage = () => {
   const lichKham = filtered[selectedIndex]
 
   return (
-    <div className="px-4 py-8 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6">
+    <div className="px-4 py-8 max-w-6xl mx-auto grid md:items-start grid-cols-1 md:grid-cols-[300px_1fr] gap-6">
       <div className="space-y-4">
         <Input
           placeholder="Tìm ngày khám,tên bác sĩ"
@@ -135,7 +136,7 @@ const LichKhamPage = () => {
         </div>
       </div>
 
-      <Card className="p-10 max-h-[400px] ">
+      <Card className="p-6 self-start w-full">
         {!lichKham ? (
           <div className="text-base text-muted-foreground">Chọn một lịch khám để xem chi tiết</div>
         ) : (
@@ -177,6 +178,9 @@ const LichKhamPage = () => {
                   </span>
                 </div>
                 {lichKham.ghiChu && <div className="text-base">Ghi chú: {lichKham.ghiChu}</div>}
+                <div className="mt-4 flex justify-end">
+                  <Button className="w-fit whitespace-nowrap">Hủy lịch khám</Button>
+                </div>
               </div>
             </div>
           </>
