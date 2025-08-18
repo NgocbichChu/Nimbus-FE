@@ -88,3 +88,25 @@ export const createLichLamViec = async (data: any) => {
     throw error
   }
 }
+
+export const getLichTrongChuyenKhoa = async (tenKhoa: string) => {
+  try {
+    const response = await get<any>(`/guest/chuyen-khoa/${encodeURIComponent(tenKhoa)}/lich-trong`)
+    return response
+  } catch (error) {
+    console.error("Lỗi : ", error)
+    throw error
+  }
+}
+
+export const getGioTrongChuyenKhoa = async (tenKhoa: string, ngay: string, caTruc: string) => {
+  try {
+    const response = await get<any>(
+      `/guest/chuyen-khoa/${encodeURIComponent(tenKhoa)}/ngay/${ngay}/ca/${caTruc}/gio-trong`
+    )
+    return response
+  } catch (error) {
+    console.error("Lỗi : ", error)
+    throw error
+  }
+}

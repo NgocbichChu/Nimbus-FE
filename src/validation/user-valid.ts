@@ -32,30 +32,77 @@ export const DoctorEditSchema = DoctorSchema.shape({
 })
 
 export const taiKhoanSchema = yup.object({
-  email: yup.string().email("Email không hợp lệ").required("Email không được để trống"),
   soDienThoai: yup
     .string()
-    .matches(/^[0-9]{10,11}$/, "Số điện thoại không hợp lệ")
+    .matches(/^0(?:\d{9}|\d{10})$/, "Số điện thoại không hợp lệ")
     .required("Vui lòng nhập số điện thoại"),
-  lienHeKhanCap: yup
-    .string()
-    .matches(/^[0-9]{10,11}$/, "Số điện thoại không hợp lệ")
-    .required("Vui lòng nhập số điện thoại"),
-  diaChi: yup.string().required("Địa chỉ không được để trống"),
-  maBHYT: yup
-    .string()
-    .required("Mã BHYT không được để trống")
-    .matches(/^BH[A-Za-z0-9]*$/, "Mã BHYT phải bắt đầu bằng 'BH' và chỉ chứa chữ/số"),
-  CCCD: yup
-    .string()
-    .required("Số CMND/CCCD không được để trống")
-    .matches(/^0[0-9]{8,11}$/, "Số CMND/CCCD phải bắt đầu bằng 0 và chỉ chứa số"),
-  danToc: yup
-    .string()
-    .required("Dân tộc không được để trống")
-    .matches(/^[A-Za-zÀ-ỹ\s]+$/, "Dân tộc chỉ được chứa chữ cái"),
 })
 export type TaiKhoan = yup.InferType<typeof taiKhoanSchema>
+
+const toNull = (v: unknown) => (v === "" || v === undefined ? null : v)
+const onlyDigits = (v: unknown) => (typeof v === "string" ? v.replace(/\D/g, "") : v)
+
+export const hoSoSchema = yup.object({
+  soDienThoai: yup
+    .string()
+    .matches(/^0(?:\d{9}|\d{10})$/, "Số điện thoại không hợp lệ")
+    .required("Vui lòng nhập số điện thoại"),
+
+  lienHeKhanCap: yup
+    .string()
+    .transform((v) => {
+      const d = onlyDigits(v)
+      return d === "" ? null : (d as string)
+    })
+    .nullable()
+    .matches(/^0(?:\d{9}|\d{10})$/, {
+      message: "Số điện thoại không hợp lệ",
+      excludeEmptyString: true,
+    }),
+
+  diaChi: yup.string().transform(toNull).nullable(),
+
+  baoHiem: yup
+    .string()
+    .transform((v) => {
+      if (typeof v !== "string") return null
+      const s = v.trim().toUpperCase()
+      return s === "" ? null : s
+    })
+    .nullable()
+    .matches(/^BH[0-9A-Z]+$/, {
+      message: "Mã BHYT phải bắt đầu bằng 'BH' và chỉ chứa chữ/số",
+      excludeEmptyString: true,
+    }),
+
+  canCuocCongDan: yup
+    .string()
+    .transform((v) => {
+      const d = onlyDigits(v)
+      return d === "" ? null : (d as string)
+    })
+    .nullable()
+    .test(
+      "cmnd-cccd",
+      "Số CMND/CCCD phải gồm 9 hoặc 12 số và số 0 ở đầu",
+      (val) => !val || /^0(?:\d{8}|\d{11})$/.test(val)
+    ),
+
+  danToc: yup
+    .string()
+    .transform((v) => {
+      if (typeof v !== "string") return null
+      const s = v.trim()
+      return s === "" ? null : s
+    })
+    .nullable()
+    .matches(/^[A-Za-zÀ-ỹ\s]+$/, {
+      message: "Dân tộc chỉ được chứa chữ cái",
+      excludeEmptyString: true,
+    }),
+})
+
+export type HoSo = yup.InferType<typeof hoSoSchema>
 
 export const passwordChangeSchema = yup.object({
   oldPassword: yup.string().trim().required("Vui lòng nhập mật khẩu hiện tại"),

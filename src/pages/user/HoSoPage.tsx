@@ -14,17 +14,20 @@ import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { getThongTinBenhNhan } from "../../api/accountApi"
 import { capNhatBenhNhan } from "../../api/accountApi"
+import { yupResolver } from "@hookform/resolvers/yup"
+import { hoSoSchema } from "../../validation/user-valid"
+import type { HoSo } from "../../validation/user-valid"
 
 type User = {
   name: string
   email: string
-  soDT: string
+  soDienThoai: string
   gioiTinh: string
   diaChi: string
   maBN: string
   img: string
-  maBHYT: string
-  CCCD: string
+  baoHiem: string
+  canCuocCongDan: string
   danToc: string
   lienHeKhanCap: string
 }
@@ -35,49 +38,66 @@ const HoSoPage = () => {
   const [user, setUser] = useState<User>({
     name: "",
     email: "",
-    soDT: "",
+    soDienThoai: "",
     gioiTinh: "",
     diaChi: "",
     maBN: "",
     img: "",
-    maBHYT: "",
-    CCCD: "",
+    baoHiem: "",
+    canCuocCongDan: "",
     danToc: "",
     lienHeKhanCap: "",
   })
 
-  const { register, handleSubmit, reset } = useForm<User>({
-    defaultValues: user,
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<HoSo>({
+    resolver: yupResolver(hoSoSchema) as any,
+    defaultValues: {
+      soDienThoai: "",
+      diaChi: "",
+      baoHiem: "",
+      canCuocCongDan: "",
+      danToc: "",
+      lienHeKhanCap: "",
+    },
   })
 
-  const onSubmit = async (data: User) => {
+  const onSubmit = async (data: HoSo) => {
     setUpdateMessage("")
     try {
-      const payload = {
+      await capNhatBenhNhan({
         benhNhanId: user.maBN,
         hoTen: user.name,
-        gioiTinh: data.gioiTinh === "M" ? "Nam" : "Nữ",
+        gioiTinh: user.gioiTinh,
         email: user.email,
-        soDienThoai: data.soDT,
+        soDienThoai: data.soDienThoai,
         diaChi: data.diaChi,
-        baoHiem: data.maBHYT,
-        canCuocCongDan: data.CCCD,
+        baoHiem: data.baoHiem,
+        canCuocCongDan: data.canCuocCongDan,
         danToc: data.danToc,
         lienHeKhanCap: data.lienHeKhanCap,
-      }
-      await capNhatBenhNhan(payload)
+      })
       setUser((prev) => ({
         ...prev,
-        name: prev.name,
-        gioiTinh: data.gioiTinh === "M" ? "Nam" : "Nữ",
-        email: prev.email,
-        soDT: data.soDT,
+        soDienThoai: data.soDienThoai ?? "",
+        diaChi: data.diaChi ?? "",
+        baoHiem: data.baoHiem ?? "",
+        canCuocCongDan: data.canCuocCongDan ?? "",
+        danToc: data.danToc ?? prev.danToc,
+        lienHeKhanCap: data.lienHeKhanCap ?? "",
+      }))
+      reset({
+        soDienThoai: data.soDienThoai,
         diaChi: data.diaChi,
-        maBHYT: data.maBHYT,
-        CCCD: data.CCCD,
+        baoHiem: data.baoHiem,
+        canCuocCongDan: data.canCuocCongDan,
         danToc: data.danToc,
         lienHeKhanCap: data.lienHeKhanCap,
-      }))
+      })
       setIsEditing(false)
       setUpdateMessage("Cập nhật thông tin thành công")
     } catch (error) {
@@ -98,14 +118,14 @@ const HoSoPage = () => {
         const res = await getThongTinBenhNhan()
         const user = {
           name: res.data.hoTen || "",
-          soDT: res.data.soDienThoai || "",
-          gioiTinh: res.data.gioiTinh === "M" ? "Nam" : "Nữ",
+          soDienThoai: res.data.soDienThoai || "",
+          gioiTinh: res.data.gioiTinh || "",
           email: res.data.email || "",
           diaChi: res.data.diaChi || "",
           maBN: res.data.benhNhanId || "",
           img: "",
-          maBHYT: res.data.baoHiem || "",
-          CCCD: res.data.canCuocCongDan || "",
+          baoHiem: res.data.baoHiem || "",
+          canCuocCongDan: res.data.canCuocCongDan || "",
           danToc: res.data.danToc || "",
           lienHeKhanCap: res.data.lienHeKhanCap || "",
         }
@@ -149,9 +169,14 @@ const HoSoPage = () => {
               <div className="grid grid-cols-2">
                 <Label className="text-base">Số điện thoại:</Label>
                 {isEditing ? (
-                  <Input {...register("soDT")} defaultValue={user.soDT} />
+                  <div>
+                    <Input {...register("soDienThoai")} />
+                    {errors.soDienThoai && (
+                      <p className="text-sm text-red-500 mt-1">{errors.soDienThoai.message}</p>
+                    )}
+                  </div>
                 ) : (
-                  <p>{user.soDT}</p>
+                  <p>{user.soDienThoai}</p>
                 )}
               </div>
               <div className="grid grid-cols-2">
@@ -161,7 +186,12 @@ const HoSoPage = () => {
               <div className="grid grid-cols-2">
                 <Label className="text-base">Địa chỉ:</Label>
                 {isEditing ? (
-                  <Input {...register("diaChi")} defaultValue={user.diaChi} />
+                  <div>
+                    <Input {...register("diaChi")} />
+                    {errors.diaChi && (
+                      <p className="text-sm text-red-500 mt-1">{errors.diaChi.message}</p>
+                    )}
+                  </div>
                 ) : (
                   <p>{user.diaChi || "------------"}</p>
                 )}
@@ -177,23 +207,38 @@ const HoSoPage = () => {
               <div className="grid grid-cols-2">
                 <Label className="text-base">Mã BHYT:</Label>
                 {isEditing ? (
-                  <Input {...register("maBHYT")} defaultValue={user.maBHYT} />
+                  <div>
+                    <Input {...register("baoHiem")} />
+                    {errors.baoHiem && (
+                      <p className="text-sm text-red-500 mt-1">{errors.baoHiem.message}</p>
+                    )}
+                  </div>
                 ) : (
-                  <p>{user.maBHYT || "------------"}</p>
+                  <p>{user.baoHiem || "------------"}</p>
                 )}
               </div>
               <div className="grid grid-cols-2">
                 <Label className="text-base">Số CMND/CCCD:</Label>
                 {isEditing ? (
-                  <Input {...register("CCCD")} defaultValue={user.CCCD} />
+                  <div>
+                    <Input {...register("canCuocCongDan")} />
+                    {errors.canCuocCongDan && (
+                      <p className="text-sm text-red-500 mt-1">{errors.canCuocCongDan.message}</p>
+                    )}
+                  </div>
                 ) : (
-                  <p>{user.CCCD || "------------"}</p>
+                  <p>{user.canCuocCongDan || "------------"}</p>
                 )}
               </div>
               <div className="grid grid-cols-2">
                 <Label className="text-base">Dân tộc:</Label>
                 {isEditing ? (
-                  <Input {...register("danToc")} defaultValue={user.danToc} />
+                  <div>
+                    <Input {...register("danToc")} />
+                    {errors.danToc && (
+                      <p className="text-sm text-red-500 mt-1">{errors.danToc.message}</p>
+                    )}
+                  </div>
                 ) : (
                   <p>{user.danToc || "------------"}</p>
                 )}
@@ -201,7 +246,12 @@ const HoSoPage = () => {
               <div className="grid grid-cols-2">
                 <Label className="text-base">Số liên hệ khẩn cấp:</Label>
                 {isEditing ? (
-                  <Input {...register("lienHeKhanCap")} defaultValue={user.lienHeKhanCap} />
+                  <div>
+                    <Input {...register("lienHeKhanCap")} />
+                    {errors.lienHeKhanCap && (
+                      <p className="text-sm text-red-500 mt-1">{errors.lienHeKhanCap.message}</p>
+                    )}
+                  </div>
                 ) : (
                   <p>{user.lienHeKhanCap || "------------"}</p>
                 )}
@@ -216,8 +266,8 @@ const HoSoPage = () => {
           <CardFooter className="justify-end max-w-[700px] mt-4">
             {isEditing ? (
               <div className="flex gap-3">
-                <Button type="submit" className="w-fit px-6">
-                  Lưu
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Đang lưu…" : "Lưu"}
                 </Button>
                 <Button
                   type="button"

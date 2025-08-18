@@ -77,11 +77,11 @@ const AccountPage = () => {
         const user = {
           name: res.data.hoTen,
           soDienThoai: res.data.soDienThoai,
-          gioiTinh: res.data.gioiTinh === "M" ? "Nam" : "Nữ",
+          gioiTinh: res.data.gioiTinh,
           email: res.data.email,
         }
         setUser(user)
-        reset({ email: res.data.email ?? "", soDienThoai: res.data.soDienThoai ?? "" })
+        reset({ soDienThoai: res.data.soDienThoai ?? "" })
       } catch (error) {
         console.log("Lỗi : ", error)
       }
@@ -94,15 +94,15 @@ const AccountPage = () => {
     try {
       await capNhatThongTin({
         hoTen: user.name,
-        gioiTinh: user.gioiTinh === "M" ? "Nam" : "Nữ",
-        email: data.email,
+        gioiTinh: user.gioiTinh,
+        email: user.email,
         soDienThoai: data.soDienThoai,
       })
       setUser((prev) => ({
         ...prev,
-        email: data.email,
-        soDT: data.soDienThoai,
+        soDienThoai: data.soDienThoai,
       }))
+      reset({ soDienThoai: data.soDienThoai })
       setIsEditing(false)
       setUpdateMessage("Cập nhật thông tin thành công")
     } catch (error) {
@@ -164,7 +164,7 @@ const AccountPage = () => {
                       type="button"
                       variant="outline"
                       onClick={() => {
-                        reset({ email: user.email, soDienThoai: user.soDienThoai })
+                        reset({ soDienThoai: user.soDienThoai })
                         setIsEditing(false)
                       }}
                       className="w-fit px-6"
