@@ -1,113 +1,188 @@
-import { useState } from 'react';
-import { Calendar } from '@/components/ui/calendar';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { format, isSameDay } from 'date-fns';
-import { vi } from 'date-fns/locale';
-import BackToTopButton from '@/components/back-to-top/back-to-top';
+import { useState, useEffect, useCallback } from "react"
+import type { ChangeEvent } from "react"
+import { Combobox } from "@/components/ui/combobox"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { format } from "date-fns"
+import { vi } from "date-fns/locale"
+import BackToTopButton from "@/components/back-to-top/back-to-top"
+import { DatePopover } from "@/components/dateInput/DatePopover"
+import { getLichLamViecHomNay, getLichLamViecByNgay, createLichLamViec } from "@/api/appointmentApi"
+import { fetchDoctors } from "@/api/apiDoctor"
+import { toastSuccess, toastError } from "@/helper/toast"
+import { useAppDispatch, useAppSelector } from "@/helper"
+import { Loader2 } from "lucide-react"
 
 interface WorkSchedule {
-  lichlvId: number;
-  ngay: string;
-  caTruc: 'Sáng' | 'Chiều';
-  lyDoNghi?: string;
-  tenBacSi: string;
-  idBacSi: number;
+  lichlvId: number
+  ngay: string
+  caTruc: string
+  lyDoNghi?: string
+  tenBacSi: string
+  bacSiId: number
 }
 
-const mockDoctors = [
-  { id: 1, name: 'Bác sĩ Nguyễn Văn A', specialty: 'Nội tổng quát' },
-  { id: 2, name: 'Bác sĩ Trần Thị B', specialty: 'Nhi khoa' },
-  { id: 3, name: 'Bác sĩ Lê Văn C', specialty: 'Da liễu' },
-  { id: 4, name: 'Bác sĩ Phạm Thị D', specialty: 'Tim mạch' },
-  { id: 5, name: 'Bác sĩ Hoàng Văn E', specialty: 'Ngoại khoa' },
-];
-
-const mockSchedules: WorkSchedule[] = [
-  {
-    lichlvId: 1,
-    ngay: '2025-08-14',
-    caTruc: 'Sáng',
-    tenBacSi: 'Bác sĩ Nguyễn Văn A',
-    idBacSi: 1,
-  },
-  {
-    lichlvId: 2,
-    ngay: '2025-08-14',
-    caTruc: 'Chiều',
-    tenBacSi: 'Bác sĩ Trần Thị B',
-    idBacSi: 2,
-  },
-  {
-    lichlvId: 3,
-    ngay: '2025-08-13',
-    caTruc: 'Sáng',
-    tenBacSi: 'Bác sĩ Lê Văn C',
-    idBacSi: 3,
-    lyDoNghi: 'Nghỉ phép',
-  },
-  {
-    lichlvId: 4,
-    ngay: '2025-08-13',
-    caTruc: 'Chiều',
-    tenBacSi: 'Bác sĩ Phạm Thị D',
-    idBacSi: 4,
-  },
-  {
-    lichlvId: 5,
-    ngay: '2025-08-12',
-    caTruc: 'Sáng',
-    tenBacSi: 'Bác sĩ Hoàng Văn E',
-    idBacSi: 5,
-  },
-];
-
 const AppointmentAdmin = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [selectedDoctor, setSelectedDoctor] = useState<string>('');
-  const [selectedShift, setSelectedShift] = useState<'Sáng' | 'Chiều'>('Sáng');
-  const [reason, setReason] = useState<string>('');
-  const [schedules, setSchedules] = useState<WorkSchedule[]>(mockSchedules);
+  const dispatch = useAppDispatch()
+  const doctors = useAppSelector((state) => state.doctors.doctors)
+  const doctorsLoading = useAppSelector((state) => state.doctors.loading)
+
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
+  const [selectedDoctor, setSelectedDoctor] = useState<string>("")
+  const [selectedShift, setSelectedShift] = useState<"Sáng" | "Chiều">("Sáng")
+  const [reason, setReason] = useState<string>("")
+  const [todaySchedules, setTodaySchedules] = useState<WorkSchedule[]>([])
+  const [historySchedules, setHistorySchedules] = useState<WorkSchedule[]>([])
+  const [loadingHistory, setLoadingHistory] = useState(false)
+  const [loadingToday, setLoadingToday] = useState(false)
+  const [creating, setCreating] = useState(false)
 
   // Bộ lọc khoa & ngày xem lịch
-  const [selectedSpecialty, setSelectedSpecialty] = useState<string>(''); // lọc cho hôm nay
-  const [historySpecialty, setHistorySpecialty] = useState<string>(''); // lọc cho lịch sử
-  const [historyDate, setHistoryDate] = useState<Date | undefined>(undefined);
+  const [selectedSpecialty, setSelectedSpecialty] = useState<string>("") // lọc cho hôm nay
+  const [historySpecialty, setHistorySpecialty] = useState<string>("") // lọc cho lịch sử
+  const [historyDate, setHistoryDate] = useState<Date | undefined>(undefined)
+  const [todayShift, setTodayShift] = useState<string>("all")
+  const [historyShift, setHistoryShift] = useState<string>("all")
+  const [todaySearch, setTodaySearch] = useState<string>("")
+  const [historySearch, setHistorySearch] = useState<string>("")
 
-  const specialties = Array.from(new Set(mockDoctors.map(doc => doc.specialty)));
+  const handleTodaySearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setTodaySearch(e.target.value)
+  }
 
-  const handleAssignSchedule = () => {
-    if (!selectedDate || !selectedDoctor) return;
+  const handleHistorySearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setHistorySearch(e.target.value)
+  }
 
-    const newSchedule: WorkSchedule = {
-      lichlvId: schedules.length + 1,
-      ngay: format(selectedDate, 'yyyy-MM-dd'),
-      caTruc: selectedShift,
-      tenBacSi: mockDoctors.find(doc => doc.id === parseInt(selectedDoctor))?.name || '',
-      idBacSi: parseInt(selectedDoctor),
-      lyDoNghi: reason || undefined,
-    };
+  const specialties = Array.from(new Set(doctors.map((doc) => doc.tenKhoa)))
 
-    setSchedules([newSchedule, ...schedules]);
-    setReason('');
-  };
+  // Chuẩn hóa dữ liệu lịch làm việc từ API về một định dạng thống nhất
+  const normalizeSchedules = (raw: any): WorkSchedule[] => {
+    if (!raw) return []
+    const rawArray = Array.isArray(raw) ? raw : [raw]
+    return rawArray.map((item: any) => {
+      const id = Number(item?.lichlvId ?? item?.lichLamViecId ?? item?.id ?? 0)
+      const bacSiId = Number(item?.bacSiId ?? item?.bacsi_id ?? item?.doctorId ?? 0)
+      const ngayRaw = item?.ngay
+      const ngay =
+        typeof ngayRaw === "string"
+          ? ngayRaw.slice(0, 10)
+          : ngayRaw
+            ? format(new Date(ngayRaw), "yyyy-MM-dd")
+            : ""
+      const caTruc = String(item?.caTruc ?? item?.shift ?? "").trim()
+      const lyDoNghi = item?.lyDoNghi ?? item?.lydoNghi ?? item?.reason ?? ""
+      const tenBacSi = item?.tenBacSi ?? item?.hoTen ?? item?.doctorName ?? ""
+      return { lichlvId: id, bacSiId, ngay, caTruc, lyDoNghi, tenBacSi }
+    })
+  }
 
-  const getShiftColor = (shift: 'Sáng' | 'Chiều') => {
-    return shift === 'Sáng' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800';
-  };
+  // Load lịch làm việc hôm nay
+  const loadTodaySchedule = useCallback(async () => {
+    try {
+      setLoadingToday(true)
+      const response = await getLichLamViecHomNay()
+      const payload = (response as any)?.data ?? response
+      setTodaySchedules(normalizeSchedules(payload))
+    } catch (error) {
+      toastError("Không thể tải lịch làm việc hôm nay")
+      console.error("Error loading today schedule:", error)
+    } finally {
+      setLoadingToday(false)
+    }
+  }, [])
+
+  // Load lịch làm việc theo ngày
+  const loadScheduleByDate = async (date: Date) => {
+    try {
+      setLoadingHistory(true)
+      const formattedDate = format(date, "yyyy-MM-dd")
+      const response = await getLichLamViecByNgay(formattedDate)
+      const payload = (response as any)?.data ?? response
+      setHistorySchedules(normalizeSchedules(payload))
+    } catch (error) {
+      toastError("Không thể tải lịch làm việc theo ngày")
+      console.error("Error loading schedule by date:", error)
+    } finally {
+      setLoadingHistory(false)
+    }
+  }
+
+  // Load doctors và lịch làm việc hôm nay khi component mount
+  useEffect(() => {
+    dispatch(fetchDoctors())
+    loadTodaySchedule()
+  }, [dispatch, loadTodaySchedule])
+
+  const handleAssignSchedule = async () => {
+    if (!selectedDate || !selectedDoctor) return
+
+    try {
+      setCreating(true)
+
+      const shiftMapping = {
+        Sáng: "sáng",
+        Chiều: "chiều",
+      }
+
+      const data = {
+        bacSiId: parseInt(selectedDoctor),
+        ngay: format(selectedDate, "yyyy-MM-dd"),
+        caTruc: shiftMapping[selectedShift] || "sáng",
+        lyDoNghi: reason || "",
+      }
+
+      const response = await createLichLamViec(data)
+      console.log("API Response:", response) // Debug log
+
+      // response đã là data từ axios helpers
+      if (response && (response as any).success) {
+        toastSuccess((response as any).message ?? "Tạo lịch làm việc cho bác sĩ thành công")
+
+        // Reload schedule
+        await loadTodaySchedule()
+
+        // Reset form
+        setReason("")
+        setSelectedDoctor("")
+      } else {
+        toastError((response as any)?.message ?? "Không thể tạo lịch làm việc")
+      }
+    } catch (error) {
+      const anyError: any = error
+      const serverMessage = anyError?.response?.data?.message
+      toastError(serverMessage ?? "Không thể tạo lịch làm việc")
+      console.error("Error creating schedule:", error)
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  const getShiftColor = (shift: string) => {
+    const normalized = (shift || "").trim().toLowerCase()
+    return normalized === "sáng" || normalized === "sang"
+      ? "bg-blue-100 text-blue-800"
+      : "bg-orange-100 text-orange-800"
+  }
 
   const getStatusColor = (reason?: string) => {
-    return reason ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
-  };
+    return reason ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+  }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="py-3 space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Quản lý lịch làm việc bác sĩ</h1>
         <p className="text-muted-foreground">
@@ -123,38 +198,38 @@ const AppointmentAdmin = () => {
             <CardDescription>Chọn ngày, bác sĩ và ca trực để phân lịch</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Chọn ngày</Label>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                className="rounded-md border"
-                locale={vi}
-              />
+            <div className="flex flex-wrap gap-4 items-center">
+              <div className="space-y-2">
+                <Label className="font-bold">Chọn ngày</Label>
+                <DatePopover date={selectedDate} setDate={setSelectedDate} locale={vi} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="doctor" className="font-bold">
+                  Chọn bác sĩ
+                </Label>
+                <Combobox
+                  value={selectedDoctor}
+                  onValueChange={setSelectedDoctor}
+                  placeholder="Chọn bác sĩ"
+                  searchPlaceholder="Tìm kiếm bác sĩ..."
+                  options={
+                    doctorsLoading
+                      ? [{ value: "loading", label: "Đang tải...", disabled: true }]
+                      : doctors.length === 0
+                        ? [{ value: "no-data", label: "Không có bác sĩ nào", disabled: true }]
+                        : doctors.map((doctor) => ({
+                            value: doctor.bacsi_id.toString(),
+                            label: `${doctor.hoTen} - ${doctor.tenKhoa}`,
+                          }))
+                  }
+                />
+              </div>
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="doctor">Chọn bác sĩ</Label>
-              <Select value={selectedDoctor} onValueChange={setSelectedDoctor}>
-                <SelectTrigger id="doctor">
-                  <SelectValue placeholder="Chọn bác sĩ" />
-                </SelectTrigger>
-                <SelectContent>
-                  {mockDoctors.map((doctor) => (
-                    <SelectItem key={doctor.id} value={doctor.id.toString()}>
-                      {doctor.name} - {doctor.specialty}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Chọn ca trực</Label>
+              <Label className="font-bold">Chọn ca trực</Label>
               <RadioGroup
                 value={selectedShift}
-                onValueChange={(value) => setSelectedShift(value as 'Sáng' | 'Chiều')}
+                onValueChange={(value) => setSelectedShift(value as "Sáng" | "Chiều")}
                 className="flex space-x-4"
               >
                 <div className="flex items-center space-x-2">
@@ -173,7 +248,9 @@ const AppointmentAdmin = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="reason">Lý do nghỉ (nếu có)</Label>
+              <Label htmlFor="reason" className="font-bold">
+                Lý do nghỉ (nếu có)
+              </Label>
               <Textarea
                 id="reason"
                 placeholder="Nhập lý do nghỉ..."
@@ -183,12 +260,12 @@ const AppointmentAdmin = () => {
               />
             </div>
 
-            <Button 
-              onClick={handleAssignSchedule} 
+            <Button
+              onClick={handleAssignSchedule}
               className="w-full"
-              disabled={!selectedDate || !selectedDoctor}
+              disabled={!selectedDate || !selectedDoctor || creating}
             >
-              Phân lịch làm việc
+              {creating ? "Đang tạo..." : "Phân lịch làm việc"}
             </Button>
           </CardContent>
         </Card>
@@ -197,46 +274,95 @@ const AppointmentAdmin = () => {
         <Card>
           <CardHeader>
             <CardTitle>Lịch làm việc hôm nay</CardTitle>
-            <CardDescription>{format(new Date(), 'EEEE, dd/MM/yyyy', { locale: vi })}</CardDescription>
+            <CardDescription>
+              {format(new Date(), "EEEE, dd/MM/yyyy", { locale: vi })}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Bộ lọc khoa */}
-            <Select value={selectedSpecialty} onValueChange={setSelectedSpecialty}>
-              <SelectTrigger>
-                <SelectValue placeholder="Lọc theo khoa" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả</SelectItem>
-                {specialties.map((spec) => (
-                  <SelectItem key={spec} value={spec}>{spec}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {/* Bộ lọc nâng cao: khoa, ca trực, tìm tên */}
+            <div className="flex flex-wrap gap-3 items-center">
+              <Combobox
+                value={selectedSpecialty}
+                onValueChange={setSelectedSpecialty}
+                placeholder="Lọc theo khoa"
+                searchPlaceholder="Tìm kiếm khoa..."
+                options={[
+                  { value: "all", label: "Tất cả" },
+                  ...specialties.map((spec) => ({
+                    value: spec,
+                    label: spec,
+                  })),
+                ]}
+              />
+              <Combobox
+                value={todayShift}
+                onValueChange={setTodayShift}
+                placeholder="Lọc theo ca"
+                searchPlaceholder="Tìm kiếm ca..."
+                options={[
+                  { value: "all", label: "Tất cả ca" },
+                  { value: "sáng", label: "Ca sáng" },
+                  { value: "chiều", label: "Ca chiều" },
+                ]}
+              />
+              <input
+                type="text"
+                value={todaySearch}
+                onChange={handleTodaySearchChange}
+                placeholder="Tìm theo tên bác sĩ"
+                aria-label="Tìm theo tên bác sĩ"
+                className="w-full md:w-[240px] px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
 
-            <div className="space-y-3">
-              {schedules
-                .filter(schedule => schedule.ngay === format(new Date(), 'yyyy-MM-dd'))
-                .filter(schedule => {
-                  if (!selectedSpecialty || selectedSpecialty === "all") return true;
-                  const doctor = mockDoctors.find(d => d.id === schedule.idBacSi);
-                  return doctor?.specialty === selectedSpecialty;
-                })
-                .map((schedule) => {
-                  const specialty = mockDoctors.find(d => d.id === schedule.idBacSi)?.specialty;
-                  return (
-                    <div key={schedule.lichlvId} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div>
-                        <p className="font-medium">{schedule.tenBacSi} - {specialty}</p>
-                        <Badge className={getShiftColor(schedule.caTruc)}>
-                          Ca {schedule.caTruc.toLowerCase()}
+            <div className="space-y-3 max-h-[300px] overflow-y-auto">
+              {loadingToday ? (
+                <div className="text-center py-4">Đang tải...</div>
+              ) : todaySchedules.length === 0 ? (
+                <div className="text-center py-4 text-muted-foreground">
+                  Không có lịch làm việc nào
+                </div>
+              ) : (
+                todaySchedules
+                  .filter((schedule) => {
+                    if (!selectedSpecialty || selectedSpecialty === "all") return true
+                    const doctor = doctors.find((d) => Number(d.bacsi_id) === schedule.bacSiId)
+                    return doctor?.tenKhoa === selectedSpecialty
+                  })
+                  .filter((schedule) => {
+                    if (!todayShift || todayShift === "all") return true
+                    const normalized = (schedule.caTruc || "").trim().toLowerCase()
+                    return normalized === todayShift
+                  })
+                  .filter((schedule) => {
+                    if (!todaySearch.trim()) return true
+                    const name = (schedule.tenBacSi || "").toLowerCase()
+                    return name.includes(todaySearch.trim().toLowerCase())
+                  })
+                  .map((schedule) => {
+                    const specialty =
+                      doctors.find((d) => Number(d.bacsi_id) === schedule.bacSiId)?.tenKhoa ||
+                      "Không xác định"
+                    return (
+                      <div
+                        key={`${schedule.lichlvId || "noid"}-${schedule.bacSiId}-${schedule.ngay}-${schedule.caTruc}`}
+                        className="flex items-center justify-between p-3 border rounded-lg"
+                      >
+                        <div>
+                          <p className="font-medium">
+                            {schedule.tenBacSi} - {specialty}
+                          </p>
+                          <Badge className={getShiftColor(schedule.caTruc)}>
+                            Ca {schedule.caTruc.toLowerCase()}
+                          </Badge>
+                        </div>
+                        <Badge variant={schedule.lyDoNghi ? "destructive" : "default"}>
+                          {schedule.lyDoNghi ? "Nghỉ" : "Làm việc"}
                         </Badge>
                       </div>
-                      <Badge variant={schedule.lyDoNghi ? "destructive" : "default"}>
-                        {schedule.lyDoNghi ? 'Nghỉ' : 'Làm việc'}
-                      </Badge>
-                    </div>
-                  );
-                })}
+                    )
+                  })
+              )}
             </div>
           </CardContent>
         </Card>
@@ -249,27 +375,62 @@ const AppointmentAdmin = () => {
           <CardDescription>Tất cả các ca làm việc đã được phân chia</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Bộ lọc khoa + ngày */}
+          {/* Bộ lọc khoa + ngày + ca trực + tìm tên */}
           <div className="flex flex-wrap gap-4">
-            <Select value={historySpecialty} onValueChange={setHistorySpecialty}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Lọc theo khoa" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả</SelectItem>
-                {specialties.map((spec) => (
-                  <SelectItem key={spec} value={spec}>{spec}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Calendar
-              mode="single"
-              selected={historyDate}
-              onSelect={setHistoryDate}
-              className="rounded-md border"
-              locale={vi}
+            <Combobox
+              value={historySpecialty}
+              onValueChange={setHistorySpecialty}
+              placeholder="Lọc theo khoa"
+              searchPlaceholder="Tìm kiếm khoa..."
+              className="w-[200px]"
+              options={[
+                { value: "all", label: "Tất cả" },
+                ...specialties.map((spec) => ({
+                  value: spec,
+                  label: spec,
+                })),
+              ]}
             />
+
+            <DatePopover date={historyDate} setDate={setHistoryDate} locale={vi} />
+            <Combobox
+              value={historyShift}
+              onValueChange={setHistoryShift}
+              placeholder="Lọc theo ca"
+              searchPlaceholder="Tìm kiếm ca..."
+              className="w-[160px]"
+              options={[
+                { value: "all", label: "Tất cả ca" },
+                { value: "sáng", label: "Ca sáng" },
+                { value: "chiều", label: "Ca chiều" },
+              ]}
+            />
+            <input
+              type="text"
+              value={historySearch}
+              onChange={handleHistorySearchChange}
+              placeholder="Tìm theo tên bác sĩ"
+              aria-label="Tìm theo tên bác sĩ"
+              className="w-full md:w-[240px] px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-primary"
+            />
+            <Button
+              variant="outline"
+              onClick={() => {
+                const today = new Date()
+                setHistoryDate(today)
+                loadScheduleByDate(today)
+                setHistorySpecialty("all")
+                setHistoryShift("all")
+                setHistorySearch("")
+              }}
+            >
+              Xóa lọc
+            </Button>
+            {historyDate && (
+              <Button variant="outline" onClick={() => loadScheduleByDate(historyDate)}>
+                Xem lịch ngày này
+              </Button>
+            )}
           </div>
 
           <Table>
@@ -283,45 +444,74 @@ const AppointmentAdmin = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {schedules
-                .filter(schedule => {
-                  if (historyDate) {
-                    return isSameDay(new Date(schedule.ngay), historyDate);
-                  }
-                  return true;
-                })
-                .filter(schedule => {
-                  if (!historySpecialty || historySpecialty === "all") return true;
-                  const doctor = mockDoctors.find(d => d.id === schedule.idBacSi);
-                  return doctor?.specialty === historySpecialty;
-                })
-                .map((schedule) => {
-                  const specialty = mockDoctors.find(d => d.id === schedule.idBacSi)?.specialty;
-                  return (
-                    <TableRow key={schedule.lichlvId}>
-                      <TableCell>{format(new Date(schedule.ngay), 'dd/MM/yyyy', { locale: vi })}</TableCell>
-                      <TableCell className="font-medium">{schedule.tenBacSi} - {specialty}</TableCell>
-                      <TableCell>
-                        <Badge className={getShiftColor(schedule.caTruc)}>{schedule.caTruc}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(schedule.lyDoNghi)}>
-                          {schedule.lyDoNghi ? 'Nghỉ' : 'Làm việc'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {schedule.lyDoNghi || '-'}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+              {loadingHistory ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center justify-center py-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  </TableCell>
+                </TableRow>
+              ) : historySchedules.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center justify-center py-2">
+                    Không có lịch làm việc nào
+                  </TableCell>
+                </TableRow>
+              ) : (
+                historySchedules.length > 0 &&
+                historySchedules
+                  .filter((schedule) => {
+                    if (!historySpecialty || historySpecialty === "all") return true
+                    const doctor = doctors.find((d) => Number(d.bacsi_id) === schedule.bacSiId)
+                    return doctor?.tenKhoa === historySpecialty
+                  })
+                  .filter((schedule) => {
+                    if (!historyShift || historyShift === "all") return true
+                    const normalized = (schedule.caTruc || "").trim().toLowerCase()
+                    return normalized === historyShift
+                  })
+                  .filter((schedule) => {
+                    if (!historySearch.trim()) return true
+                    const name = (schedule.tenBacSi || "").toLowerCase()
+                    return name.includes(historySearch.trim().toLowerCase())
+                  })
+                  .map((schedule) => {
+                    const specialty =
+                      doctors.find((d) => Number(d.bacsi_id) === schedule.bacSiId)?.tenKhoa ||
+                      "Không xác định"
+                    return (
+                      <TableRow
+                        key={`${schedule.lichlvId || "noid"}-${schedule.bacSiId}-${schedule.ngay}-${schedule.caTruc}`}
+                      >
+                        <TableCell>
+                          {format(new Date(schedule.ngay), "dd/MM/yyyy", { locale: vi })}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {schedule.tenBacSi} - {specialty}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getShiftColor(schedule.caTruc)}>
+                            {schedule.caTruc}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getStatusColor(schedule.lyDoNghi)}>
+                            {schedule.lyDoNghi ? "Nghỉ" : "Làm việc"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {schedule.lyDoNghi || "-"}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })
+              )}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
-      <BackToTopButton/>
+      <BackToTopButton />
     </div>
-  );
-};
+  )
+}
 
-export default AppointmentAdmin;
+export default AppointmentAdmin
