@@ -8,7 +8,6 @@ import { logoutUser } from "@/api/authApi"
 import { logout } from "@/redux"
 import { NavUser } from "@/components/sidebar/nav-user"
 import Footer from "../components/footer/footer"
-import Logo from "@/components/navbar/logo"
 
 const UserLayout = () => {
   const navigate = useNavigate()
@@ -31,10 +30,9 @@ const UserLayout = () => {
       {/* Navbar */}
       <nav className="h-16 bg-blue-200 dark:bg-black dark:text-white border-b z-50 w-full fixed">
         <div className="h-full flex items-center justify-between max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-8">
-            <Logo />
+          
             <NavMenu className="hidden md:block" />
-          </div>
+          
 
           <div className="flex items-center gap-3">
             {!user ? (
@@ -73,7 +71,6 @@ const UserLayout = () => {
       {/* Footer */}
       <Footer />
     </div>
-
   )
 }
 
