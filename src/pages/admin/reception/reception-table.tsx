@@ -34,8 +34,7 @@ export function ReceptionTable<TData extends Record<string, any>>({
   filterPlaceholder = "Tìm kiếm...",
   pageSize = 5,
 }: DataTableProps<TData>) {
-  const [pageIndex, setPageIndex] = useState(0)
-  const [sorting, setSorting] = useState<SortingState>([])
+   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
@@ -56,8 +55,7 @@ export function ReceptionTable<TData extends Record<string, any>>({
   })
 
   //const currentPageRows = table.getRowModel().rows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
-  const pageCount = Math.ceil(data.length / pageSize)
-
+ 
   return (
     <div className="w-full overflow-auto space-y-4">
       {/* Filter */}
@@ -107,24 +105,29 @@ export function ReceptionTable<TData extends Record<string, any>>({
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={pageIndex === 0}
-          onClick={() => setPageIndex((prev) => Math.max(prev - 1, 0))}
-        >
-          Previous
-        </Button>
-
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={pageIndex + 1 >= pageCount}
-          onClick={() => setPageIndex((prev) => Math.min(prev + 1, pageCount - 1))}
-        >
-          Next
-        </Button>
+        <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="text-sm text-muted-foreground flex-1">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   )

@@ -37,6 +37,7 @@ export const fetchManager = createAsyncThunk(
       const response = await get<ApiResponse<Manager[]>>(
         "/quan-ly/LayDanhSachQuanLy"
       );
+       console.log("Quản lý", response.data)
 
       return response.data;
     } catch (error: any) {

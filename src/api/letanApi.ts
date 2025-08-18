@@ -24,7 +24,7 @@ export const fetchReceptions = createAsyncThunk(
       const response = await get<ApiResponse<Receptionist[]>>(
         "/le-tan/LayDanhSachLeTan"
       );
-       
+       console.log("Lễ tân", response.data)
       return response.data;
     } catch (error: any) {
       const errorMessage =
