@@ -225,7 +225,9 @@ const AppointmentPage = () => {
         if (!selected?.tenKhoa) return
         const res = await getBacSiByChuyenKhoa(selected.tenKhoa)
         setListChuyenGia(res.data || [])
-      } catch (error) {}
+      } catch (error) {
+        console.log("Lỗi : ", error)
+      }
     }
     fetchChuyenGiaByChuyenKhoa()
   }, [specialty, listChuyenKhoa])

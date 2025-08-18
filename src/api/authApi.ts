@@ -27,11 +27,10 @@ export const loginUser = async (loginData: LoginRequest): Promise<any> => {
 
     return response
   } catch (error: any) {
-  const message = error.response?.data?.message || "Có lỗi xảy ra!";
-  toastError(`Đăng nhập thất bại: ${message}`);
-  throw error;
-}
-
+    const message = error.response?.data?.message || "Có lỗi xảy ra!"
+    toastError(`Đăng nhập thất bại: ${message}`)
+    throw error
+  }
 }
 export const registerUser = async (registerData: RegisterRequest): Promise<any> => {
   try {
@@ -55,7 +54,7 @@ export const confirmOTP = async (otpData: { otp: any }): Promise<any> => {
     const response = await post<any>(`/auth/confirm_OTP?otp=${otpData.otp}`)
 
     if (response.success === true) {
-      localStorage.removeItem("pendingEmail");
+      localStorage.removeItem("pendingEmail")
       toastSuccess("Xác nhận OTP thành công. Bạn có thể đăng nhập ngay bây giờ!")
     }
 

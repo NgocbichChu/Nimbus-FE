@@ -145,7 +145,6 @@ const AppointmentAdmin = () => {
       }
 
       const response = await createLichLamViec(data)
-      console.log("API Response:", response) // Debug log
 
       // response đã là data từ axios helpers
       if (response && (response as any).success) {
