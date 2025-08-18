@@ -34,7 +34,10 @@ export const fetchManager = createAsyncThunk(
   "manages/fetchManager",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await get<ApiResponse<Manager[]>>("/quan-ly/LayDanhSachQuanLy")
+      const response = await get<ApiResponse<Manager[]>>(
+        "/quan-ly/LayDanhSachQuanLy"
+      );
+       console.log("Quản lý", response.data)
 
       return response.data
     } catch (error: any) {
@@ -48,16 +51,6 @@ export const fetchManager = createAsyncThunk(
 export const updateManager = createAsyncThunk(
   "doctors/updateDoctor",
   async ({ quanLyId, ...updateData }: UpdateManagerRequest, { rejectWithValue }) => {
-    const payload = {
-      hoTen: updateData.hoTen,
-      gioiTinh: updateData.gioiTinh,
-      email: updateData.email,
-      soDienThoai: updateData.soDienThoai,
-      matKhau: updateData.matKhau,
-      chucVu: updateData.chucVu,
-      ghiChu: updateData.ghiChu,
-      trangThaiHoatDong: updateData.trangThaiHoatDong,
-    }
 
     try {
       const response = await put<Manager>(`/quan-ly/CapNhatQuanLy/${quanLyId}`, updateData)

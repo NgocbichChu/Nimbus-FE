@@ -21,9 +21,11 @@ export const fetchReceptions = createAsyncThunk(
   "receptions/fetchReceptions",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await get<ApiResponse<Receptionist[]>>("/le-tan/LayDanhSachLeTan")
-
-      return response.data
+      const response = await get<ApiResponse<Receptionist[]>>(
+        "/le-tan/LayDanhSachLeTan"
+      );
+       console.log("Lễ tân", response.data)
+      return response.data;
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "Lỗi khi tải danh sách lễ tân"
       toastError(errorMessage)
@@ -48,17 +50,6 @@ interface UpdateReceptionRequest {
 export const updateReception = createAsyncThunk(
   "reception/updateReception",
   async ({ leTanId, ...updateData }: UpdateReceptionRequest, { rejectWithValue }) => {
-    const payload = {
-      hoTen: updateData.hoTen,
-      gioiTinh: updateData.gioiTinh,
-      email: updateData.email,
-      soDienThoai: updateData.soDienThoai,
-      matKhau: updateData.matKhau,
-      ngayTuyenDung: updateData.ngayTuyenDung,
-      chucVu: updateData.chucVu,
-      ghiChu: updateData.ghiChu,
-      trangThaiHoatDong: updateData.trangThaiHoatDong,
-    }
 
     try {
       const response = await put<Manager>(`/le-tan/CapNhatLeTan/${leTanId}`, updateData)
