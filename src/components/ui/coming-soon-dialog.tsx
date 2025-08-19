@@ -30,7 +30,7 @@ export const ComingSoonDialog = ({ isOpen, onClose }: ComingSoonDialogProps) => 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Coming Soon!</DialogTitle>
         </DialogHeader>

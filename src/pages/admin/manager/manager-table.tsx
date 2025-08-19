@@ -2,9 +2,21 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
-import type { ColumnDef, SortingState, ColumnFiltersState, VisibilityState } from "@tanstack/react-table"
-import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, flexRender } from "@tanstack/react-table"
-
+import { Combobox } from "@/components/ui/combobox"
+import type {
+  ColumnDef,
+  SortingState,
+  ColumnFiltersState,
+  VisibilityState,
+} from "@tanstack/react-table"
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  flexRender,
+} from "@tanstack/react-table"
 
 // Props
 interface DataTableProps<TData> {
@@ -15,14 +27,14 @@ interface DataTableProps<TData> {
   pageSize?: number
 }
 
- export function ManagerTable<TData extends Record<string, any>>({
+export function ManagerTable<TData extends Record<string, any>>({
   columns,
   data,
   filterColumn,
-  filterPlaceholder = "Tìm kiếm...",
+  filterPlaceholder = "Tìm kiếm theo tên...",
   pageSize = 5,
 }: DataTableProps<TData>) {
-   const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
@@ -42,19 +54,35 @@ interface DataTableProps<TData> {
     pageCount: Math.ceil(data.length / pageSize),
   })
 
-  //const currentPageRows = table.getRowModel().rows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
- 
   return (
     <div className="w-full overflow-auto space-y-4">
       {/* Filter */}
-      {filterColumn && (
-        <Input
-          placeholder={filterPlaceholder}
-          value={(table.getColumn(filterColumn as string)?.getFilterValue() as string) ?? ""}
-          onChange={(e) => table.getColumn(filterColumn as string)?.setFilterValue(e.target.value)}
-          className="max-w-sm"
-        />
-      )}
+      <div className="flex items-center gap-2 p-1">
+        {filterColumn && (
+          <Input
+            placeholder={filterPlaceholder}
+            value={(table.getColumn(filterColumn as string)?.getFilterValue() as string) ?? ""}
+            onChange={(e) =>
+              table.getColumn(filterColumn as string)?.setFilterValue(e.target.value)
+            }
+            className="max-w-sm"
+          />
+        )}
+        {table.getColumn("trangThaiHoatDong" as string) && (
+          <Combobox
+            options={[
+              { value: "", label: "Tất cả trạng thái" },
+              { value: "true", label: "Hoạt động" },
+              { value: "false", label: "Nghỉ" },
+            ]}
+            value={(table.getColumn("trangThaiHoatDong")?.getFilterValue() as string) ?? ""}
+            onValueChange={(value) => table.getColumn("trangThaiHoatDong")?.setFilterValue(value)}
+            placeholder="Lọc trạng thái"
+            searchPlaceholder="Tìm trạng thái..."
+            className="w-[200px]"
+          />
+        )}
+      </div>
 
       {/* Table */}
       <div className="rounded-md border">
@@ -62,9 +90,7 @@ interface DataTableProps<TData> {
           <TableHeader>
             <TableRow>
               {columns.map((col) => (
-                <TableCell key={String(col.header)}>
-                  {col.header as string}
-                </TableCell>
+                <TableCell key={String(col.header)}>{col.header as string}</TableCell>
               ))}
             </TableRow>
           </TableHeader>
@@ -73,7 +99,11 @@ interface DataTableProps<TData> {
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="max-w-[150px] truncate" title={String(cell.getValue() ?? "")}>
+                    <TableCell
+                      key={cell.id}
+                      className="max-w-[150px] truncate"
+                      title={String(cell.getValue() ?? "")}
+                    >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -91,30 +121,30 @@ interface DataTableProps<TData> {
       </div>
 
       {/* Pagination */}
-        <div className="flex items-center justify-end space-x-2 py-4">
-              <div className="text-sm text-muted-foreground flex-1">
-                {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                {table.getFilteredRowModel().rows.length} row(s) selected.
-              </div>
-              <div className="space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => table.previousPage()}
-                  disabled={!table.getCanPreviousPage()}
-                >
-                  Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => table.nextPage()}
-                  disabled={!table.getCanNextPage()}
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="text-sm text-muted-foreground flex-1">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

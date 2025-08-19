@@ -42,7 +42,6 @@ export const ManagerForm = ({ manager, onClose }: ManagerFormProps) => {
   })
 
   const handleEdit = async (data: any) => {
-    console.log("kiểm tra hoạt động ")
     if (!manager?.quanLyId) {
       console.error("Không có ID Quản lý để cập nhật.")
       return
