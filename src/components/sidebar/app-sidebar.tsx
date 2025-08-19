@@ -22,7 +22,7 @@ const data = {
       icon: Users,
     },
     {
-      title: "Quản lý lịch khám",
+      title: "Quản lý lịch làm việc",
       url: "/dashboard/appointments",
       icon: ClipboardPlus,
     },
