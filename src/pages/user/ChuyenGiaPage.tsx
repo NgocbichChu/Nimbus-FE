@@ -1,6 +1,7 @@
+import { getDanhSachChuyenGia } from "../../api/chuyenGiaApi"
+import BackToTopButton from "@/components/back-to-top/back-to-top"
 import { Input } from "@/components/ui/input"
 import { useEffect, useMemo, useState } from "react"
-import { getDanhSachChuyenGia } from "../../api/chuyenGiaApi"
 
 const ChuyenGiaPage = () => {
   const [listChuyenGia, setListChuyenGia] = useState<any[]>([])
@@ -170,6 +171,7 @@ const ChuyenGiaPage = () => {
           </div>
         )}
       </div>
+      <BackToTopButton />
 
       {/* CSS animation */}
       <style>{`

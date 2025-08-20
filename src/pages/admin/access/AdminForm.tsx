@@ -1,3 +1,4 @@
+import { fetchManager } from "@/api/manager"
 import { addAdmin } from "@/api/quanlyApi"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,6 +17,7 @@ const AdminForm = () => {
   const {
     control,
     register,
+    reset,
     handleSubmit,
   } = useForm({
     defaultValues: {
@@ -26,6 +28,7 @@ const AdminForm = () => {
       matKhau: '',
       chucVu: '',
       ghiChu: '',
+      trangThaiHoatDong: true
     },
   })
 
@@ -36,7 +39,9 @@ const AdminForm = () => {
   const handleAdd = async (data: any) => {
     try {
       await dispatch(addAdmin(data)).unwrap()
-     } catch (error) {
+      dispatch(fetchManager());
+      reset();
+    } catch (error) {
       console.error("Thêm bác sĩ thất bại:", error)
     }
   }

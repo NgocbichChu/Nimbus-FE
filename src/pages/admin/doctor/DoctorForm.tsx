@@ -42,6 +42,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -64,9 +65,8 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
   const handleAdd = async (data: any) => {
     try {
       await dispatch(addDoctor(data)).unwrap()
-      // console.log("")
       dispatch(fetchDoctors())
-      console.log("gọi lại danh sách form")
+      reset();
       onClose?.()
     } catch (error) {
       console.error("Thêm bác sĩ thất bại:", error)
@@ -131,12 +131,12 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
           render={({ field }) => (
             <RadioGroup value={field.value} onValueChange={field.onChange} className="flex gap-4">
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Nam" id="male" />
-                <Label htmlFor="male">Nam</Label>
+                <RadioGroupItem value="Nam" id="Nam" />
+                <Label htmlFor="Nam">Nam</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Nữ" id="female" />
-                <Label htmlFor="female">Nữ</Label>
+                <RadioGroupItem value="Nữ" id="Nu" />
+                <Label htmlFor="Nu">Nữ</Label>
               </div>
             </RadioGroup>
           )}
@@ -247,10 +247,6 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
         {errors.trinhDo && <p className="text-red-500 text-sm">{errors.trinhDo.message}</p>}
       </div>
 
-      {/* <div className="grid gap-2">
-        <Label>Kinh nghiệm (năm)</Label>
-        <Input {...register("kinhNghiem")} placeholder="Nhập số năm" min={0}  type="number" />
-      </div> */}
       <div className="grid gap-2">
         <Label>Kinh nghiệm (năm)</Label>
         <Controller

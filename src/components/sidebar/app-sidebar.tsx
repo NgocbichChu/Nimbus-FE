@@ -1,4 +1,4 @@
-import { BadgeCheck, BookUser, ClipboardPlus, GraduationCap, House, Users } from "lucide-react"
+import { BadgeCheck, BookUser, ClipboardPlus, House, Users } from "lucide-react"
 
 import { NavMain } from "@/components/sidebar/nav-main"
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from "@/components/ui/sidebar"
@@ -22,7 +22,7 @@ const data = {
       icon: Users,
     },
     {
-      title: "Quản lý lịch khám",
+      title: "Quản lý lịch làm việc",
       url: "/dashboard/appointments",
       icon: ClipboardPlus,
     },
@@ -31,11 +31,11 @@ const data = {
       url: "/dashboard/access",
       icon: BadgeCheck,
     },
-    {
-      title: "Duyệt chứng chỉ",
-      url: "/dashboard/certifications",
-      icon: GraduationCap,
-    },
+    // {
+    //   title: "Duyệt chứng chỉ",
+    //   url: "/dashboard/certifications",
+    //   icon: GraduationCap,
+    // },
   ],
 }
 

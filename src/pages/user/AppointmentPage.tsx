@@ -45,6 +45,7 @@ import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 import timezone from "dayjs/plugin/timezone"
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter"
+import BackToTopButton from "@/components/back-to-top/back-to-top"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type AppointmentFormType = yup.InferType<typeof appointmentSchema>
@@ -224,7 +225,9 @@ const AppointmentPage = () => {
         if (!selected?.tenKhoa) return
         const res = await getBacSiByChuyenKhoa(selected.tenKhoa)
         setListChuyenGia(res.data || [])
-      } catch (error) {}
+      } catch (error) {
+        console.log("Lỗi : ", error)
+      }
     }
     fetchChuyenGiaByChuyenKhoa()
   }, [specialty, listChuyenKhoa])
@@ -1086,6 +1089,7 @@ const AppointmentPage = () => {
             </CardFooter>
           </Card>
         </div>
+        <BackToTopButton/>
         <style>
           {`  @keyframes fadeIn {
     from {

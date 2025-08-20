@@ -1,48 +1,39 @@
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table"
+import { Input } from "@/components/ui/input"
+import { Combobox } from "@/components/ui/combobox"
+import type {
+  ColumnDef,
+  SortingState,
+  ColumnFiltersState,
+  VisibilityState,
+} from "@tanstack/react-table"
 import {
-  flexRender,
+  useReactTable,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type SortingState,
-  type ColumnFiltersState,
-  type VisibilityState,
+  getFilteredRowModel,
+  flexRender,
 } from "@tanstack/react-table"
 
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuCheckboxItem,
-} from "@/components/ui/dropdown-menu"
-import { ChevronDown } from "lucide-react"
-import { useState } from "react"
-
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
+// Props
+interface DataTableProps<TData> {
+  columns: ColumnDef<TData, any>[]
   data: TData[]
   filterColumn?: keyof TData
   filterPlaceholder?: string
+  pageSize?: number
 }
 
-export function DataTableUser<TData, TValue>({
+export function ManagerTable<TData extends Record<string, any>>({
   columns,
   data,
   filterColumn,
-  filterPlaceholder = "Tìm kiếm theo tên bệnh nhân...",
-}: DataTableProps<TData, TValue>) {
+  filterPlaceholder = "Tìm kiếm theo tên...",
+  pageSize = 5,
+}: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -51,12 +42,7 @@ export function DataTableUser<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
+    state: { sorting, columnFilters, columnVisibility, rowSelection },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -65,12 +51,13 @@ export function DataTableUser<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    pageCount: Math.ceil(data.length / pageSize),
   })
-  
 
   return (
-    <div className="w-full overflow-auto">
-      <div className="flex items-center py-4 ps-1">
+    <div className="w-full overflow-auto space-y-4">
+      {/* Filter */}
+      <div className="flex items-center gap-2 p-1">
         {filterColumn && (
           <Input
             placeholder={filterPlaceholder}
@@ -81,50 +68,42 @@ export function DataTableUser<TData, TValue>({
             className="max-w-sm"
           />
         )}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((col) => col.getCanHide())
-              .map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {table.getColumn("trangThaiHoatDong" as string) && (
+          <Combobox
+            options={[
+              { value: "", label: "Tất cả trạng thái" },
+              { value: "true", label: "Hoạt động" },
+              { value: "false", label: "Nghỉ" },
+            ]}
+            value={(table.getColumn("trangThaiHoatDong")?.getFilterValue() as string) ?? ""}
+            onValueChange={(value) => table.getColumn("trangThaiHoatDong")?.setFilterValue(value)}
+            placeholder="Lọc trạng thái"
+            searchPlaceholder="Tìm trạng thái..."
+            className="w-[200px]"
+          />
+        )}
       </div>
 
+      {/* Table */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
+            <TableRow>
+              {columns.map((col) => (
+                <TableCell key={String(col.header)}>{col.header as string}</TableCell>
+              ))}
+            </TableRow>
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className="max-w-[150px] truncate"
+                      title={String(cell.getValue() ?? "")}
+                    >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -141,9 +120,10 @@ export function DataTableUser<TData, TValue>({
         </Table>
       </div>
 
+      {/* Pagination */}
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="text-sm text-muted-foreground flex-1">
-          {table.getFilteredSelectedRowModel().rows.length} of{""}
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="space-x-2">
@@ -155,7 +135,12 @@ export function DataTableUser<TData, TValue>({
           >
             Previous
           </Button>
-          <Button variant="outline" size="sm"  onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} >
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
             Next
           </Button>
         </div>

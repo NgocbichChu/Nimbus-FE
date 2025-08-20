@@ -50,6 +50,45 @@ export const postTaoLichKham = async (data: any) => {
   }
 }
 
+export const getLichLamViecHomNay = async () => {
+  try {
+    const response = await get<any>("/lich-lam-viec/LichLamViecHomNay")
+    return response
+  } catch (error) {
+    console.error("Lỗi : ", error)
+    throw error
+  }
+}
+
+export const getLichLamViecByNgay = async (ngay: string) => {
+  try {
+    const response = await get<any>(`/lich-lam-viec/LichLamViecTheoNgay?ngay=${ngay}`)
+    return response
+  } catch (error) {
+    console.error("Lỗi : ", error)
+    throw error
+  }
+}
+
+export const createLichLamViec = async (data: any) => {
+  try {
+    const requestBody = {
+      ngay: data.ngay,
+      caTruc: data.caTruc,
+      lyDoNghi: data.lyDoNghi || "",
+    }
+
+    const response = await post<any>(
+      `/lich-lam-viec/TaoLichLamViec?bacSiId=${data.bacSiId}`,
+      requestBody
+    )
+    return response
+  } catch (error) {
+    console.error("Lỗi : ", error)
+    throw error
+  }
+}
+
 export const getLichTrongChuyenKhoa = async (tenKhoa: string) => {
   try {
     const response = await get<any>(`/guest/chuyen-khoa/${encodeURIComponent(tenKhoa)}/lich-trong`)

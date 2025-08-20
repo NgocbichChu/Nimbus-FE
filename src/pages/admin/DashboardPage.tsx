@@ -11,6 +11,7 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import BackToTopButton from "@/components/back-to-top/back-to-top"
 
 // ======================= COMPONENT SELECT =======================
 const SearchableSelect = ({
@@ -203,6 +204,7 @@ const DashboardPage = () => {
         selectedYear={selectedYear}
         selectedMonth={selectedMonth}
       />
+      <BackToTopButton />
     </div>
   )
 }

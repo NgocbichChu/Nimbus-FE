@@ -57,7 +57,7 @@ export const addDoctor = createAsyncThunk(
   async (doctorData: CreateDoctorRequest, { rejectWithValue }) => {
     try {
       const response = await post<any>("/bac-si/TaoMoiBacSi", doctorData)
-      toastSuccess("Thêm bác sĩ thành công!")
+      toastSuccess(response.message || "Thêm bác sĩ thành công!")  
       return response.data
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "Lỗi khi thêm bác sĩ"

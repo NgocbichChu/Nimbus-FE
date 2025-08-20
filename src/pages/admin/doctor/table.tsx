@@ -30,6 +30,7 @@ import {
 import { ChevronDown } from "lucide-react"
 import { useState } from "react"
 import DoctorDialog from "./doctor-dialog"
+import { AdvancedFilters } from "@/components/ui/advanced-filters"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -68,79 +69,74 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
   })
 
+  const handleKhoaChange = (value: string) => {
+    table.getColumn("tenKhoa")?.setFilterValue(value)
+  }
+
+  const handleTrangThaiChange = (value: string) => {
+    table.getColumn("trangThaiHoatDong")?.setFilterValue(value)
+  }
+
+  const khoaValue = table.getColumn("tenKhoa")?.getFilterValue() as string
+  const trangThaiValue = table.getColumn("trangThaiHoatDong")?.getFilterValue() as string
+
   return (
     <div className="w-full overflow-auto">
-      <div className="flex items-center py-4 ps-1">
-        {filterColumn && (
-          <Input
-            placeholder={filterPlaceholder}
-            value={(table.getColumn(filterColumn as string)?.getFilterValue() as string) ?? ""}
-            onChange={(e) =>
-              table.getColumn(filterColumn as string)?.setFilterValue(e.target.value)
-            }
-            className="max-w-sm"
-          />
-        )}
-        {/* Filter by Khoa */}
-        {table.getColumn("tenKhoa") && (
-          <select
-            onChange={(e) => table.getColumn("tenKhoa")?.setFilterValue(e.target.value)}
-            className="ml-4 h-9 px-3 rounded-md border text-sm"
-            defaultValue=""
-          >
-            <option value="">Tất cả khoa</option>
-            {[
-              ...new Set(
-                (data || [])
-                  .filter((item: any) => item && item.tenKhoa) // chỉ lấy item hợp lệ
-                  .map((item: any) => item.tenKhoa)
-              ),
-            ].map((khoa, index) => (
-              <option key={`${khoa}-${index}`} value={khoa}>
-                {khoa}
-              </option>
-            ))}
-          </select>
-        )}
+      <div className="space-y-4 py-4">
+        {/* Search + Filters + Actions Row */}
+        <div className="flex items-center justify-between gap-4">
+          {/* Left side: Search, Filters, Add Doctor */}
+          <div className="flex items-center gap-4 ps-1">
+            {filterColumn && (
+              <Input
+                placeholder={filterPlaceholder}
+                value={(table.getColumn(filterColumn as string)?.getFilterValue() as string) ?? ""}
+                onChange={(e) =>
+                  table.getColumn(filterColumn as string)?.setFilterValue(e.target.value)
+                }
+                className="max-w-sm"
+              />
+            )}
 
-        {/* Filter by Trạng thái hoạt động */}
-        {table.getColumn("trangThaiHoatDong") && (
-          <select
-            onChange={(e) => table.getColumn("trangThaiHoatDong")?.setFilterValue(e.target.value)}
-            className="ml-4 h-9 px-3 rounded-md border text-sm"
-            defaultValue=""
-          >
-            <option value="">Tất cả trạng thái</option>
-            <option value="true">Hoạt động</option>
-            <option value="false">Nghỉ</option>
-          </select>
-        )}
-        <div className="ps-4">
-          <DoctorDialog mode="add" />
+            {(table.getColumn("tenKhoa") || table.getColumn("trangThaiHoatDong")) && (
+              <AdvancedFilters
+                data={data}
+                onKhoaChange={handleKhoaChange}
+                onTrangThaiChange={handleTrangThaiChange}
+                khoaValue={khoaValue}
+                trangThaiValue={trangThaiValue}
+              />
+            )}
+
+            <DoctorDialog mode="add" />
+          </div>
+
+          {/* Right side: Column toggle */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((col) => col.getCanHide())
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((col) => col.getCanHide())
-              .map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
 
+      {/* Table */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -178,6 +174,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
+      {/* Pagination */}
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="text-sm text-muted-foreground flex-1">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}

@@ -14,12 +14,14 @@ export type Doctor = {
   trangThaiHoatDong: boolean
 }
 export type Patient = {
-  benhnhan_id: number
+  benhNhanId: number
   hoTen: string
   gioiTinh: "Nam" | "Nữ"
   email: string
   soDienThoai: string
-  cccd: string
+  danToc: string
+  lienHeKhanCap: string
+  canCuocCongDan: string
   diaChi: string
 }
 export type Certification = {
@@ -33,6 +35,35 @@ export type Certification = {
 export type Specialty = {
   chuyenKhoaId: string
   tenKhoa: string
-  moTa: string 
+  moTa: string
+}
+
+export type Receptionist = {
+  leTanId: number,
+  hoTen: string,
+  gioiTinh: string,
+  email: string,
+  soDienThoai: string,
+  ngayTuyenDung: string,
+  chucVu: string,
+  ghiChu: string,
+  ngayTao: string,
+  ngayCapNhat: string,
+  trangThaiHoatDong: boolean
+}
+
+export type Manager = {
+  quanLyId: number,
+  hoTen: string,
+  gioiTinh: string,
+  email: string,
+  soDienThoai: string,
+  ngayTuyenDung: string,
+  chucVu: string,
+  ghiChu: string,
+  ngayTao: string,
+  matKhau : string,
+  ngayCapNhat: string,
+  trangThaiHoatDong: boolean
 }
 

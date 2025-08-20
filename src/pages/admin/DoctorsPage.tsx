@@ -10,7 +10,6 @@ export default function DoctorPage() {
 
   useEffect(() => {
     dispatch(fetchDoctors())
-    console.log("danh sách ở page")
   }, [dispatch])
 
   return (

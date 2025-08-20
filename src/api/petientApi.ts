@@ -17,3 +17,14 @@ export const fetchPatient = createAsyncThunk(
     }
   }
 )
+export const fetchPatientById = createAsyncThunk(
+  "patients/fetchById",
+  async (id: number, { rejectWithValue }) => {
+    try {
+      const response = await get<any>(`/benh-nhan/LayBenhNhanTheoId/${id}`)
+      return response.data // giả sử API trả về 1 object Patient
+    } catch (err: any) {
+      return rejectWithValue(err.message)
+    }
+  }
+)
