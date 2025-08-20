@@ -46,6 +46,7 @@ import utc from "dayjs/plugin/utc"
 import timezone from "dayjs/plugin/timezone"
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { toastSuccess, toastError } from "../../helper/toast"
 
 type AppointmentFormType = yup.InferType<typeof appointmentSchema>
 
@@ -126,9 +127,43 @@ const AppointmentPage = () => {
     setValue: setFormValue,
     trigger,
     formState: { errors, isSubmitting },
+    reset: resetForm,
   } = useForm<AppointmentFormType>({
     resolver: yupResolver(appointmentSchema) as any,
   })
+
+  const resetAll = () => {
+    setActiveTab("tab1")
+    setShowPaymentMethod(false)
+    setPaymentMethod("")
+
+    setServiceType("")
+    setSpecialty("")
+    setDoctor("")
+    setNote("")
+
+    setOpen(false)
+    setValue("")
+    setDate(undefined)
+    setMonth(undefined)
+    setSelectedTime(null)
+    setAvailableTimes([])
+    setNgayLamViec([])
+
+    setOpen2(false)
+    setValue2("")
+    setDate2(undefined)
+    setMonth2(undefined)
+    setSelectedTime2(null)
+    setAvailableTimes2([])
+    setNgayTrongChuyenKhoa([])
+    setLichTrongMap({})
+
+    setOpenDoctor(false)
+    setOpenSpecialty(false)
+
+    resetForm()
+  }
 
   function toHHMM(t: string) {
     const s = String(t || "").trim()
@@ -269,7 +304,7 @@ const AppointmentPage = () => {
           setAvailableTimes([])
           return
         }
-        
+
         const resGio = await getGioTheoNgay(Number(doctor), ngayStr, caTruc)
         const slots = extractSlots(resGio)
         const sorted = [...slots].sort((a, b) => a.thoiGian.localeCompare(b.thoiGian))
@@ -278,12 +313,11 @@ const AppointmentPage = () => {
           if (!sorted[i].trangThai || !sorted[i + 1].trangThai) continue
           const s = toHHMM(sorted[i].thoiGian)
           const e = toHHMM(sorted[i + 1].thoiGian)
-          formatted.push({ 
-            label: `${s} - ${e}`, 
-            start: `${s}:00`, 
-            end: `${e}:00` 
+          formatted.push({
+            label: `${s} - ${e}`,
+            start: `${s}:00`,
+            end: `${e}:00`,
           })
-
         }
 
         setAvailableTimes(formatted)
@@ -300,7 +334,7 @@ const AppointmentPage = () => {
     Record<string, { label: string; start: string; end: string }[]>
   >({})
 
- // FLOW 2 chuyên khoa -> ngày -> giờ
+  // FLOW 2 chuyên khoa -> ngày -> giờ
   useEffect(() => {
     const fetchLichTrong = async () => {
       setNgayTrongChuyenKhoa([])
@@ -558,10 +592,11 @@ const AppointmentPage = () => {
     }
     try {
       await postTaoLichKham(payload)
-      alert(`Đặt lịch thành công với phương thức: ${paymentMethod}`)
+      toastSuccess(`Đặt lịch thành công với phương thức: ${paymentMethod}`)
+      resetAll()
     } catch (error) {
       console.error("Lỗi : ", error)
-      alert("Đặt lịch thất bại")
+      toastError("Đặt lịch thất bại")
     }
   }
 
@@ -579,7 +614,7 @@ const AppointmentPage = () => {
       day: "2-digit",
       timeZone: "Asia/Ho_Chi_Minh",
     } as const
-    
+
     return new Intl.DateTimeFormat("vi-VN", options).format(d)
   }
 
