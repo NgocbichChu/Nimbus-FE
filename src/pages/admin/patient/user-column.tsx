@@ -1,7 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table"
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 import type { Patient } from "../../../components/data-table/type-table"
-import { Link } from "react-router-dom"
+// import { Link } from "react-router-dom"
 
 export const patientColumns: ColumnDef<Patient>[] = [
   {
@@ -61,20 +61,19 @@ export const patientColumns: ColumnDef<Patient>[] = [
     header: "Địa chỉ",
     cell: ({ row }) => <span className="capitalize">{row.getValue("diaChi")}</span>,
   },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const patient = row.original
-      return (
-        <Link to={`/dashboard/patients/${patient.benhNhanId}`}>
-          <Button variant="outline" size="sm" onClick={() => {
-            console.log("Bệnh nhân ID:", patient.benhNhanId)
-          }}>
-            Xem chi tiết
-          </Button>
-        </Link>
-      )
-    },
-  },
+  // {
+  //   id: "actions",
+  //   enableHiding: false,
+  //   cell: ({ row }) => {
+  //     // const patient = row.original
+  //     return (
+  //       // <Link to={`/dashboard/patients/${patient.benhNhanId}`}>
+  //         <Button variant="outline" size="sm" onClick={() => {
+  //         }}>
+  //           Xem chi tiết
+  //         </Button>
+  //       // </Link>
+  //     )
+  //   },
+  // },
 ]

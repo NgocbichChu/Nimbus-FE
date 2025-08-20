@@ -65,9 +65,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
   const handleAdd = async (data: any) => {
     try {
       await dispatch(addDoctor(data)).unwrap()
-      // console.log("")
       dispatch(fetchDoctors())
-      console.log("gọi lại danh sách form")
       reset();
       onClose?.()
     } catch (error) {
