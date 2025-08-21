@@ -180,22 +180,55 @@ const AppointmentPage = () => {
     return s
   }
 
-  function extractSlots(resp: any): { thoiGian: string; trangThai: boolean }[] {
-    const raw = Array.isArray(resp?.data)
-      ? resp.data
-      : Array.isArray(resp?.data?.gioTrong)
-        ? resp.data.gioTrong
-        : Array.isArray(resp?.gioTrong)
-          ? resp.gioTrong
+  function extractRanges(resp: any): {
+    label: string
+    start: string
+    end: string
+    available: boolean
+  }[] {
+    const raw = Array.isArray(resp?.data?.gioTrong)
+      ? resp.data.gioTrong
+      : Array.isArray(resp?.gioTrong)
+        ? resp.gioTrong
+        : Array.isArray(resp?.data)
+          ? resp.data
           : Array.isArray(resp)
             ? resp
             : []
-    return raw
+
+    if (raw.some((x: any) => typeof x?.batDau === "string" && typeof x?.ketThuc === "string")) {
+      return raw
+        .filter((x: any) => x && x.batDau && x.ketThuc)
+        .map((x: any) => {
+          const s = toHHMM(x.batDau)
+          const e = toHHMM(x.ketThuc)
+          const available = x?.daDat === true
+          return {
+            label: `${s} - ${e}`,
+            start: `${s}:00`,
+            end: `${e}:00`,
+            available,
+          }
+        })
+        .sort((a: any, b: any) => a.start.localeCompare(b.start))
+    }
+
+    const points = raw
       .map((x: any) => ({
-        thoiGian: toHHMM(typeof x === "string" ? x : String(x?.thoiGian || x?.time || "")),
-        trangThai: typeof x === "object" && x !== null ? (x.trangThai ?? true) : true,
+        time: toHHMM(typeof x === "string" ? x : String(x?.thoiGian || x?.time || "")),
+        ok: typeof x === "object" && x !== null ? (x.trangThai ?? true) : true,
       }))
-      .filter((s: any) => s.thoiGian)
+      .filter((s: any) => s.time)
+      .sort((a: any, b: any) => a.time.localeCompare(b.time))
+
+    const out: { label: string; start: string; end: string; available: boolean }[] = []
+    for (let i = 0; i < points.length - 1; i++) {
+      if (!points[i].ok || !points[i + 1].ok) continue
+      const s = toHHMM(points[i].time)
+      const e = toHHMM(points[i + 1].time)
+      out.push({ label: `${s} - ${e}`, start: `${s}:00`, end: `${e}:00`, available: true })
+    }
+    return out
   }
 
   useEffect(() => {
@@ -285,6 +318,7 @@ const AppointmentPage = () => {
     fetchNgayLamViec()
   }, [doctor])
 
+  // FLOW 1: Bác sĩ -> ngày -> giờ
   useEffect(() => {
     const fetchGioTheoNgay = async () => {
       if (!doctor || !date) {
@@ -306,20 +340,16 @@ const AppointmentPage = () => {
         }
 
         const resGio = await getGioTheoNgay(Number(doctor), ngayStr, caTruc)
-        const slots = extractSlots(resGio)
-        const sorted = [...slots].sort((a, b) => a.thoiGian.localeCompare(b.thoiGian))
-        const formatted: { label: string; start: string; end: string }[] = []
-        for (let i = 0; i < sorted.length - 1; i++) {
-          if (!sorted[i].trangThai || !sorted[i + 1].trangThai) continue
-          const s = toHHMM(sorted[i].thoiGian)
-          const e = toHHMM(sorted[i + 1].thoiGian)
-          formatted.push({
-            label: `${s} - ${e}`,
-            start: `${s}:00`,
-            end: `${e}:00`,
-          })
+
+        let ranges = extractRanges(resGio).filter((r) => r.available)
+
+        const todayKey = dayjs().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
+        if (ngayStr === todayKey) {
+          const nowHHmm = dayjs().tz("Asia/Ho_Chi_Minh").format("HH:mm")
+          ranges = ranges.filter((r) => r.start.slice(0, 5) > nowHHmm)
         }
 
+        const formatted = ranges.map((r) => ({ label: r.label, start: r.start, end: r.end }))
         setAvailableTimes(formatted)
       } catch (error) {
         console.error("Lỗi khi lấy giờ theo ngày:", error)
@@ -479,16 +509,19 @@ const AppointmentPage = () => {
                 ? resp.bacSiName
                 : undefined
 
-          const slots = extractSlots(resp)
-          const sorted = [...slots].sort((a, b) => a.thoiGian.localeCompare(b.thoiGian))
-          for (let i = 0; i < sorted.length - 1; i++) {
-            if (!sorted[i].trangThai || !sorted[i + 1].trangThai) continue
-            const s = toHHMM(sorted[i].thoiGian)
-            const e = toHHMM(sorted[i + 1].thoiGian)
+          let ranges = extractRanges(resp).filter((x) => x.available)
+
+          const todayKey = dayjs().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
+          if (ngay === todayKey) {
+            const nowHHmm = dayjs().tz("Asia/Ho_Chi_Minh").format("HH:mm")
+            ranges = ranges.filter((rr) => rr.start.slice(0, 5) > nowHHmm)
+          }
+
+          for (const rr of ranges) {
             rangesAll.push({
-              label: `${s} - ${e}`,
-              start: `${s}:00`,
-              end: `${e}:00`,
+              label: rr.label,
+              start: rr.start,
+              end: rr.end,
               doctorId,
               doctorName,
               caTruc,
@@ -496,12 +529,12 @@ const AppointmentPage = () => {
           }
         }
 
-        const dedup = new Map<string, (typeof rangesAll)[number]>()
+        const deDup = new Map<string, (typeof rangesAll)[number]>()
         for (const r of rangesAll) {
           const key = `${r.label}|${r.doctorId ?? "x"}`
-          if (!dedup.has(key)) dedup.set(key, r)
+          if (!deDup.has(key)) deDup.set(key, r)
         }
-        let finalRanges = Array.from(dedup.values()).sort((a, b) => a.start.localeCompare(b.start))
+        let finalRanges = Array.from(deDup.values()).sort((a, b) => a.start.localeCompare(b.start))
 
         const todayKey = dayjs().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
         if (ngay === todayKey) {
@@ -585,7 +618,7 @@ const AppointmentPage = () => {
       thoiGianTu: gioHen || "",
       thoiGianDen: gioDen || "",
       loaiHinhKham: serviceType,
-      trangThai: "Chờ duyệt",
+      trangThai: "",
       ghiChu: note || "",
       ngayKham,
       caKham,
@@ -671,13 +704,9 @@ const AppointmentPage = () => {
           >
             <span className="mt-1 text-blue-500">•</span>
             <span>
-              {" "}
               Đặt hẹn bằng cách gọi tổng đài Chăm sóc khách hàng tại số{" "}
-              <span className="font-semibold text-blue-600">
-                {" "}
-                091-234-5678 – 098-765-4321{" "}
-              </span>{" "}
-              (Bệnh viện Đa khoa Nimbus) hoặc{" "}
+              <span className="font-semibold text-blue-600">091-234-5678 – 098-765-4321</span> (Bệnh
+              viện Đa khoa Nimbus) hoặc{" "}
               <span className="font-semibold text-blue-600">098-765-4321 – 091-234-5678</span> (Bệnh
               viện Đa khoa Nimbus)
             </span>
@@ -887,7 +916,7 @@ const AppointmentPage = () => {
                     <Input
                       id="date"
                       value={value}
-                      className={`w-full bg-background pr-10 dark:border-white ${errors.selectedDate ? inputErrorClass : ""}`}
+                      className={`w/full bg-background pr-10 dark:border-white ${errors.selectedDate ? inputErrorClass : ""}`}
                       readOnly
                     />
                     <Popover open={open} onOpenChange={setOpen}>
