@@ -25,7 +25,6 @@ type User = {
   gioiTinh: string
   diaChi: string
   maBN: string
-  img: string
   baoHiem: string
   canCuocCongDan: string
   danToc: string
@@ -42,7 +41,6 @@ const HoSoPage = () => {
     gioiTinh: "",
     diaChi: "",
     maBN: "",
-    img: "",
     baoHiem: "",
     canCuocCongDan: "",
     danToc: "",
@@ -123,7 +121,6 @@ const HoSoPage = () => {
           email: res.data.email || "",
           diaChi: res.data.diaChi || "",
           maBN: res.data.benhNhanId || "",
-          img: "",
           baoHiem: res.data.baoHiem || "",
           canCuocCongDan: res.data.canCuocCongDan || "",
           danToc: res.data.danToc || "",
@@ -149,11 +146,6 @@ const HoSoPage = () => {
               <CardTitle className="text-xl">{user.name}</CardTitle>
               <CardDescription>Mã bệnh nhân: {user.maBN}</CardDescription>
             </div>
-            <img
-              src={user.img ? user.img : "https://ui.shadcn.com/placeholder.svg"}
-              alt="Ảnh bệnh nhân"
-              className="w-16 h-16 rounded-full object-cover border"
-            />
           </div>
         </CardHeader>
 

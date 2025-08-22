@@ -4,8 +4,9 @@ import { Separator } from "@/components/ui/separator"
 import dayjs from "dayjs"
 import "dayjs/locale/vi"
 import { useEffect, useState } from "react"
-import { lichSuKham } from "@/api/lichKhamApi"
+import { lichSuKham, huyLichKham } from "@/api/lichKhamApi"
 import { Button } from "@/components/ui/button"
+import { toastSuccess, toastError, toastConfirm } from "../../helper/toast"
 
 type LichKhamItem = {
   lichKhamId: number
@@ -96,6 +97,23 @@ const LichKhamPage = () => {
 
   const lichKham = filtered[selectedIndex]
 
+  const handleCancel = async () => {
+    if (!lichKham) return
+
+    const ok = await toastConfirm(
+      `Bạn có chắc muốn hủy lịch #${lichKham.lichKhamId}- bác sĩ ${lichKham.tenBacSi} không?`
+    )
+    if (!ok) return
+
+    try {
+      await huyLichKham(lichKham.lichKhamId)
+      await load()
+      toastSuccess("Hủy lịch khám thành công!")
+    } catch (error) {
+      console.error(error)
+      toastError("Có lỗi xảy ra khi hủy lịch khám")
+    }
+  }
   return (
     <div className="px-4 py-8 max-w-6xl mx-auto grid md:items-start grid-cols-1 md:grid-cols-[300px_1fr] gap-6">
       <div className="space-y-4">
@@ -179,7 +197,17 @@ const LichKhamPage = () => {
                 </div>
                 {lichKham.ghiChu && <div className="text-base">Ghi chú: {lichKham.ghiChu}</div>}
                 <div className="mt-4 flex justify-end">
-                  <Button className="w-fit whitespace-nowrap">Hủy lịch khám</Button>
+                  <Button
+                    onClick={handleCancel}
+                    disabled={lichKham.trangThai === "Đã hủy"}
+                    className={`w-fit whitespace-nowrap ${
+                      lichKham.trangThai === "Đã hủy"
+                        ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-500 hover:bg-blue-700"
+                    }`}
+                  >
+                    {lichKham.trangThai === "Đã hủy" ? "Đã hủy" : "Hủy lịch khám"}
+                  </Button>
                 </div>
               </div>
             </div>

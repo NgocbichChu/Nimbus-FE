@@ -32,3 +32,30 @@ export function toastInfo(message: string, options?: ToastOptions) {
     duration: options?.duration ?? 3000,
   })
 }
+
+export function toastConfirm(
+  message: string,
+  confirmLabel = "Hủy lịch",
+  cancelLabel = "Giữ lại",
+  duration = Infinity
+): Promise<boolean> {
+  return new Promise((resolve) => {
+    const id = toast(message, {
+      duration,
+      action: {
+        label: confirmLabel,
+        onClick: () => {
+          resolve(true)
+          toast.dismiss(id)
+        },
+      },
+      cancel: {
+        label: cancelLabel,
+        onClick: () => {
+          resolve(false)
+          toast.dismiss(id)
+        },
+      },
+    } as any)
+  })
+}
