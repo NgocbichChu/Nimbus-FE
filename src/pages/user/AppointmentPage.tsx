@@ -47,7 +47,7 @@ import timezone from "dayjs/plugin/timezone"
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter"
 import BackToTopButton from "@/components/back-to-top/back-to-top"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { toastSuccess, toastError } from "../../helper/toast"
+import { toastSuccess, toastError, toastWarning } from "../../helper/toast"
 
 type AppointmentFormType = yup.InferType<typeof appointmentSchema>
 
@@ -603,7 +603,7 @@ const AppointmentPage = () => {
     }
 
     if (!paymentMethod) {
-      alert("Vui lòng chọn phương thức thanh toán")
+      toastWarning("Vui lòng chọn phương thức thanh toán")
       return
     }
 
