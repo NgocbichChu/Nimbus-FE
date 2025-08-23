@@ -16,7 +16,6 @@ export default function AccessPage() {
   const [activeTab, setActiveTab] = useState("quanly")
 
   const tabs = [
-
     {
       id: "quanly",
       label: "Tạo Tài Khoản Quản lý",
@@ -28,7 +27,8 @@ export default function AccessPage() {
       label: "Tạo Tài Khoản Lễ tân",
       icon: UserCheck,
       description: "Thêm lễ tân mới vào hệ thống",
-    }, {
+    },
+    {
       id: "danhsachquanly",
       label: "Danh Sách Quản lý",
       icon: Users,
@@ -46,7 +46,6 @@ export default function AccessPage() {
   const receptions = useAppSelector((state) => state.reception.Receptionist)
   const manager = useAppSelector((state) => state.manager.manager)
 
-
   useEffect(() => {
     dispatch(fetchReceptions()) // Gọi API khi mount
   }, [dispatch])
@@ -55,46 +54,40 @@ export default function AccessPage() {
     dispatch(fetchManager()) // Gọi API khi mount
   }, [dispatch])
 
-
   return (
     <div className="min-h-screen pt-4 ">
-      <div className="  mx-auto space-y-6">
-
+      <div className="mx-auto">
         {/* Tabs Menu */}
-        <Card className="border-0 shadow-sm" style={{ width: "850px" }}>
-          <CardContent className="p-2 flex flex-wrap gap-2">
+        <Card className="border-0 shadow-none py-2" style={{ width: "850px" }}>
+          <CardContent className="px-0 flex flex-wrap gap-2">
             {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
+              const Icon = tab.icon
+              const isActive = activeTab === tab.id
 
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={cn(
-                    "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all",
+                    "flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-all",
                     isActive
-                      ? "bg-sky-100 text-sky-900 shadow-sm"
+                      ? "bg-sky-100 text-sky-900"
                       : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                   )}
                 >
                   <Icon className="h-5 w-5" />
                   <span>{tab.label}</span>
                 </button>
-              );
+              )
             })}
           </CardContent>
         </Card>
 
         {/* Content Area */}
-        <Card className="border-0 shadow-sm">
+        <Card className="shadow-xs mt-2">
           <CardHeader>
-            <CardTitle className="text-xl">
-              {tabs.find((t) => t.id === activeTab)?.label}
-            </CardTitle>
-            <CardDescription>
-              {tabs.find((t) => t.id === activeTab)?.description}
-            </CardDescription>
+            <CardTitle className="text-xl">{tabs.find((t) => t.id === activeTab)?.label}</CardTitle>
+            <CardDescription>{tabs.find((t) => t.id === activeTab)?.description}</CardDescription>
           </CardHeader>
           <CardContent>
             {activeTab === "quanly" && <AdminForm />}
@@ -107,9 +100,7 @@ export default function AccessPage() {
             )}
           </CardContent>
         </Card>
-
       </div>
     </div>
-
   )
 }

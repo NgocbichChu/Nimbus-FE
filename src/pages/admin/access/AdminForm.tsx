@@ -14,21 +14,16 @@ const AdminForm = () => {
   const dispatch = useAppDispatch()
   const [showPassword, setShowPassword] = useState(false)
 
-  const {
-    control,
-    register,
-    reset,
-    handleSubmit,
-  } = useForm({
+  const { control, register, reset, handleSubmit } = useForm({
     defaultValues: {
-      hoTen: '',
-      gioiTinh: '',
-      email: '',
-      soDienThoai: '',
-      matKhau: '',
-      chucVu: '',
-      ghiChu: '',
-      trangThaiHoatDong: true
+      hoTen: "",
+      gioiTinh: "",
+      email: "",
+      soDienThoai: "",
+      matKhau: "",
+      chucVu: "",
+      ghiChu: "",
+      trangThaiHoatDong: true,
     },
   })
 
@@ -39,8 +34,8 @@ const AdminForm = () => {
   const handleAdd = async (data: any) => {
     try {
       await dispatch(addAdmin(data)).unwrap()
-      dispatch(fetchManager());
-      reset();
+      dispatch(fetchManager())
+      reset()
     } catch (error) {
       console.error("Thêm bác sĩ thất bại:", error)
     }
@@ -50,28 +45,31 @@ const AdminForm = () => {
       <form onSubmit={handleSubmit(handleAdd)}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="grid gap-3">
-            <Label htmlFor="fullName">Họ tên *</Label>
-            <Input id="fullName" type="text" placeholder="Nhập họ tên đầy đủ" {...register('hoTen')} />
+            <Label className="font-bold" htmlFor="fullName">
+              Họ tên *
+            </Label>
+            <Input
+              id="fullName"
+              type="text"
+              placeholder="Nhập họ tên đầy đủ"
+              {...register("hoTen")}
+            />
           </div>
           <Controller
             name="gioiTinh"
             control={control}
             defaultValue="Nam" // hoặc lấy từ defaultValues
             render={({ field }) => (
-              <RadioGroup
-                onValueChange={field.onChange}
-                value={field.value}
-                className="flex gap-6"
-              >
+              <RadioGroup onValueChange={field.onChange} value={field.value} className="flex gap-6">
                 <div className="flex items-center gap-2">
                   <RadioGroupItem id="male" value="Nam" />
-                  <Label htmlFor="male" className="cursor-pointer">
+                  <Label className="font-bold cursor-pointer" htmlFor="male">
                     Nam
                   </Label>
                 </div>
                 <div className="flex items-center gap-2">
                   <RadioGroupItem id="female" value="Nữ" />
-                  <Label htmlFor="female" className="cursor-pointer">
+                  <Label className="font-bold cursor-pointer" htmlFor="female">
                     Nữ
                   </Label>
                 </div>
@@ -80,22 +78,39 @@ const AdminForm = () => {
           />
 
           <div className="grid gap-3">
-            <Label htmlFor="email">Email *</Label>
-            <Input id="email" type="email" placeholder="m@gmail.com" {...register('email')} />
+            <Label className="font-bold" htmlFor="email">
+              Email *
+            </Label>
+            <Input id="email" type="email" placeholder="m@gmail.com" {...register("email")} />
           </div>
           <div className="grid gap-3">
-            <Label htmlFor="sdt">Số điện thoại *</Label>
-            <Input id="sdt" type="text"  {...register('soDienThoai')} />
+            <Label className="font-bold" htmlFor="sdt">
+              Số điện thoại *
+            </Label>
+            <Input id="sdt" type="text" {...register("soDienThoai")} />
           </div>
           <div className="grid gap-3">
-            <Label htmlFor="chucVu">Chức vụ *</Label>
-            <Input id="chucVu" type="text" placeholder="Ví dụ: Quản lý cấp cao" {...register('chucVu')} />
+            <Label className="font-bold" htmlFor="chucVu">
+              Chức vụ *
+            </Label>
+            <Input
+              id="chucVu"
+              type="text"
+              placeholder="Ví dụ: Quản lý cấp cao"
+              {...register("chucVu")}
+            />
           </div>
           <div className="grid gap-3 ">
-            <Label htmlFor="password">Mật khẩu *</Label>
+            <Label className="font-bold" htmlFor="password">
+              Mật khẩu *
+            </Label>
             {/* <Input id="password" type="password" /> */}
             <div className="relative">
-              <Input id="password" type={showPassword ? "text" : "password"}  {...register('matKhau')} />
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                {...register("matKhau")}
+              />
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
@@ -109,10 +124,10 @@ const AdminForm = () => {
           </div>
         </div>
         <div className="grid gap-3 pt-4">
-          <Label>Ghi chú</Label>
-          <Textarea placeholder="Thêm thông tin bổ sung (nếu có)"   {...register('ghiChu')} />
+          <Label className="font-bold">Ghi chú</Label>
+          <Textarea placeholder="Thêm thông tin bổ sung (nếu có)" {...register("ghiChu")} />
           <div className="flex justify-end pt-4">
-            <Button type="submit" className="bg-sky-600 hover:bg-sky-700">Tạo tài khoản quản lý</Button>
+            <Button type="submit">Tạo tài khoản quản lý</Button>
           </div>
         </div>
       </form>

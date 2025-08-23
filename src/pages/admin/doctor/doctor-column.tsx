@@ -109,7 +109,7 @@ export const doctorColumns: ColumnDef<Doctor>[] = [
   },
   {
     id: "actions",
-    header: "...",
+    header: "",
     cell: ({ row }) => {
       const doctor = row.original as Doctor
       return <DoctorDialog mode="edit" doctor={doctor} />

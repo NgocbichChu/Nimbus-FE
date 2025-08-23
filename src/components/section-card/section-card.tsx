@@ -23,20 +23,20 @@ type SectionCardsProps = {
 
 export function SectionCards({ cards }: SectionCardsProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {cards.map((card, idx) => (
-        <Card key={idx} className="@container/card">
+        <Card key={idx} className="@container/card gap-2">
           <CardHeader>
             <CardDescription>{card.title}</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {card.value}
-            </CardTitle>
             <CardAction>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 text-green-500">
                 {card.trend === "up" ? <TrendingUp /> : <TrendingDown />}
                 {card.trendValue}
               </div>
             </CardAction>
+            <CardTitle className="text-2xl text-primary font-semibold tabular-nums @[250px]/card:text-3xl">
+              {card.value}
+            </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
@@ -47,7 +47,6 @@ export function SectionCards({ cards }: SectionCardsProps) {
                 <TrendingDown className="size-4" />
               )}
             </div>
-            <div className="text-muted-foreground">{card.footerDesc}</div>
           </CardFooter>
         </Card>
       ))}

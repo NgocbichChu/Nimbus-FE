@@ -78,7 +78,7 @@ export const ManagerColumns: ColumnDef<Manager>[] = [
     , // Trong columns
 {
   id: "actions",
-  header: "...",
+  header: "",
   cell: ({ row }) => {
     return <ManagerActionsCell manager={row.original} />
   },

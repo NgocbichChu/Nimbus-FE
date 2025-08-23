@@ -24,6 +24,7 @@ import { fetchDoctors } from "@/api/apiDoctor"
 import { toastSuccess, toastError } from "@/helper/toast"
 import { useAppDispatch, useAppSelector } from "@/helper"
 import { Loader2 } from "lucide-react"
+import { Input } from "@/components/ui/input"
 
 interface WorkSchedule {
   lichlvId: number
@@ -180,6 +181,24 @@ const AppointmentAdmin = () => {
     return reason ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
   }
 
+  const getFilteredTodaySchedules = (schedules: WorkSchedule[], doctors: any[], specialty: string, shift: string, search: string) => {
+    return schedules.filter((schedule) => {
+      const doctor = doctors.find((d) => Number(d.bacsi_id) === schedule.bacSiId)
+      const specialtyMatch = !specialty || specialty === "all" || doctor?.tenKhoa === specialty
+      const shiftMatch = !shift || shift === "all" || schedule.caTruc === shift
+      const searchMatch = !search.trim() || schedule.tenBacSi.toLowerCase().includes(search.trim().toLowerCase())
+      return specialtyMatch && shiftMatch && searchMatch
+    })
+  }
+
+  const getDoctorSpecialty = (doctors: any[], bacSiId: number) => {
+    const doctor = doctors.find((d) => Number(d.bacsi_id) === bacSiId)
+    return doctor?.tenKhoa || "Không xác định"
+  }
+
+  const generateScheduleKey = (schedule: WorkSchedule) => {
+    return `${schedule.lichlvId || "noid"}-${schedule.bacSiId}-${schedule.ngay}-${schedule.caTruc}`
+  }
   return (
     <div className="py-3 space-y-6">
       <div>
@@ -234,13 +253,13 @@ const AppointmentAdmin = () => {
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Sáng" id="morning" />
                   <Label htmlFor="morning" className="cursor-pointer">
-                    Ca sáng 
+                    Ca sáng
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Chiều" id="afternoon" />
                   <Label htmlFor="afternoon" className="cursor-pointer">
-                    Ca chiều 
+                    Ca chiều
                   </Label>
                 </div>
               </RadioGroup>
@@ -256,6 +275,7 @@ const AppointmentAdmin = () => {
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 rows={3}
+                className="h-[100px]"
               />
             </div>
 
@@ -279,12 +299,19 @@ const AppointmentAdmin = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Bộ lọc nâng cao: khoa, ca trực, tìm tên */}
-            <div className="flex flex-wrap gap-3 items-center">
+            <div className="flex gap-3 items-center">
+              <Input
+                type="text"
+                value={todaySearch}
+                onChange={handleTodaySearchChange}
+                placeholder="Tìm theo tên bác sĩ"
+              />
               <Combobox
                 value={selectedSpecialty}
                 onValueChange={setSelectedSpecialty}
                 placeholder="Lọc theo khoa"
                 searchPlaceholder="Tìm kiếm khoa..."
+                className="w-[200px]"
                 options={[
                   { value: "all", label: "Tất cả" },
                   ...specialties.map((spec) => ({
@@ -298,19 +325,12 @@ const AppointmentAdmin = () => {
                 onValueChange={setTodayShift}
                 placeholder="Lọc theo ca"
                 searchPlaceholder="Tìm kiếm ca..."
+                className="w-[160px]"
                 options={[
                   { value: "all", label: "Tất cả ca" },
                   { value: "sáng", label: "Ca sáng" },
                   { value: "chiều", label: "Ca chiều" },
                 ]}
-              />
-              <input
-                type="text"
-                value={todaySearch}
-                onChange={handleTodaySearchChange}
-                placeholder="Tìm theo tên bác sĩ"
-                aria-label="Tìm theo tên bác sĩ"
-                className="w-full md:w-[240px] px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -322,45 +342,28 @@ const AppointmentAdmin = () => {
                   Không có lịch làm việc nào
                 </div>
               ) : (
-                todaySchedules
-                  .filter((schedule) => {
-                    if (!selectedSpecialty || selectedSpecialty === "all") return true
-                    const doctor = doctors.find((d) => Number(d.bacsi_id) === schedule.bacSiId)
-                    return doctor?.tenKhoa === selectedSpecialty
-                  })
-                  .filter((schedule) => {
-                    if (!todayShift || todayShift === "all") return true
-                    const normalized = (schedule.caTruc || "").trim().toLowerCase()
-                    return normalized === todayShift
-                  })
-                  .filter((schedule) => {
-                    if (!todaySearch.trim()) return true
-                    const name = (schedule.tenBacSi || "").toLowerCase()
-                    return name.includes(todaySearch.trim().toLowerCase())
-                  })
-                  .map((schedule) => {
-                    const specialty =
-                      doctors.find((d) => Number(d.bacsi_id) === schedule.bacSiId)?.tenKhoa ||
-                      "Không xác định"
-                    return (
-                      <div
-                        key={`${schedule.lichlvId || "noid"}-${schedule.bacSiId}-${schedule.ngay}-${schedule.caTruc}`}
-                        className="flex items-center justify-between p-3 border rounded-lg"
-                      >
-                        <div>
-                          <p className="font-medium">
-                            {schedule.tenBacSi} - {specialty}
-                          </p>
-                          <Badge className={getShiftColor(schedule.caTruc)}>
-                            Ca {schedule.caTruc.toLowerCase()}
-                          </Badge>
-                        </div>
-                        <Badge variant={schedule.lyDoNghi ? "destructive" : "default"}>
-                          {schedule.lyDoNghi ? "Nghỉ" : "Làm việc"}
+                getFilteredTodaySchedules(todaySchedules, doctors, selectedSpecialty, todayShift, todaySearch).map((schedule) => {
+                  const specialty = getDoctorSpecialty(doctors, schedule.bacSiId)
+                  
+                  return (
+                    <div
+                      key={generateScheduleKey(schedule)}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
+                      <div>
+                        <p className="font-medium">
+                          {schedule.tenBacSi} - {specialty}
+                        </p>
+                        <Badge className={getShiftColor(schedule.caTruc)}>
+                          Ca {schedule.caTruc.toLowerCase()}
                         </Badge>
                       </div>
-                    )
-                  })
+                      <Badge variant={schedule.lyDoNghi ? "destructive" : "default"}>
+                        {schedule.lyDoNghi ? "Nghỉ" : "Làm việc"}
+                      </Badge>
+                    </div>
+                  )
+                })
               )}
             </div>
           </CardContent>
@@ -375,7 +378,13 @@ const AppointmentAdmin = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Bộ lọc khoa + ngày + ca trực + tìm tên */}
-          <div className="flex flex-wrap gap-4">
+          <div className="flex gap-4">
+            <Input
+              type="text"
+              value={historySearch}
+              onChange={handleHistorySearchChange}
+              placeholder="Tìm theo tên bác sĩ"
+            />
             <Combobox
               value={historySpecialty}
               onValueChange={setHistorySpecialty}
@@ -404,14 +413,7 @@ const AppointmentAdmin = () => {
                 { value: "chiều", label: "Ca chiều" },
               ]}
             />
-            <input
-              type="text"
-              value={historySearch}
-              onChange={handleHistorySearchChange}
-              placeholder="Tìm theo tên bác sĩ"
-              aria-label="Tìm theo tên bác sĩ"
-              className="w-full md:w-[240px] px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-primary"
-            />
+
             <Button
               variant="outline"
               onClick={() => {
@@ -423,7 +425,7 @@ const AppointmentAdmin = () => {
                 setHistorySearch("")
               }}
             >
-              Xóa lọc
+              Xoá lọc
             </Button>
             {historyDate && (
               <Button variant="outline" onClick={() => loadScheduleByDate(historyDate)}>
@@ -466,7 +468,9 @@ const AppointmentAdmin = () => {
                   .filter((schedule) => {
                     if (!historyShift || historyShift === "all") return true
                     const normalized = (schedule.caTruc || "").trim().toLowerCase()
-                    return normalized === historyShift
+                    return (
+                      normalized === historyShift || normalized === "sang" || normalized === "chiều"
+                    )
                   })
                   .filter((schedule) => {
                     if (!historySearch.trim()) return true
@@ -489,7 +493,9 @@ const AppointmentAdmin = () => {
                         </TableCell>
                         <TableCell>
                           <Badge className={getShiftColor(schedule.caTruc)}>
-                            {schedule.caTruc}
+                            {schedule.caTruc === "sáng" || schedule.caTruc === "sang"
+                              ? "Ca sáng"
+                              : "Ca chiều"}
                           </Badge>
                         </TableCell>
                         <TableCell>

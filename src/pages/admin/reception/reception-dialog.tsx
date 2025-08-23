@@ -20,7 +20,7 @@ export function ReceptionActionsCell({ reception }: ReceptionActionsCellProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="destructive" size="icon" className="h-8 w-8">
+        <Button size="icon" className="h-8 w-8">
           <Pencil className="h-4 w-4" />
         </Button>
       </DialogTrigger>

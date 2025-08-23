@@ -1,4 +1,3 @@
-import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import {
   Card,
@@ -44,7 +43,7 @@ export function ChartBarMultiple({ data, selectedYear, selectedMonth }: ChartBar
       : data.filter((item) => item.month.toLowerCase() === selectedMonth.toLowerCase())
 
   return (
-    <div className="pt-4">
+    <>
       <Card className="h-fit w-full gap-0">
         <CardHeader>
           <div className="flex justify-between items-center">
@@ -66,10 +65,7 @@ export function ChartBarMultiple({ data, selectedYear, selectedMonth }: ChartBar
                 axisLine={false}
                 tickFormatter={(value: string) => value.slice(0, 3)}
               />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent indicator="dashed" />}
-              />
+              <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
               <Bar dataKey="noi" fill="var(--chart-1)" radius={4} />
               <Bar dataKey="ngoai" fill="var(--chart-2)" radius={4} />
               <Bar dataKey="san" fill="var(--chart-3)" radius={4} />
@@ -79,15 +75,12 @@ export function ChartBarMultiple({ data, selectedYear, selectedMonth }: ChartBar
         </CardContent>
 
         <CardFooter className="flex-col items-start gap-2 text-sm">
-          <div className="flex gap-2 leading-none font-medium">
-            Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-          </div>
           <div className="text-muted-foreground leading-none">
-            Hiển thị tổng số khách truy cập trong {" "}
+            Hiển thị tổng số khách truy cập trong{" "}
             {selectedMonth === "all" ? "all months" : selectedMonth} của {selectedYear}
           </div>
         </CardFooter>
       </Card>
-    </div>
+    </>
   )
 }

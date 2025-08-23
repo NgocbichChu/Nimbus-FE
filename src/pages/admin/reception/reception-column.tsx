@@ -76,7 +76,7 @@ export const ReceptionColumns: ColumnDef<Receptionist>[] = [
   }, // Trong columns
   {
     id: "actions",
-    header: "...",
+    header: "",
     cell: ({ row }) => {
       return <ReceptionActionsCell reception={row.original} />
     },
