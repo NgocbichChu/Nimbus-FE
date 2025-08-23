@@ -133,7 +133,7 @@ export function ManagerTable<TData extends Record<string, any>>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
+            Trang trước
           </Button>
           <Button
             variant="outline"
@@ -141,7 +141,7 @@ export function ManagerTable<TData extends Record<string, any>>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            Trang tiếp theo
           </Button>
         </div>
       </div>

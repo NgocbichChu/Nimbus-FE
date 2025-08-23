@@ -234,13 +234,13 @@ const AppointmentAdmin = () => {
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Sáng" id="morning" />
                   <Label htmlFor="morning" className="cursor-pointer">
-                    Ca sáng (7:30 - 11:30)
+                    Ca sáng 
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Chiều" id="afternoon" />
                   <Label htmlFor="afternoon" className="cursor-pointer">
-                    Ca chiều (13:30 - 17:30)
+                    Ca chiều 
                   </Label>
                 </div>
               </RadioGroup>
