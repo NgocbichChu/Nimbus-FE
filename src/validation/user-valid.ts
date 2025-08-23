@@ -105,11 +105,21 @@ export const hoSoSchema = yup.object({
 export type HoSo = yup.InferType<typeof hoSoSchema>
 
 export const passwordChangeSchema = yup.object({
-  oldPassword: yup.string().trim().required("Vui lòng nhập mật khẩu hiện tại"),
+  oldPassword: yup
+    .string()
+    .trim()
+    .required("Vui lòng nhập mật khẩu hiện tại")
+    .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
   newPassword: yup
     .string()
     .trim()
     .min(6, "Mật khẩu mới phải ≥ 6 ký tự")
     .required("Vui lòng nhập mật khẩu mới"),
+  confirmNewPassword: yup
+    .string()
+    .trim()
+    .oneOf([yup.ref("newPassword")], "Mật khẩu xác nhận không khớp")
+    .required("Vui lòng xác nhận mật khẩu mới")
+    .min(6, "Mật khẩu mới phải ≥ 6 ký tự"),
 })
 export type PasswordChange = yup.InferType<typeof passwordChangeSchema>

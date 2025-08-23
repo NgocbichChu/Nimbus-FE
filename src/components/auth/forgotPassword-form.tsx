@@ -140,7 +140,9 @@ const ForgotPasswordForm = () => {
       {step === "password" && (
         <form onSubmit={pwForm.handleSubmit(setNewPw)} className="space-y-5">
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-left">Mật khẩu mới *</label>
+            <label className="text-sm font-medium text-left">
+              Mật khẩu mới <span className="text-red-500">*</span>
+            </label>
             <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
