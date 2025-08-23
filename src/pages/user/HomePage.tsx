@@ -312,6 +312,7 @@ const HomePage = () => {
         </div>
         <BackToTopButton />
       </section>
+      <BackToTopButton />
 
       <style>
         {`
