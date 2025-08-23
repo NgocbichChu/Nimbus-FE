@@ -53,3 +53,19 @@ export const ForgetPasswordSchema = yup.object({
 })
 
 export type ForgetPasswordSchema = yup.InferType<typeof ForgetPasswordSchema>
+
+export const OtpSchema = yup.object({
+  otp: yup
+    .string()
+    .required("Vui lòng nhập mã OTP")
+    .matches(/^[0-9]{6}$/, "Mã OTP phải gồm đúng 6 chữ số"),
+})
+export type OtpSchema = yup.InferType<typeof OtpSchema>
+
+export const ResetPasswordSchema = yup.object({
+  matKhau: yup
+    .string()
+    .required("Vui lòng nhập mật khẩu")
+    .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+})
+export type ResetPasswordSchema = yup.InferType<typeof ResetPasswordSchema>

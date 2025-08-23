@@ -26,9 +26,9 @@ const HomePage = () => {
       link: "/dat-lich",
     },
     {
-      title: "Bảng giá khám bệnh",
-      icon: <Icon icon="tabler:zoom-money" width="32" height="32" />,
-      link: "/bang-gia",
+      title: "Liên hệ",
+      icon: <Icon icon="mdi:phone-plus-outline" width="32" height="32" />,
+      link: "/lien-he",
     },
   ]
 
@@ -236,83 +236,82 @@ const HomePage = () => {
         </div>
       </section>
 
-     <section>
-  {/* Trên 1024px */}
-  <div className="hidden lg:block h-[350px] bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-10 select-none">
-    <h3 className="text-2xl font-bold text-center mb-12 dark:text-white">
-      Hướng dẫn đặt lịch khám
-    </h3>
+      <section>
+        {/* Trên 1024px */}
+        <div className="hidden lg:block h-[350px] bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-10 select-none">
+          <h3 className="text-2xl font-bold text-center mb-12 dark:text-white">
+            Hướng dẫn đặt lịch khám
+          </h3>
 
-    <div className="relative">
-      {/* SVG đường cong */}
-      <svg
-        className="w-full h-36"
-        viewBox="0 0 1000 200"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="none"
-      >
-        <path
-          d="M 100 15 C 200 75, 300 185, 450 80 S 700 -25, 900 70"
-          stroke="#60A5FA"
-          strokeWidth="4"
-          strokeDasharray="10 10"
-          fill="transparent"
-        />
-      </svg>
+          <div className="relative">
+            {/* SVG đường cong */}
+            <svg
+              className="w-full h-36"
+              viewBox="0 0 1000 200"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="none"
+            >
+              <path
+                d="M 100 15 C 200 75, 300 185, 450 80 S 700 -25, 900 70"
+                stroke="#60A5FA"
+                strokeWidth="4"
+                strokeDasharray="10 10"
+                fill="transparent"
+              />
+            </svg>
 
-      {/* Các bước */}
-      <div className="absolute top-0 left-0 w-full h-full flex justify-between items-start px-6 sm:px-12">
-        {[
-          "Chọn mục “Đặt lịch” từ trang chủ hoặc thanh điều hướng",
-          "Chọn loại dịch vụ, chuyên khoa, chuyên gia và thời gian khám phù hợp",
-          "Nhập thông tin bệnh nhân và xác nhận đặt lịch",
-          "Nhận email xác nhận và có thể kiểm tra lại trong mục “Lịch khám”",
-        ].map((text, i) => (
-          <div
-            key={i}
-            className="relative flex flex-col items-center text-center flex-1"
-            style={{
-              transform:
-                i === 0
-                  ? "translateY(15%)"
-                  : i === 1
-                  ? "translateY(45%)"
-                  : i === 2
-                  ? "translateY(-15%)"
-                  : "translateY(10%)",
-            }}
-          >
-            {/* Nút tròn */}
-            <div className="w-10 h-10 flex items-center justify-center bg-blue-500 dark:bg-blue-600 rounded-full ring-4 ring-white dark:ring-gray-800 shadow-md transition-transform duration-300 hover:scale-110">
-              <span className="text-white font-bold">{i + 1}</span>
-            </div>
+            {/* Các bước */}
+            <div className="absolute top-0 left-0 w-full h-full flex justify-between items-start px-6 sm:px-12">
+              {[
+                "Chọn mục “Đặt lịch” từ trang chủ hoặc thanh điều hướng",
+                "Chọn loại dịch vụ, chuyên khoa, chuyên gia và thời gian khám phù hợp",
+                "Nhập thông tin bệnh nhân và xác nhận đặt lịch",
+                "Nhận email xác nhận và có thể kiểm tra lại trong mục “Lịch khám”",
+              ].map((text, i) => (
+                <div
+                  key={i}
+                  className="relative flex flex-col items-center text-center flex-1"
+                  style={{
+                    transform:
+                      i === 0
+                        ? "translateY(15%)"
+                        : i === 1
+                          ? "translateY(45%)"
+                          : i === 2
+                            ? "translateY(-15%)"
+                            : "translateY(10%)",
+                  }}
+                >
+                  {/* Nút tròn */}
+                  <div className="w-10 h-10 flex items-center justify-center bg-blue-500 dark:bg-blue-600 rounded-full ring-4 ring-white dark:ring-gray-800 shadow-md transition-transform duration-300 hover:scale-110">
+                    <span className="text-white font-bold">{i + 1}</span>
+                  </div>
 
-            {/* Nội dung */}
-            <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg max-w-[220px] transition-all duration-300 cursor-default">
-              <p className="text-sm text-gray-700 dark:text-gray-300">{text}</p>
+                  {/* Nội dung */}
+                  <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg max-w-[220px] transition-all duration-300 cursor-default">
+                    <p className="text-sm text-gray-700 dark:text-gray-300">{text}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
-    </div>
-  </div>
+        </div>
 
-  {/* Dưới 1024px */}
-  <div className="block lg:hidden bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-10">
-    <h3 className="text-2xl font-bold text-center mb-6 dark:text-white">
-      Hướng dẫn đặt lịch khám
-    </h3>
-    <ol className="list-decimal list-inside space-y-4 text-gray-700 dark:text-gray-300">
-      <li>Chọn mục “Đặt lịch” từ trang chủ hoặc thanh điều hướng</li>
-      <li>Chọn loại dịch vụ, chuyên khoa, chuyên gia và thời gian khám phù hợp</li>
-      <li>Nhập thông tin bệnh nhân và xác nhận đặt lịch</li>
-      <li>Nhận email xác nhận và có thể kiểm tra lại trong mục “Lịch khám”</li>
-    </ol>
-  </div>
-</section>
-<BackToTopButton/>
-
+        {/* Dưới 1024px */}
+        <div className="block lg:hidden bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-10">
+          <h3 className="text-2xl font-bold text-center mb-6 dark:text-white">
+            Hướng dẫn đặt lịch khám
+          </h3>
+          <ol className="list-decimal list-inside space-y-4 text-gray-700 dark:text-gray-300">
+            <li>Chọn mục “Đặt lịch” từ trang chủ hoặc thanh điều hướng</li>
+            <li>Chọn loại dịch vụ, chuyên khoa, chuyên gia và thời gian khám phù hợp</li>
+            <li>Nhập thông tin bệnh nhân và xác nhận đặt lịch</li>
+            <li>Nhận email xác nhận và có thể kiểm tra lại trong mục “Lịch khám”</li>
+          </ol>
+        </div>
+        <BackToTopButton />
+      </section>
 
       <style>
         {`
