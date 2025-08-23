@@ -8,6 +8,7 @@ import { doiMatKhau, layThongTinTaiKhoan, capNhatThongTin } from "../../api/acco
 import { yupResolver } from "@hookform/resolvers/yup"
 import { taiKhoanSchema, passwordChangeSchema } from "../../validation/user-valid"
 import type { TaiKhoan, PasswordChange } from "../../validation/user-valid"
+import { Eye, EyeOff } from "lucide-react"
 
 type User = {
   name: string
@@ -27,6 +28,9 @@ const AccountPage = () => {
     gioiTinh: "",
     email: "",
   })
+  const [showOld, setShowOld] = useState(false)
+  const [showNew, setShowNew] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const handleDoiMatKhau = async (data: PasswordChange) => {
     setMessage("")
@@ -67,7 +71,7 @@ const AccountPage = () => {
     formState: { errors: pwdErrors, isSubmitting: pwdSubmitting },
   } = useForm<PasswordChange>({
     resolver: yupResolver(passwordChangeSchema),
-    defaultValues: { oldPassword: "", newPassword: "" },
+    defaultValues: { oldPassword: "", newPassword: "", confirmNewPassword: "" },
   })
 
   useEffect(() => {
@@ -116,7 +120,7 @@ const AccountPage = () => {
       <div className="max-w-7xl mx-auto">
         <h2 className="text-2xl font-semibold mb-6">Tài khoản</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center items-start">
           <Card className="w-full max-w-2xl">
             <form onSubmit={handleSubmit(onSubmit)}>
               <CardContent>
@@ -190,11 +194,21 @@ const AccountPage = () => {
                     <Label className="text-sm font-medium">
                       Mật khẩu hiện tại <span className="text-red-500">*</span>
                     </Label>
-                    <Input
-                      type="password"
-                      placeholder="Nhập mật khẩu hiện tại"
-                      {...registerPwd("oldPassword")}
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showOld ? "text" : "password"}
+                        placeholder="Nhập mật khẩu hiện tại"
+                        {...registerPwd("oldPassword")}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowOld((v) => !v)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                        aria-label={showOld ? "Ẩn mật khẩu" : "Hiển thị mật khẩu"}
+                      >
+                        {showOld ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                      </button>
+                    </div>
                     {pwdErrors.oldPassword && (
                       <p className="text-sm text-red-500 mt-1">{pwdErrors.oldPassword.message}</p>
                     )}
@@ -204,13 +218,49 @@ const AccountPage = () => {
                     <Label className="text-sm font-medium">
                       Mật khẩu mới <span className="text-red-500">*</span>
                     </Label>
-                    <Input
-                      type="password"
-                      placeholder="Nhập mật khẩu mới"
-                      {...registerPwd("newPassword")}
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showNew ? "text" : "password"}
+                        placeholder="Nhập mật khẩu mới"
+                        {...registerPwd("newPassword")}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNew((v) => !v)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                        aria-label={showNew ? "Ẩn mật khẩu" : "Hiển thị mật khẩu"}
+                      >
+                        {showNew ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                      </button>
+                    </div>
                     {pwdErrors.newPassword && (
                       <p className="text-sm text-red-500 mt-1">{pwdErrors.newPassword.message}</p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <Label className="text-sm font-medium">
+                      Xác nhận mật khẩu mới <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        type={showConfirm ? "text" : "password"}
+                        placeholder="Xác nhận mật khẩu mới"
+                        {...registerPwd("confirmNewPassword")}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirm((v) => !v)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                        aria-label={showConfirm ? "Ẩn mật khẩu" : "Hiển thị mật khẩu"}
+                      >
+                        {showConfirm ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                      </button>
+                    </div>
+                    {pwdErrors.confirmNewPassword && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {pwdErrors.confirmNewPassword.message}
+                      </p>
                     )}
                   </div>
 
