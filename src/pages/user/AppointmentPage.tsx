@@ -297,6 +297,8 @@ const AppointmentPage = () => {
     fetchChuyenGiaByChuyenKhoa()
   }, [specialty, listChuyenKhoa])
 
+  const [caKhamMap, setCaKhamMap] = useState<Record<string, string>>({})
+
   useEffect(() => {
     const fetchNgayLamViec = async () => {
       try {
@@ -306,11 +308,18 @@ const AppointmentPage = () => {
 
         const today = dayjs().startOf("day")
 
-        const ngayCoTruc = list
-          .filter((item) => item.caTruc && dayjs(item.ngay).isSameOrAfter(today))
-          .map((item) => dayjs.utc(item.ngay).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD"))
+        const ngayCoTruc: string[] = []
+        const map: Record<string, string> = {}
+        for (const item of list) {
+          if (item.caTruc && dayjs(item.ngay).isSameOrAfter(today)) {
+            const d = dayjs.utc(item.ngay).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD")
+            ngayCoTruc.push(d)
+            map[d] = item.caTruc
+          }
+        }
 
         setNgayLamViec(ngayCoTruc)
+        setCaKhamMap(map)
       } catch (error) {
         console.log("Lỗi : ", error)
       }
@@ -338,6 +347,8 @@ const AppointmentPage = () => {
           setAvailableTimes([])
           return
         }
+
+        setCaKhamMap((prev) => ({ ...prev, [ngayStr]: caTruc }))
 
         const resGio = await getGioTheoNgay(Number(doctor), ngayStr, caTruc)
 
@@ -604,12 +615,14 @@ const AppointmentPage = () => {
 
     let caKham = ""
     if (activeTab === "tab1") {
-      const resNgay = await getNgayKhamByChuyenGia(Number(doctor))
-      const list: { ngay: string; caTruc: string | null }[] = resNgay.data || []
-      caKham = list.find((i) => i.ngay === ngayKham)?.caTruc || ""
+      caKham = caKhamMap[ngayKham] || ""
     } else {
       caKham = selectedTime2?.caTruc || ""
     }
+    const bacSiName =
+      activeTab === "tab1"
+        ? (selectDoctor?.hoTen ?? selectDoctor?.tenBacSi ?? "")
+        : (selectedTime2?.doctorName ?? "")
 
     const payload = {
       bacSiId:
@@ -625,7 +638,7 @@ const AppointmentPage = () => {
     }
     try {
       await postTaoLichKham(payload)
-      toastSuccess(`Đặt lịch thành công với phương thức: ${paymentMethod}`)
+      toastSuccess(`Đặt lịch thành công với bác sĩ: ${bacSiName}`)
       resetAll()
     } catch (error) {
       console.error("Lỗi : ", error)
