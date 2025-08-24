@@ -67,5 +67,10 @@ export const ResetPasswordSchema = yup.object({
     .string()
     .required("Vui lòng nhập mật khẩu")
     .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("matKhau")], "Xác nhận mật khẩu không khớp")
+    .required("Vui lòng xác nhận mật khẩu"),
 })
+
 export type ResetPasswordSchema = yup.InferType<typeof ResetPasswordSchema>
