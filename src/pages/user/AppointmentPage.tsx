@@ -111,6 +111,7 @@ const AppointmentPage = () => {
     name: "",
     maBN: "",
   })
+  const [openService, setOpenService] = useState(false)
 
   type User = {
     name: string
@@ -161,6 +162,7 @@ const AppointmentPage = () => {
 
     setOpenDoctor(false)
     setOpenSpecialty(false)
+    setOpenService(false)
 
     resetForm()
   }
@@ -585,7 +587,20 @@ const AppointmentPage = () => {
     setFormValue,
   ])
 
+  const requireLogin = (callback?: () => void) => {
+    if (!user?.maBN) {
+      toastError("Vui lòng đăng nhập để tiếp tục")
+      return
+    }
+    callback?.()
+  }
+
   const onSubmit = async () => {
+    if (!user?.maBN) {
+      toastError("Vui lòng đăng nhập để tiếp tục")
+      return
+    }
+
     const fieldsToValidate =
       activeTab === "tab1"
         ? (["serviceType", "specialty", "doctor", "selectedDate", "selectedTime", "note"] as const)
@@ -751,7 +766,18 @@ const AppointmentPage = () => {
 
             <div className="flex flex-col gap-2 w-full max-w-md ">
               <Label className="font-bold">1. Loại hình khám</Label>
-              <Select value={serviceType} onValueChange={setServiceType}>
+              <Select
+                value={serviceType}
+                onValueChange={(val) => requireLogin(() => setServiceType(val))}
+                open={openService}
+                onOpenChange={(o) => {
+                  if (o && !user?.maBN) {
+                    toastError("Vui lòng đăng nhập để tiếp tục")
+                    return
+                  }
+                  setOpenService(o)
+                }}
+              >
                 <SelectTrigger
                   className={cn(
                     "w-full border rounded-md px-3 py-2 bg-white",
@@ -790,14 +816,23 @@ const AppointmentPage = () => {
 
             <div className="flex flex-col gap-2 w-full max-w-md">
               <Label className="font-bold">2. Chuyên khoa</Label>
-              <Popover open={openSpecialty} onOpenChange={setOpenSpecialty}>
+              <Popover
+                open={openSpecialty}
+                onOpenChange={(o) => {
+                  if (o && !user?.maBN) {
+                    toastError("Vui lòng đăng nhập để tiếp tục")
+                    return
+                  }
+                  setOpenSpecialty(o)
+                }}
+              >
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     role="combobox"
                     aria-expanded={openSpecialty}
                     className={cn(
-                      "w-full flex justify-between items-center",
+                      "w-full flex justify-between items-center border rounded-md px-3 py-2 bg-white",
                       errors.specialty && "border-red-500"
                     )}
                   >
@@ -821,6 +856,10 @@ const AppointmentPage = () => {
                             key={item.chuyenKhoaId}
                             value={item.tenKhoa.toString()}
                             onSelect={() => {
+                              if (!user?.maBN) {
+                                toastError("Vui lòng đăng nhập để tiếp tục")
+                                return
+                              }
                               setSpecialty(String(item.chuyenKhoaId))
                               setOpenSpecialty(false)
                             }}
@@ -851,16 +890,16 @@ const AppointmentPage = () => {
               onValueChange={(v) => setActiveTab(v as "tab1" | "tab2")}
               className="w-full max-w-md"
             >
-              <TabsList className="w-full bg-blue-400 rounded-lg overflow-hidden">
+              <TabsList className="w-full bg-blue-400 dark:bg-zinc-500 rounded-lg overflow-hidden">
                 <TabsTrigger
                   value="tab1"
-                  className="w-1/2 text-white data-[state=active]:bg-blue-600"
+                  className="w-1/2 text-white data-[state=active]:bg-blue-600 dark:data-[state=active]:bg-zinc-700"
                 >
                   Chọn bác sĩ
                 </TabsTrigger>
                 <TabsTrigger
                   value="tab2"
-                  className="w-1/2 text-white data-[state=active]:bg-blue-600"
+                  className="w-1/2 text-white data-[state=active]:bg-blue-600 dark:data-[state=active]:bg-zinc-700"
                 >
                   Chọn ngày/giờ
                 </TabsTrigger>
@@ -869,21 +908,35 @@ const AppointmentPage = () => {
               <TabsContent value="tab1" className="mt-4 space-y-5">
                 <div className="flex flex-col gap-2 w-full">
                   <Label className="font-bold">3. Bác sĩ khám</Label>
-                  <Popover open={openDoctor} onOpenChange={setOpenDoctor}>
+                  <Popover
+                    open={openDoctor}
+                    onOpenChange={(o) => {
+                      if (o && !user?.maBN) {
+                        toastError("Vui lòng đăng nhập để tiếp tục")
+                        return
+                      }
+                      if (o && !specialty) {
+                        toastError("Vui lòng chọn chuyên khoa trước")
+                        return
+                      }
+                      setOpenDoctor(o)
+                    }}
+                  >
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
                         role="combobox"
                         aria-expanded={openDoctor}
-                        disabled={!specialty}
                         className={cn(
-                          "w-full flex justify-between items-center",
+                          "w-full flex justify-between items-center border rounded-md px-3 py-2 bg-white",
                           errors?.doctor && "border-red-500 focus:ring-red-500"
                         )}
                       >
                         <span className={cn("truncate", !doctor && "text-muted-foreground")}>
                           {doctor
-                            ? `${listChuyenGia.find((item) => String(item.bacSiId) === doctor)?.trinhDo} - ${listChuyenGia.find((item) => String(item.bacSiId) === doctor)?.hoTen}`
+                            ? `${listChuyenGia.find((i) => String(i.bacSiId) === doctor)?.trinhDo} - ${
+                                listChuyenGia.find((i) => String(i.bacSiId) === doctor)?.hoTen
+                              }`
                             : ""}
                         </span>
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -900,6 +953,14 @@ const AppointmentPage = () => {
                                 key={item.bacSiId}
                                 value={String(item.bacSiId)}
                                 onSelect={() => {
+                                  if (!user?.maBN) {
+                                    toastError("Vui lòng đăng nhập để tiếp tục")
+                                    return
+                                  }
+                                  if (!specialty) {
+                                    toastError("Vui lòng chọn chuyên khoa trước")
+                                    return
+                                  }
                                   setDoctor(String(item.bacSiId))
                                   setOpenDoctor(false)
                                 }}
@@ -932,13 +993,25 @@ const AppointmentPage = () => {
                       className={`w/full bg-background pr-10 dark:border-white ${errors.selectedDate ? inputErrorClass : ""}`}
                       readOnly
                     />
-                    <Popover open={open} onOpenChange={setOpen}>
+                    <Popover
+                      open={open}
+                      onOpenChange={(o) => {
+                        if (o && !user?.maBN) {
+                          toastError("Vui lòng đăng nhập để tiếp tục")
+                          return
+                        }
+                        setOpen(o)
+                      }}
+                    >
                       <PopoverTrigger asChild>
                         <Button
                           id="date-picker"
                           variant="ghost"
                           className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
                           disabled={!doctor}
+                          onClick={() => {
+                            if (!user?.maBN) toastError("Vui lòng đăng nhập để tiếp tục")
+                          }}
                         >
                           <CalendarIcon className="size-3.5" />
                         </Button>
@@ -981,7 +1054,7 @@ const AppointmentPage = () => {
                       <Button
                         key={time.label}
                         variant={selectedTime?.label === time.label ? "default" : "outline"}
-                        onClick={() => setSelectedTime(time)}
+                        onClick={() => requireLogin(() => setSelectedTime(time))}
                         className={`w-full p-2 rounded-lg text-sm transition-colors ${selectedTime?.label === time.label ? "bg-primary text-white" : "bg-white hover:bg-gray-100"}`}
                       >
                         {time.label}
@@ -1004,12 +1077,24 @@ const AppointmentPage = () => {
                       className={`w-full bg-background pr-10 dark:border-white ${errors.selectedDate2 ? inputErrorClass : ""}`}
                       readOnly
                     />
-                    <Popover open={open2} onOpenChange={setOpen2}>
+                    <Popover
+                      open={open2}
+                      onOpenChange={(o) => {
+                        if (o && !user?.maBN) {
+                          toastError("Vui lòng đăng nhập để tiếp tục")
+                          return
+                        }
+                        setOpen2(o)
+                      }}
+                    >
                       <PopoverTrigger asChild>
                         <Button
                           id="date-picker-2"
                           variant="ghost"
                           className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
+                          onClick={() => {
+                            if (!user?.maBN) toastError("Vui lòng đăng nhập để tiếp tục")
+                          }}
                         >
                           <CalendarIcon className="size-3.5" />
                         </Button>
@@ -1057,7 +1142,7 @@ const AppointmentPage = () => {
                             ? "default"
                             : "outline"
                         }
-                        onClick={() => setSelectedTime2(time)}
+                        onClick={() => requireLogin(() => setSelectedTime2(time))}
                         className={`w-full p-2 rounded-lg text-sm transition-colors ${selectedTime2?.label === time.label && selectedTime2?.doctorId === time.doctorId ? "bg-primary text-white" : "bg-white hover:bg-gray-100"}`}
                       >
                         {time.label}
@@ -1075,6 +1160,9 @@ const AppointmentPage = () => {
               <Label className="font-bold">Ghi chú bệnh</Label>
               <Textarea
                 value={note}
+                onFocus={() => {
+                  if (!user?.maBN) toastError("Vui lòng đăng nhập để tiếp tục")
+                }}
                 onChange={(e) => setNote(e.target.value)}
                 className="w-full dark:border-white bg-white"
               />
@@ -1094,7 +1182,7 @@ const AppointmentPage = () => {
                     <Button
                       key={option.value}
                       variant={paymentMethod === option.value ? "default" : "outline"}
-                      onClick={() => setPaymentMethod(option.value)}
+                      onClick={() => requireLogin(() => setPaymentMethod(option.value))}
                       className={`w-full dark:border-white py-2 rounded-lg text-sm transition-colors ${
                         paymentMethod === option.value
                           ? "bg-primary text-white"
