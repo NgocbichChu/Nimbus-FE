@@ -17,6 +17,7 @@ const ForgotPasswordForm = () => {
   const [step, setStep] = useState<"email" | "otp" | "password">("email")
   const [email, setEmail] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const emailForm = useForm({
     resolver: yupResolver(ForgetPasswordSchema),
@@ -30,7 +31,7 @@ const ForgotPasswordForm = () => {
 
   const pwForm = useForm({
     resolver: yupResolver(ResetPasswordSchema),
-    defaultValues: { matKhau: "" },
+    defaultValues: { matKhau: "", confirmPassword: "" },
   })
 
   const sendEmail = async (data: any) => {
@@ -165,6 +166,35 @@ const ForgotPasswordForm = () => {
               </p>
             )}
           </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-left">
+              Xác nhận mật khẩu mới <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <Input
+                type={showConfirm ? "text" : "password"}
+                placeholder="Nhập lại mật khẩu mới"
+                className={`w-full pr-10 ${
+                  pwForm.formState.errors.confirmPassword ? inputErrorClass : ""
+                }`}
+                {...pwForm.register("confirmPassword")}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirm((v) => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                aria-label={showConfirm ? "Ẩn mật khẩu" : "Hiển thị mật khẩu"}
+              >
+                {showConfirm ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              </button>
+            </div>
+            {pwForm.formState.errors.confirmPassword && (
+              <p className="text-sm text-red-500">
+                {pwForm.formState.errors.confirmPassword.message as string}
+              </p>
+            )}
+          </div>
+
           <Button type="submit" className="w-full bg-blue-600 text-white">
             Đặt lại mật khẩu
           </Button>

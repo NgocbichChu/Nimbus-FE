@@ -21,7 +21,9 @@ const AccountPage = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState("")
+  const [messageType, setMessageType] = useState<"success" | "error" | null>(null)
   const [updateMessage, setUpdateMessage] = useState("")
+  const [updateType, setUpdateType] = useState<"success" | "error" | null>(null)
   const [user, setUser] = useState<User>({
     name: "",
     soDienThoai: "",
@@ -34,6 +36,7 @@ const AccountPage = () => {
 
   const handleDoiMatKhau = async (data: PasswordChange) => {
     setMessage("")
+    setMessageType(null)
     setLoading(true)
     try {
       const response = await doiMatKhau({
@@ -42,12 +45,15 @@ const AccountPage = () => {
       })
       if (response?.success) {
         setMessage("Đổi mật khẩu thành công")
+        setMessageType("success")
         resetPwd()
       } else {
         setMessage(response?.message || "Đổi mật khẩu thất bại")
+        setMessageType("error")
       }
     } catch (error) {
       setMessage("Đổi mật khẩu thất bại")
+      setMessageType("error")
       console.log(error)
     } finally {
       setLoading(false)
@@ -95,6 +101,7 @@ const AccountPage = () => {
 
   const onSubmit = async (data: TaiKhoan) => {
     setUpdateMessage("")
+    setUpdateType(null)
     try {
       await capNhatThongTin({
         hoTen: user.name,
@@ -109,9 +116,11 @@ const AccountPage = () => {
       reset({ soDienThoai: data.soDienThoai })
       setIsEditing(false)
       setUpdateMessage("Cập nhật thông tin thành công")
+      setUpdateType("success")
     } catch (error) {
       console.log("Lỗi : ", error)
       setUpdateMessage("Cập nhật thông tin thất bại")
+      setUpdateType("error")
     }
   }
 
@@ -152,7 +161,14 @@ const AccountPage = () => {
                     <p>{user.email || "------------"}</p>
                   </div>
                   {updateMessage && (
-                    <p className="text-sm mt-2 text-center text-green-600 dark:text-green-400">
+                    <p
+                      className={`text-sm mt-2 text-center ${
+                        updateType === "success"
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-red-500 dark:text-red-400"
+                      }`}
+                      aria-live="polite"
+                    >
                       {updateMessage}
                     </p>
                   )}
@@ -170,6 +186,8 @@ const AccountPage = () => {
                       onClick={() => {
                         reset({ soDienThoai: user.soDienThoai })
                         setIsEditing(false)
+                        setUpdateMessage("")
+                        setUpdateType(null)
                       }}
                       className="w-fit px-6"
                     >
@@ -265,7 +283,14 @@ const AccountPage = () => {
                   </div>
 
                   {message && (
-                    <p className="text-sm mt-2 text-center text-red-500 dark:text-red-400">
+                    <p
+                      className={`text-sm mt-2 text-center ${
+                        messageType === "success"
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-red-500 dark:text-red-400"
+                      }`}
+                      aria-live="polite"
+                    >
                       {message}
                     </p>
                   )}
