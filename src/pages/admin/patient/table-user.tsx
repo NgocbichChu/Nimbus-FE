@@ -66,7 +66,6 @@ export function DataTableUser<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
   })
-  
 
   return (
     <div className="w-full overflow-auto">
@@ -142,10 +141,6 @@ export function DataTableUser<TData, TValue>({
       </div>
 
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-sm text-muted-foreground flex-1">
-          {table.getFilteredSelectedRowModel().rows.length} of{""}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
         <div className="space-x-2">
           <Button
             variant="outline"
@@ -155,7 +150,12 @@ export function DataTableUser<TData, TValue>({
           >
             Trang trước
           </Button>
-          <Button variant="outline" size="sm"  onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} >
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
             Trang tiếp theo
           </Button>
         </div>
