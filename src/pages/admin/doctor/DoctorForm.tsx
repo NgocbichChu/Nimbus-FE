@@ -45,7 +45,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
     reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schema as any),
     defaultValues: {
       hoTen: doctor?.hoTen ?? "",
       gioiTinh: doctor?.gioiTinh ?? "Nam",
@@ -66,7 +66,7 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
     try {
       await dispatch(addDoctor(data)).unwrap()
       dispatch(fetchDoctors())
-      reset();
+      reset()
       onClose?.()
     } catch (error) {
       console.error("Thêm bác sĩ thất bại:", error)
@@ -156,12 +156,12 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
       </div>
 
       <div className="grid gap-2">
-        <Label>Mật khẩu *</Label>
+        <Label>Mật khẩu {mode === "add" ? "*" : ""}</Label>
         <div className="relative">
           <Input
             {...register("matKhau")}
             type={showPassword ? "text" : "password"}
-            placeholder="Nhập mật khẩu"
+            placeholder={mode === "add" ? "Nhập mật khẩu" : "Nhập mật khẩu"}
             disabled={disInput}
           />
           <Button
@@ -201,6 +201,8 @@ const DoctorForm = ({ doctor, mode = "add", onClose }: DoctorFormProps) => {
                   mode="single"
                   selected={field.value ? new Date(field.value) : undefined}
                   onSelect={(date) => field.onChange(date?.toISOString() ?? "")}
+                  disabled={(date) => date > new Date()}
+                  toDate={new Date()}
                 />
               </PopoverContent>
             </Popover>

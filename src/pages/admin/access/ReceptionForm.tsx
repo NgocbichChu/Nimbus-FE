@@ -10,6 +10,8 @@ import { Controller, useForm } from "react-hook-form"
 import { addReception } from "@/api/quanlyApi"
 import { useAppDispatch } from "@/helper"
 import { fetchReceptions } from "@/api/letanApi"
+import { ReceptionAccessSchema } from "@/validation/user-valid"
+import { yupResolver } from "@hookform/resolvers/yup"
 
 const ReceptionForm = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -18,10 +20,17 @@ const ReceptionForm = () => {
     setShowPassword(!showPassword)
   }
 
-  const { control, register, handleSubmit, reset } = useForm({
+  const {
+    control,
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(ReceptionAccessSchema),
     defaultValues: {
       hoTen: "",
-      gioiTinh: "",
+      gioiTinh: "Nam",
       email: "",
       soDienThoai: "",
       matKhau: "",
@@ -37,7 +46,7 @@ const ReceptionForm = () => {
       await dispatch(addReception(data)).unwrap()
       reset({
         hoTen: "",
-        gioiTinh: "",
+        gioiTinh: "Nam",
         email: "",
         soDienThoai: "",
         matKhau: "",
@@ -66,49 +75,68 @@ const ReceptionForm = () => {
               placeholder="Nhập họ tên đầy đủ"
               {...register("hoTen")}
             />
+            {errors.hoTen && <p className="text-red-500 text-sm">{errors.hoTen.message}</p>}
           </div>
-          <Controller
-            name="gioiTinh"
-            control={control}
-            defaultValue="Nam" // hoặc lấy từ defaultValues
-            render={({ field }) => (
-              <RadioGroup onValueChange={field.onChange} value={field.value} className="flex gap-6">
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem id="male" value="Nam" />
-                  <Label htmlFor="male" className="cursor-pointer">
-                    Nam
-                  </Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem id="female" value="Nữ" />
-                  <Label htmlFor="female" className="cursor-pointer">
-                    Nữ
-                  </Label>
-                </div>
-              </RadioGroup>
-            )}
-          />
+          <div className="grid gap-3">
+            <Label className="font-bold" htmlFor="gioiTinh">
+              Giới tính *
+            </Label>
+            <Controller
+              name="gioiTinh"
+              control={control}
+              render={({ field }) => (
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  className="flex gap-6"
+                >
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem id="male" value="Nam" />
+                    <Label htmlFor="male" className="cursor-pointer">
+                      Nam
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem id="female" value="Nữ" />
+                    <Label htmlFor="female" className="cursor-pointer">
+                      Nữ
+                    </Label>
+                  </div>
+                </RadioGroup>
+              )}
+            />
+            {errors.gioiTinh && <p className="text-red-500 text-sm">{errors.gioiTinh.message}</p>}
+          </div>
           <div className="grid gap-3">
             <Label className="font-bold" htmlFor="email">
               Email *
             </Label>
             <Input id="email" type="email" placeholder="m@gmail.com" {...register("email")} />
+            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
           </div>
           <div className="grid gap-3">
             <Label className="font-bold" htmlFor="sdt">
               Số điện thoại *
             </Label>
-            <Input id="sdt" type="text" {...register("soDienThoai")} />
+            <Input
+              id="sdt"
+              type="text"
+              placeholder="Nhập số điện thoại"
+              {...register("soDienThoai")}
+            />
+            {errors.soDienThoai && (
+              <p className="text-red-500 text-sm">{errors.soDienThoai.message}</p>
+            )}
           </div>
           <div className="grid gap-3 ">
             <Label className="font-bold" htmlFor="password">
               Mật khẩu *
             </Label>
-            {/* <Input id="password" type="password" /> */}
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
+                placeholder="Nhập mật khẩu"
                 {...register("matKhau")}
               />
               <button
@@ -121,19 +149,32 @@ const ReceptionForm = () => {
                 {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
             </div>
+            {errors.matKhau && <p className="text-red-500 text-sm">{errors.matKhau.message}</p>}
           </div>
           <div className="space-y-2">
-            <Label className="font-bold">Ngày tuyển dụng</Label>
+            <Label className="font-bold">Ngày tuyển dụng *</Label>
             <Controller
               name="ngayTuyenDung"
               control={control}
               render={({ field }) => (
                 <DateInput
                   date={field.value ? new Date(field.value) : undefined}
-                  setDate={(date) => field.onChange(date?.toISOString().split("T")[0])}
+                  setDate={(date) => {
+                    if (date) {
+                      // Sử dụng local timezone để tránh lệch ngày
+                      const year = date.getFullYear()
+                      const month = String(date.getMonth() + 1).padStart(2, "0")
+                      const day = String(date.getDate()).padStart(2, "0")
+                      field.onChange(`${year}-${month}-${day}`)
+                    }
+                  }}
+                  disableFuture={true}
                 />
               )}
             />
+            {errors.ngayTuyenDung && (
+              <p className="text-red-500 text-sm">{errors.ngayTuyenDung.message}</p>
+            )}
           </div>
         </div>
         <div className="grid gap-3 pt-3">

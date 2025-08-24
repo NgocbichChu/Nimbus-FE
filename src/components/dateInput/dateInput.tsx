@@ -1,12 +1,42 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "../ui/button"
+import { cn } from "@/lib/utils"
 import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 
+export function DateInput({
+  date,
+  setDate,
+  disableFuture = false,
+  disablePast = false,
+}: {
+  date: Date | undefined
+  setDate: (d: Date) => void
+  disableFuture?: boolean
+  disablePast?: boolean
+}) {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // Set to start of day for accurate comparison
 
-export function DateInput({ date, setDate }: { date: Date | undefined; setDate: (d: Date) => void }) {
+  const getDisabledDates = () => {
+    if (disableFuture && disablePast) {
+      // Chỉ cho phép chọn hôm nay
+      return (date: Date) => {
+        const dateToCheck = new Date(date)
+        dateToCheck.setHours(0, 0, 0, 0)
+        return dateToCheck.getTime() !== today.getTime()
+      }
+    } else if (disableFuture) {
+      // Không cho phép chọn ngày tương lai
+      return (date: Date) => date > today
+    } else if (disablePast) {
+      // Không cho phép chọn ngày quá khứ
+      return (date: Date) => date < today
+    }
+    return undefined
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -22,7 +52,15 @@ export function DateInput({ date, setDate }: { date: Date | undefined; setDate: 
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
-        <Calendar mode="single" selected={date} onSelect={(d) => d && setDate(d)} initialFocus />
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={(d) => d && setDate(d)}
+          disabled={getDisabledDates()}
+          fromDate={disablePast ? today : undefined}
+          toDate={disableFuture ? today : undefined}
+          initialFocus
+        />
       </PopoverContent>
     </Popover>
   )

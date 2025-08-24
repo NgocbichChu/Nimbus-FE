@@ -9,15 +9,24 @@ import { useAppDispatch } from "@/helper"
 import { Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
 import { Controller, useForm } from "react-hook-form"
+import { AdminSchema } from "@/validation/user-valid"
+import { yupResolver } from "@hookform/resolvers/yup"
 
 const AdminForm = () => {
   const dispatch = useAppDispatch()
   const [showPassword, setShowPassword] = useState(false)
 
-  const { control, register, reset, handleSubmit } = useForm({
+  const {
+    control,
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(AdminSchema),
     defaultValues: {
       hoTen: "",
-      gioiTinh: "",
+      gioiTinh: "Nam",
       email: "",
       soDienThoai: "",
       matKhau: "",
@@ -54,40 +63,59 @@ const AdminForm = () => {
               placeholder="Nhập họ tên đầy đủ"
               {...register("hoTen")}
             />
+            {errors.hoTen && <p className="text-red-500 text-sm">{errors.hoTen.message}</p>}
           </div>
-          <Controller
-            name="gioiTinh"
-            control={control}
-            defaultValue="Nam" // hoặc lấy từ defaultValues
-            render={({ field }) => (
-              <RadioGroup onValueChange={field.onChange} value={field.value} className="flex gap-6">
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem id="male" value="Nam" />
-                  <Label className="font-bold cursor-pointer" htmlFor="male">
-                    Nam
-                  </Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem id="female" value="Nữ" />
-                  <Label className="font-bold cursor-pointer" htmlFor="female">
-                    Nữ
-                  </Label>
-                </div>
-              </RadioGroup>
-            )}
-          />
+          <div className="grid gap-3">
+            <Label className="font-bold" htmlFor="gioiTinh">
+              Giới tính *
+            </Label>
+            <Controller
+              name="gioiTinh"
+              control={control}
+              render={({ field }) => (
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  className="flex gap-6"
+                >
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem id="male" value="Nam" />
+                    <Label className="cursor-pointer" htmlFor="male">
+                      Nam
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem id="female" value="Nữ" />
+                    <Label className="cursor-pointer" htmlFor="female">
+                      Nữ
+                    </Label>
+                  </div>
+                </RadioGroup>
+              )}
+            />
+            {errors.gioiTinh && <p className="text-red-500 text-sm">{errors.gioiTinh.message}</p>}
+          </div>
 
           <div className="grid gap-3">
             <Label className="font-bold" htmlFor="email">
               Email *
             </Label>
             <Input id="email" type="email" placeholder="m@gmail.com" {...register("email")} />
+            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
           </div>
           <div className="grid gap-3">
             <Label className="font-bold" htmlFor="sdt">
               Số điện thoại *
             </Label>
-            <Input id="sdt" type="text" {...register("soDienThoai")} />
+            <Input
+              id="sdt"
+              type="text"
+              placeholder="Nhập số điện thoại"
+              {...register("soDienThoai")}
+            />
+            {errors.soDienThoai && (
+              <p className="text-red-500 text-sm">{errors.soDienThoai.message}</p>
+            )}
           </div>
           <div className="grid gap-3">
             <Label className="font-bold" htmlFor="chucVu">
@@ -99,16 +127,17 @@ const AdminForm = () => {
               placeholder="Ví dụ: Quản lý cấp cao"
               {...register("chucVu")}
             />
+            {errors.chucVu && <p className="text-red-500 text-sm">{errors.chucVu.message}</p>}
           </div>
           <div className="grid gap-3 ">
             <Label className="font-bold" htmlFor="password">
               Mật khẩu *
             </Label>
-            {/* <Input id="password" type="password" /> */}
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
+                placeholder="Nhập mật khẩu"
                 {...register("matKhau")}
               />
               <button
@@ -121,6 +150,7 @@ const AdminForm = () => {
                 {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
             </div>
+            {errors.matKhau && <p className="text-red-500 text-sm">{errors.matKhau.message}</p>}
           </div>
         </div>
         <div className="grid gap-3 pt-4">

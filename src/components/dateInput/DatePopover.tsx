@@ -12,9 +12,38 @@ interface DatePopoverProps {
   date?: Date
   setDate: (date: Date | undefined) => void
   locale: Locale
+  disablePast?: boolean
+  disableFuture?: boolean
 }
 
-export function DatePopover({ date, setDate, locale }: DatePopoverProps) {
+export function DatePopover({
+  date,
+  setDate,
+  locale,
+  disablePast = false,
+  disableFuture = false,
+}: DatePopoverProps) {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // Set to start of day for accurate comparison
+
+  const getDisabledDates = () => {
+    if (disableFuture && disablePast) {
+      // Chỉ cho phép chọn hôm nay
+      return (date: Date) => {
+        const dateToCheck = new Date(date)
+        dateToCheck.setHours(0, 0, 0, 0)
+        return dateToCheck.getTime() !== today.getTime()
+      }
+    } else if (disableFuture) {
+      // Không cho phép chọn ngày tương lai
+      return (date: Date) => date > today
+    } else if (disablePast) {
+      // Không cho phép chọn ngày quá khứ
+      return (date: Date) => date < today
+    }
+    return undefined
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -28,7 +57,15 @@ export function DatePopover({ date, setDate, locale }: DatePopoverProps) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
-        <Calendar mode="single" selected={date} onSelect={setDate} locale={locale} />
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          locale={locale}
+          disabled={getDisabledDates()}
+          fromDate={disablePast ? today : undefined}
+          toDate={disableFuture ? today : undefined}
+        />
       </PopoverContent>
     </Popover>
   )

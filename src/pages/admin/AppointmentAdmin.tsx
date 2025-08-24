@@ -181,12 +181,19 @@ const AppointmentAdmin = () => {
     return reason ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
   }
 
-  const getFilteredTodaySchedules = (schedules: WorkSchedule[], doctors: any[], specialty: string, shift: string, search: string) => {
+  const getFilteredTodaySchedules = (
+    schedules: WorkSchedule[],
+    doctors: any[],
+    specialty: string,
+    shift: string,
+    search: string
+  ) => {
     return schedules.filter((schedule) => {
       const doctor = doctors.find((d) => Number(d.bacsi_id) === schedule.bacSiId)
       const specialtyMatch = !specialty || specialty === "all" || doctor?.tenKhoa === specialty
       const shiftMatch = !shift || shift === "all" || schedule.caTruc === shift
-      const searchMatch = !search.trim() || schedule.tenBacSi.toLowerCase().includes(search.trim().toLowerCase())
+      const searchMatch =
+        !search.trim() || schedule.tenBacSi.toLowerCase().includes(search.trim().toLowerCase())
       return specialtyMatch && shiftMatch && searchMatch
     })
   }
@@ -219,7 +226,12 @@ const AppointmentAdmin = () => {
             <div className="flex flex-wrap gap-4 items-center">
               <div className="space-y-2">
                 <Label className="font-bold">Chọn ngày</Label>
-                <DatePopover date={selectedDate} setDate={setSelectedDate} locale={vi} />
+                <DatePopover
+                  date={selectedDate}
+                  setDate={setSelectedDate}
+                  locale={vi}
+                  disablePast={true}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="doctor" className="font-bold">
@@ -342,9 +354,15 @@ const AppointmentAdmin = () => {
                   Không có lịch làm việc nào
                 </div>
               ) : (
-                getFilteredTodaySchedules(todaySchedules, doctors, selectedSpecialty, todayShift, todaySearch).map((schedule) => {
+                getFilteredTodaySchedules(
+                  todaySchedules,
+                  doctors,
+                  selectedSpecialty,
+                  todayShift,
+                  todaySearch
+                ).map((schedule) => {
                   const specialty = getDoctorSpecialty(doctors, schedule.bacSiId)
-                  
+
                   return (
                     <div
                       key={generateScheduleKey(schedule)}
