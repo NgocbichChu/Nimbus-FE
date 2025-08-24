@@ -8,10 +8,9 @@ export const patientColumns: ColumnDef<Patient>[] = [
     id: "index",
     header: "STT",
     cell: ({ row, table }) => {
-      const pageIndex = table.getState().pagination.pageIndex
-      const pageSize = table.getState().pagination.pageSize
-      const rowIndex = row.index + 1 + pageIndex * pageSize
-      return <div className="text-center">{rowIndex}</div>
+      const allRows = table.getSortedRowModel().rows
+      const indexInAllRows = allRows.findIndex((r) => r.id === row.id)
+      return <div className="text-center">{indexInAllRows + 1}</div>
     },
     enableSorting: false,
     enableHiding: false,
