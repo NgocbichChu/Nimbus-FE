@@ -17,6 +17,7 @@ import { capNhatBenhNhan } from "../../api/accountApi"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { hoSoSchema } from "../../validation/user-valid"
 import type { HoSo } from "../../validation/user-valid"
+import { toastError, toastSuccess } from "@/helper/toast"
 
 type User = {
   name: string
@@ -33,7 +34,6 @@ type User = {
 
 const HoSoPage = () => {
   const [isEditing, setIsEditing] = useState(false)
-  const [updateMessage, setUpdateMessage] = useState("")
   const [user, setUser] = useState<User>({
     name: "",
     email: "",
@@ -65,7 +65,6 @@ const HoSoPage = () => {
   })
 
   const onSubmit = async (data: HoSo) => {
-    setUpdateMessage("")
     try {
       await capNhatBenhNhan({
         benhNhanId: user.maBN,
@@ -97,10 +96,10 @@ const HoSoPage = () => {
         lienHeKhanCap: data.lienHeKhanCap,
       })
       setIsEditing(false)
-      setUpdateMessage("Cập nhật thông tin thành công")
+      toastSuccess("Cập nhật thông tin thành công")
     } catch (error) {
       console.log("Lỗi : ", error)
-      setUpdateMessage("Cập nhật thông tin thất bại")
+      toastError("Cập nhật thông tin thất bại")
     }
   }
 
@@ -128,7 +127,9 @@ const HoSoPage = () => {
         }
         setUser(user)
         reset(user)
-      } catch (error) {}
+      } catch (error) {
+        console.log("Lỗi : ", error)
+      }
     }
     fetchBenhNhan()
   }, [reset])
@@ -249,11 +250,7 @@ const HoSoPage = () => {
                 )}
               </div>
             </div>
-            {updateMessage && (
-              <p className="text-sm mt-2 text-center text-green-600 dark:text-green-400">
-                {updateMessage}
-              </p>
-            )}
+          
           </CardContent>
           <CardFooter className="justify-end max-w-[700px] mt-4">
             {isEditing ? (
