@@ -48,6 +48,7 @@ import isSameOrAfter from "dayjs/plugin/isSameOrAfter"
 import BackToTopButton from "@/components/back-to-top/back-to-top"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toastSuccess, toastError, toastWarning } from "../../helper/toast"
+import { useNavigate } from "react-router-dom"
 
 type AppointmentFormType = yup.InferType<typeof appointmentSchema>
 
@@ -58,6 +59,7 @@ dayjs.extend(isSameOrAfter)
 const inputErrorClass = "border-red-500 focus:ring-red-500 focus:border-red-500 dark:border-red-500"
 
 const AppointmentPage = () => {
+  const navigate = useNavigate()
   const [serviceType, setServiceType] = useState("")
   const [specialty, setSpecialty] = useState("")
   const [open, setOpen] = useState(false)
@@ -590,17 +592,31 @@ const AppointmentPage = () => {
     setFormValue,
   ])
 
-  const requireLogin = (callback?: () => void) => {
-    if (!user?.maBN) {
+  // const requireLogin = (callback?: () => void) => {
+  //   if (!user?.maBN) {
+  //     toastError("Vui lòng đăng nhập để tiếp tục")
+  //     return
+  //   }
+  //   callback?.()
+  // }
+  
+  const handleRequireLoginChange = (o: boolean, callback: (value: boolean) => void) => {
+    if (o && !user?.maBN) {
       toastError("Vui lòng đăng nhập để tiếp tục")
+      setTimeout(() => {
+        navigate("/login")
+      }, 1500)
       return
     }
-    callback?.()
+    callback(o)
   }
 
   const onSubmit = async () => {
     if (!user?.maBN) {
       toastError("Vui lòng đăng nhập để tiếp tục")
+      setTimeout(() => {
+        navigate("/login")
+      }, 1500)
       return
     }
 
@@ -771,15 +787,9 @@ const AppointmentPage = () => {
               <Label className="font-bold">1. Loại hình khám</Label>
               <Select
                 value={serviceType}
-                onValueChange={(val) => requireLogin(() => setServiceType(val))}
+                // onValueChange={(val) => requireLogin(() => setServiceType(val))}
                 open={openService}
-                onOpenChange={(o) => {
-                  if (o && !user?.maBN) {
-                    toastError("Vui lòng đăng nhập để tiếp tục")
-                    return
-                  }
-                  setOpenService(o)
-                }}
+                onOpenChange={(o) => handleRequireLoginChange(o, setOpenService)}
               >
                 <SelectTrigger
                   className={cn(
@@ -821,13 +831,7 @@ const AppointmentPage = () => {
               <Label className="font-bold">2. Chuyên khoa</Label>
               <Popover
                 open={openSpecialty}
-                onOpenChange={(o) => {
-                  if (o && !user?.maBN) {
-                    toastError("Vui lòng đăng nhập để tiếp tục")
-                    return
-                  }
-                  setOpenSpecialty(o)
-                }}
+                onOpenChange={(o) => handleRequireLoginChange(o, setOpenService)}
               >
                 <PopoverTrigger asChild>
                   <Button
@@ -996,16 +1000,7 @@ const AppointmentPage = () => {
                       className={`w/full bg-background pr-10 dark:border-white ${errors.selectedDate ? inputErrorClass : ""}`}
                       readOnly
                     />
-                    <Popover
-                      open={open}
-                      onOpenChange={(o) => {
-                        if (o && !user?.maBN) {
-                          toastError("Vui lòng đăng nhập để tiếp tục")
-                          return
-                        }
-                        setOpen(o)
-                      }}
-                    >
+                    <Popover open={open} onOpenChange={(o) => handleRequireLoginChange(o, setOpen)}>
                       <PopoverTrigger asChild>
                         <Button
                           id="date-picker"
@@ -1057,7 +1052,7 @@ const AppointmentPage = () => {
                       <Button
                         key={time.label}
                         variant={selectedTime?.label === time.label ? "default" : "outline"}
-                        onClick={() => requireLogin(() => setSelectedTime(time))}
+                        // onClick={() => requireLogin(() => setSelectedTime(time))}
                         className={`w-full p-2 rounded-lg text-sm transition-colors ${selectedTime?.label === time.label ? "bg-primary text-white" : "bg-white hover:bg-gray-100"}`}
                       >
                         {time.label}
@@ -1082,13 +1077,7 @@ const AppointmentPage = () => {
                     />
                     <Popover
                       open={open2}
-                      onOpenChange={(o) => {
-                        if (o && !user?.maBN) {
-                          toastError("Vui lòng đăng nhập để tiếp tục")
-                          return
-                        }
-                        setOpen2(o)
-                      }}
+                      onOpenChange={(o) => handleRequireLoginChange(o, setOpen2)}
                     >
                       <PopoverTrigger asChild>
                         <Button
@@ -1145,7 +1134,7 @@ const AppointmentPage = () => {
                             ? "default"
                             : "outline"
                         }
-                        onClick={() => requireLogin(() => setSelectedTime2(time))}
+                        // onClick={() => requireLogin(() => setSelectedTime2(time))}
                         className={`w-full p-2 rounded-lg text-sm transition-colors ${selectedTime2?.label === time.label && selectedTime2?.doctorId === time.doctorId ? "bg-primary text-white" : "bg-white hover:bg-gray-100"}`}
                       >
                         {time.label}
@@ -1185,7 +1174,7 @@ const AppointmentPage = () => {
                     <Button
                       key={option.value}
                       variant={paymentMethod === option.value ? "default" : "outline"}
-                      onClick={() => requireLogin(() => setPaymentMethod(option.value))}
+                      // onClick={() => requireLogin(() => setPaymentMethod(option.value))}
                       className={`w-full dark:border-white py-2 rounded-lg text-sm transition-colors ${
                         paymentMethod === option.value
                           ? "bg-primary text-white"
@@ -1254,7 +1243,7 @@ const AppointmentPage = () => {
             </CardFooter>
           </Card>
         </div>
-        <BackToTopButton/>
+        <BackToTopButton />
         <style>
           {`  @keyframes fadeIn {
     from {

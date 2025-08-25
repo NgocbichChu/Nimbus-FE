@@ -486,9 +486,7 @@ const AppointmentAdmin = () => {
                   .filter((schedule) => {
                     if (!historyShift || historyShift === "all") return true
                     const normalized = (schedule.caTruc || "").trim().toLowerCase()
-                    return (
-                      normalized === historyShift || normalized === "sang" || normalized === "chiều"
-                    )
+                    return normalized === historyShift.toLowerCase()
                   })
                   .filter((schedule) => {
                     if (!historySearch.trim()) return true
