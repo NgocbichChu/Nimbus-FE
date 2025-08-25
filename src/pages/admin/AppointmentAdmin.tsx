@@ -394,9 +394,9 @@ const AppointmentAdmin = () => {
           <CardTitle>Lịch sử ca trực</CardTitle>
           <CardDescription>Tất cả các ca làm việc đã được phân chia</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 max-h-[550px] overflow-y-auto">
           {/* Bộ lọc khoa + ngày + ca trực + tìm tên */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 sticky top-0 bg-white z-10 h-[45px] pt-1">
             <Input
               type="text"
               value={historySearch}
